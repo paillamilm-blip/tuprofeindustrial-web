@@ -28,7 +28,7 @@ export const MILESTONES: readonly Milestone[] = [
   {
     id: "1-medio",
     label: "1ro medio",
-    description: "Bases de matematica y ciencias para partir con confianza.",
+    description: "Bases de Matemáticas y ciencias para partir con confianza.",
   },
   {
     id: "2-medio",
@@ -53,7 +53,7 @@ export const MILESTONES: readonly Milestone[] = [
   {
     id: "ing-1",
     label: "1er ano de Ingenieria",
-    description: "Nivelacion en calculo, algebra y fisica universitaria.",
+    description: "Nivelacion en cálculo, algebra y Física universitaria.",
   },
   {
     id: "ing-2",
