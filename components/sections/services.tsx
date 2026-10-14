@@ -66,7 +66,7 @@ const SERVICES = [
 ] as const;
 
 const SUBJECTS = [
-  { icon: Sigma, label: "Matemática" },
+  { icon: Sigma, label: "Matemáticas" },
   { icon: Atom, label: "Física" },
   { icon: Cog, label: "Ingeniería" },
 ] as const;
