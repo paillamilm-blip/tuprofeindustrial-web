@@ -6,11 +6,35 @@ Este repositorio es un producto de software autonomo, **solo frontend/web**. No 
 
 ## Que incluye
 
-- **Hero** orientado a conversion con CTA principal a WhatsApp.
+Landing de conversion completa, dividida en secciones (una por componente en
+`components/sections/`, con `app/page.tsx` como raiz de composicion):
+
+- **Cabecera sticky** con wordmark, navegacion por anclas, enlace "saltar al contenido" y CTA compacto de WhatsApp.
+- **Hero** con la propuesta de valor (ingeniero industrial + diplomado en docencia e innovacion + innovador en productos digitales con IA) y CTA principal.
 - **Calculadora de notas** con dos modos:
   - **Mi promedio**: promedio ponderado de tus evaluaciones y si apruebas (desde 4.0).
   - **Que nota necesito**: la nota que necesitas en la evaluacion restante para llegar a tu meta, con mensajes claros cuando es imposible o cuando ya la tienes asegurada.
+- **Servicios/Clases**: clases personalizadas, intensivo PAES y nivelacion de ingenieria (tarjetas diferenciadas), materias (matematica, fisica, ingenieria) y niveles (1° medio hasta ultimo año de ingenieria). CTA de WhatsApp al final.
+- **Quien soy / Tu profe**: bio profesional + placeholder accesible de foto (reemplazar por imagen real).
+- **Testimonios/Resultados**: 4 slots marcados como placeholders para reemplazar por reseñas reales (ver abajo).
+- **Preguntas frecuentes (FAQ)**: acordeon accesible (shadcn + Radix) con modalidad, precios, horarios, agenda y niveles.
+- **CTA final** + footer con el wordmark.
 - **CTA de WhatsApp** destacado y fijo (sticky) en mobile.
+
+## Identidad visual
+
+La identidad se creo desde cero (el negocio no tenia logo). Se documenta en el
+bloque de comentarios al inicio de [`app/globals.css`](app/globals.css):
+
+- **Paleta** en tokens `oklch`: primario *teal de ingenieria* (~hue 195) y acento *ambar señal* (~hue 72), con neutros frios intencionales. Sin AI-purple ni grises planos.
+- **Tipografia** (via `next/font`): **Sora** (titulos/wordmark), **IBM Plex Sans** (cuerpo) e **IBM Plex Mono** (numerico).
+- **Wordmark**: componente accesible en [`components/brand/wordmark.tsx`](components/brand/wordmark.tsx).
+
+## Placeholders por reemplazar
+
+- **Numero de WhatsApp**: `NEXT_PUBLIC_WHATSAPP_PHONE` (ver seccion mas abajo).
+- **Foto del profesor**: caja marcada en la seccion "Quien soy" (`components/sections/about.tsx`).
+- **Testimonios**: edita el arreglo `TESTIMONIALS` en `components/sections/testimonials.tsx`. Pon `placeholder: false` y completa `quote`, `name` y `context` por cada reseña real (instrucciones en el comentario del archivo).
 
 ## Stack tecnologico
 
@@ -24,13 +48,19 @@ Este repositorio es un producto de software autonomo, **solo frontend/web**. No 
 
 ```
 app/
-  layout.tsx         # metadata en espanol, lang="es"
-  page.tsx           # landing (hero + calculadora + beneficios + CTA)
-  globals.css        # Tailwind v4 + tokens de tema
+  layout.tsx         # metadata en espanol, lang="es", fuentes next/font
+  page.tsx           # raiz de composicion de la landing (ordena las secciones)
+  globals.css        # Tailwind v4 + tokens de marca (oklch) + Design Read
 components/
+  brand/
+    wordmark.tsx         # wordmark/logo accesible "Tu Profe Industrial"
+  sections/              # una seccion de la landing por archivo
+    site-header.tsx, hero.tsx, calculator-section.tsx, services.tsx,
+    about.tsx, testimonials.tsx, faq.tsx, closing-cta.tsx,
+    site-footer.tsx, reveal.tsx (entrada sutil respetando reduced-motion)
   grade-calculator.tsx   # calculadora interactiva (client component)
   whatsapp-cta.tsx       # boton CTA de WhatsApp
-  ui/                    # primitivas de Shadcn UI
+  ui/                    # primitivas de Shadcn UI (incluye accordion)
 lib/
   grades.ts          # logica pura de la calculadora (escala 1.0 - 7.0)
   grades.test.ts     # pruebas unitarias de la logica

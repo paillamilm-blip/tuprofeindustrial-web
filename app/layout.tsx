@@ -33,9 +33,10 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Tu Profe Industrial | Calculadora de notas y clases online",
+  title:
+    "Tu Profe Industrial | Clases de matemática, física e ingeniería en Chile",
   description:
-    "Calcula tu promedio y la nota que necesitas en la escala chilena de 1.0 a 7.0. Clases particulares y asesoria por WhatsApp.",
+    "Ingeniero industrial y diplomado en docencia e innovación con IA. Clases online de matemática, física e ingeniería desde 1° medio hasta universidad: personalizadas, intensivo PAES y nivelación. Agenda por WhatsApp.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
