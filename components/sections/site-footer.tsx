@@ -18,7 +18,7 @@ export function SiteFooter() {
         <div className="flex flex-col items-center gap-2 sm:items-start">
           <Wordmark />
           <p className="text-sm text-muted-foreground">
-            Tu Profe Industrial · Clases particulares online en Chile
+            Tu Profe Industrial · Clases particulares presenciales y online en Chile
           </p>
         </div>
 

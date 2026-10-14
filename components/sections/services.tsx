@@ -25,10 +25,16 @@ const SERVICES = [
   {
     icon: Target,
     name: "Clases personalizadas",
-    tagline: "1 a 1, a tu ritmo",
+    tagline: "1 a 1, 100% personalizadas",
     description:
-      "Clases individuales enfocadas en tus dudas reales: repasamos lo que te cuesta y preparamos tus pruebas y controles paso a paso.",
-    points: ["Plan según tus notas", "Material a tu medida", "Horario flexible"],
+      "Clases individuales enfocadas en tus dudas reales, presenciales u online. Son 100% personalizables: se adaptan a tu nivel, tu ritmo y las pruebas que necesitas preparar.",
+    points: [
+      "Presencial u online",
+      "Plan 100% a tu medida",
+      "Horario flexible",
+    ],
+    price: "desde $20.000",
+    priceLabel: "Clase individual",
     featured: false,
   },
   {
@@ -36,12 +42,14 @@ const SERVICES = [
     name: "Intensivo PAES",
     tagline: "Preparación con estrategia",
     description:
-      "Preparación enfocada para la PAES de Matemática (M1 y M2) y Ciencias: contenido, ensayos comentados y estrategia de puntaje para llegar firme al día de la prueba.",
+      "Preparación enfocada para la PAES de Matemáticas (M1 y M2) y Ciencias: contenido, ensayos comentados y estrategia de puntaje para llegar firme al día de la prueba.",
     points: [
       "Diagnóstico inicial de nivel",
       "Ensayos con retroalimentación",
       "Técnicas de tiempo y puntaje",
     ],
+    price: null,
+    priceLabel: null,
     featured: true,
   },
   {
@@ -49,8 +57,10 @@ const SERVICES = [
     name: "Nivelación de Ingeniería",
     tagline: "Para universitarios",
     description:
-      "Apoyo en ramos de los primeros años de ingeniería: cálculo, álgebra, física y más. Ideal si vienes arrastrando bases o preparas un examen clave.",
+      "Apoyo en ramos de los primeros años de ingeniería: cálculo, álgebra, Física y más. Ideal si vienes arrastrando bases o preparas un examen clave.",
     points: ["Cálculo y álgebra", "Física universitaria", "Antes de certámenes"],
+    price: null,
+    priceLabel: null,
     featured: false,
   },
 ] as const;
@@ -190,6 +200,17 @@ function ServiceCard({
           </li>
         ))}
       </ul>
+
+      {service.price && (
+        <div className="mt-auto flex items-baseline gap-2 border-t border-border/70 pt-4">
+          <span className="text-sm text-muted-foreground">
+            {service.priceLabel}
+          </span>
+          <span className="font-mono text-base font-semibold text-foreground">
+            {service.price}
+          </span>
+        </div>
+      )}
     </article>
   );
 }
