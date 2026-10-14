@@ -99,6 +99,12 @@ Hay dos lugares relacionados:
 > Importante: `NEXT_PUBLIC_WHATSAPP_PHONE` se inyecta en tiempo de build. Si la
 > cambias en Vercel, vuelve a desplegar para que tome efecto.
 
+> Aviso en desarrollo: si la variable no esta definida y se usa el numero
+> PLACEHOLDER, la app imprime una advertencia en consola (solo fuera de
+> produccion) desde `warnIfPlaceholderPhone` en
+> [`lib/whatsapp.ts`](lib/whatsapp.ts). Es un recordatorio barato para no
+> publicar con el numero equivocado; no aparece en produccion.
+
 ## Como desplegar en Vercel
 
 1. Sube este repositorio a GitHub/GitLab.

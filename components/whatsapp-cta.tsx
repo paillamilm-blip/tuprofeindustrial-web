@@ -1,5 +1,9 @@
 import { cn } from "@/lib/utils";
-import { buildWhatsAppUrl, DEFAULT_WHATSAPP_MESSAGE } from "@/lib/whatsapp";
+import {
+  buildWhatsAppUrl,
+  DEFAULT_WHATSAPP_MESSAGE,
+  warnIfPlaceholderPhone,
+} from "@/lib/whatsapp";
 
 /** Icono de WhatsApp (SVG inline para no depender de un set externo). */
 function WhatsAppIcon({ className }: { className?: string }) {
@@ -40,6 +44,9 @@ export function WhatsAppCta({
   sticky = false,
   className,
 }: WhatsAppCtaProps) {
+  // Aviso en desarrollo si falta configurar el numero real de WhatsApp.
+  warnIfPlaceholderPhone();
+
   const href = buildWhatsAppUrl(message);
 
   const button = (

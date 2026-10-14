@@ -16,13 +16,18 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { WhatsAppCta } from "@/components/whatsapp-cta";
 import {
+  hasIncoherentWeightSum,
+  normalizeNumericInput,
+  parseRows,
+  sumWeights,
+} from "@/lib/calculator-input";
+import {
   MAX_GRADE,
   MIN_GRADE,
   PASSING_GRADE,
   passes,
   requiredGrade,
   weightedAverage,
-  type GradeItem,
 } from "@/lib/grades";
 
 /** Fila editable del formulario (valores como string para la UI). */
@@ -38,34 +43,10 @@ function newRow(grade = "", weight = ""): Row {
   return { id: rowCounter, grade, weight };
 }
 
-/** Convierte las filas en GradeItem[], ignorando filas vacias. */
-function parseRows(rows: Row[]): { items: GradeItem[]; hasPartial: boolean } {
-  const items: GradeItem[] = [];
-  let hasPartial = false;
-
-  for (const row of rows) {
-    const gradeRaw = row.grade.trim().replace(",", ".");
-    const weightRaw = row.weight.trim().replace(",", ".");
-
-    if (gradeRaw === "" && weightRaw === "") {
-      continue;
-    }
-    if (gradeRaw === "" || weightRaw === "") {
-      hasPartial = true;
-      continue;
-    }
-
-    const grade = Number(gradeRaw);
-    const weight = Number(weightRaw);
-    if (Number.isNaN(grade) || Number.isNaN(weight)) {
-      hasPartial = true;
-      continue;
-    }
-    items.push({ grade, weight });
-  }
-
-  return { items, hasPartial };
-}
+/** Aviso no bloqueante que se muestra bajo el resultado. */
+const PARTIAL_ROWS_WARNING =
+  "Ignoramos una o mas filas incompletas o con valores no numericos. " +
+  "Revisa que cada evaluacion tenga nota y ponderacion.";
 
 function GradeWeightRows({
   rows,
@@ -145,7 +126,7 @@ function AverageMode() {
     newRow("", ""),
   ]);
   const [result, setResult] = React.useState<
-    | { ok: true; average: number; approved: boolean }
+    | { ok: true; average: number; approved: boolean; warning?: string }
     | { ok: false; error: string }
     | null
   >(null);
@@ -165,6 +146,7 @@ function AverageMode() {
         ok: true,
         average,
         approved: passes(average),
+        warning: hasPartial ? PARTIAL_ROWS_WARNING : undefined,
       });
     } catch (e) {
       setResult({
@@ -172,7 +154,6 @@ function AverageMode() {
         error: e instanceof Error ? e.message : "Revisa los datos ingresados.",
       });
     }
-    void hasPartial;
   }
 
   return (
@@ -211,6 +192,15 @@ function AverageMode() {
           </p>
         </div>
       )}
+
+      {result && result.ok && result.warning && (
+        <p
+          role="status"
+          className="text-sm font-medium text-amber-700 dark:text-amber-500"
+        >
+          {result.warning}
+        </p>
+      )}
     </div>
   );
 }
@@ -230,13 +220,14 @@ function RequiredMode() {
         impossible: boolean;
         secured: boolean;
         target: number;
+        warning?: string;
       }
     | { ok: false; error: string }
     | null
   >(null);
 
   function calcular() {
-    const { items } = parseRows(rows);
+    const { items, hasPartial } = parseRows(rows);
     if (items.length === 0) {
       setResult({
         ok: false,
@@ -245,8 +236,9 @@ function RequiredMode() {
       return;
     }
 
-    const remaining = Number(remainingWeight.trim().replace(",", "."));
-    if (remainingWeight.trim() === "" || Number.isNaN(remaining)) {
+    const remainingRaw = normalizeNumericInput(remainingWeight);
+    const remaining = Number(remainingRaw);
+    if (remainingRaw === "" || Number.isNaN(remaining)) {
       setResult({
         ok: false,
         error: "Ingresa la ponderacion de la evaluacion que te queda.",
@@ -254,8 +246,9 @@ function RequiredMode() {
       return;
     }
 
-    const targetNum = Number(target.trim().replace(",", "."));
-    if (target.trim() === "" || Number.isNaN(targetNum)) {
+    const targetRaw = normalizeNumericInput(target);
+    const targetNum = Number(targetRaw);
+    if (targetRaw === "" || Number.isNaN(targetNum)) {
       setResult({ ok: false, error: "Ingresa una nota objetivo valida." });
       return;
     }
@@ -266,7 +259,28 @@ function RequiredMode() {
         remainingWeight: remaining,
         target: targetNum,
       });
-      setResult({ ok: true, ...r, target: targetNum });
+
+      // Advertencias no bloqueantes: filas ignoradas y/o ponderaciones que no
+      // suman un curso completo (~100% o ~1). El calculo asume que lo rendido
+      // mas lo restante cubre el 100% del ramo.
+      const warnings: string[] = [];
+      if (hasPartial) {
+        warnings.push(PARTIAL_ROWS_WARNING);
+      }
+      if (hasIncoherentWeightSum(sumWeights(items), remaining)) {
+        warnings.push(
+          "Las ponderaciones ingresadas no suman un curso completo " +
+            "(deberian sumar ~100%). Revisa los datos: el resultado asume " +
+            "que lo rendido mas la evaluacion restante cubren todo el ramo."
+        );
+      }
+
+      setResult({
+        ok: true,
+        ...r,
+        target: targetNum,
+        warning: warnings.length > 0 ? warnings.join(" ") : undefined,
+      });
     } catch (e) {
       setResult({
         ok: false,
@@ -355,6 +369,15 @@ function RequiredMode() {
           </p>
           <p className="mt-1 text-sm">en la evaluacion restante.</p>
         </div>
+      )}
+
+      {result && result.ok && result.warning && (
+        <p
+          role="status"
+          className="text-sm font-medium text-amber-700 dark:text-amber-500"
+        >
+          {result.warning}
+        </p>
       )}
     </div>
   );
