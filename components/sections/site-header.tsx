@@ -12,9 +12,11 @@ import { cn } from "@/lib/utils";
  */
 const NAV_LINKS = [
   { href: "#calculadora", label: "Calculadora" },
+  { href: "#diagnostico", label: "Diagnóstico" },
   { href: "#servicios", label: "Servicios" },
-  { href: "#profe", label: "Tu profe" },
-  { href: "#testimonios", label: "Resultados" },
+  { href: "#simulador-paes", label: "PAES" },
+  { href: "#ruta", label: "Ruta" },
+  { href: "#asesorias", label: "Asesorías" },
   { href: "#faq", label: "Preguntas" },
 ] as const;
 

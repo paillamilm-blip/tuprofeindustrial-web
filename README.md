@@ -10,11 +10,15 @@ Landing de conversion completa, dividida en secciones (una por componente en
 `components/sections/`, con `app/page.tsx` como raiz de composicion):
 
 - **Cabecera sticky** con wordmark, navegacion por anclas, enlace "saltar al contenido" y CTA compacto de WhatsApp.
-- **Hero** con la propuesta de valor (ingeniero industrial + diplomado en docencia e innovacion + innovador en productos digitales con IA) y CTA principal.
+- **Hero** con la propuesta de valor (Ingeniero Industrial + diplomado en Docencia e innovacion + Innovador en productos digitales con IA), el eslogan **"Aprender es para todos"** y CTA principal.
 - **Calculadora de notas** con dos modos:
   - **Mi promedio**: promedio ponderado de tus evaluaciones y si apruebas (desde 4.0).
   - **Que nota necesito**: la nota que necesitas en la evaluacion restante para llegar a tu meta, con mensajes claros cuando es imposible o cuando ya la tienes asegurada.
+- **Diagnostico interactivo PAES / Ingenieria**: test de 5 preguntas que entrega un plan recomendado (clases personalizadas, Intensivo PAES, nivelacion de Ingenieria o asesoria) y abre WhatsApp con ese plan ya pre-escrito.
 - **Servicios/Clases**: clases personalizadas, intensivo PAES y nivelacion de ingenieria (tarjetas diferenciadas), materias (matematica, fisica, ingenieria) y niveles (1° medio hasta ultimo año de ingenieria). CTA de WhatsApp al final.
+- **Simulador de meta PAES**: compara tu puntaje actual con tu puntaje objetivo, calcula cuanto debes subir y recomienda el intensivo o refuerzo que mas te conviene, con su propio CTA de WhatsApp.
+- **Ruta de aprendizaje visual**: roadmap que muestra el camino desde tu nivel actual hasta tu meta, etapa por etapa.
+- **Asesorias e Innovacion**: seccion aparte de las clases que refuerza su faceta de **Innovador en productos digitales con IA** y presenta los proyectos que asesora, tanto digitales como PYME: **paginas web, aplicaciones, pizzerias, confiterias saludables, innovacion en comidas y fundaciones**. Tiene su propio CTA de WhatsApp con un mensaje de asesoria distinto al del resto del sitio.
 - **Quien soy / Tu profe**: bio profesional + placeholder accesible de foto (reemplazar por imagen real).
 - **Testimonios/Resultados**: 4 slots marcados como placeholders para reemplazar por reseñas reales (ver abajo).
 - **Preguntas frecuentes (FAQ)**: acordeon accesible (shadcn + Radix) con modalidad, precios, horarios, agenda y niveles.
@@ -55,15 +59,24 @@ components/
   brand/
     wordmark.tsx         # wordmark/logo accesible "Tu Profe Industrial"
   sections/              # una seccion de la landing por archivo
-    site-header.tsx, hero.tsx, calculator-section.tsx, services.tsx,
+    site-header.tsx, hero.tsx, calculator-section.tsx,
+    diagnostico-section.tsx, services.tsx, paes-section.tsx,
+    roadmap-section.tsx, advisory.tsx (Asesorias e Innovacion),
     about.tsx, testimonials.tsx, faq.tsx, closing-cta.tsx,
     site-footer.tsx, reveal.tsx (entrada sutil respetando reduced-motion)
   grade-calculator.tsx   # calculadora interactiva (client component)
+  diagnostico.tsx        # diagnostico interactivo PAES/Ingenieria (client)
+  paes-simulator.tsx     # simulador de meta PAES (client)
+  roadmap.tsx            # ruta de aprendizaje visual (client)
   whatsapp-cta.tsx       # boton CTA de WhatsApp
   ui/                    # primitivas de Shadcn UI (incluye accordion)
 lib/
   grades.ts          # logica pura de la calculadora (escala 1.0 - 7.0)
   grades.test.ts     # pruebas unitarias de la logica
+  calculator-input.ts / calculator-input.test.ts  # parseo de entradas
+  diagnostico.ts / diagnostico.test.ts  # logica del diagnostico + mensaje WA
+  paes.ts / paes.test.ts            # logica del simulador de meta PAES
+  roadmap.ts / roadmap.test.ts      # etapas de la ruta de aprendizaje
   whatsapp.ts        # constructor del enlace wa.me + numero placeholder
   utils.ts           # helper cn (clsx + tailwind-merge)
 .env.example         # variables de entorno de ejemplo

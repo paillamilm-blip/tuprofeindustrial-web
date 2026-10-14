@@ -34,10 +34,26 @@ export function SiteFooter() {
             </li>
             <li>
               <a
+                href="#diagnostico"
+                className="rounded transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+              >
+                Diagnóstico
+              </a>
+            </li>
+            <li>
+              <a
                 href="#servicios"
                 className="rounded transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
               >
                 Servicios
+              </a>
+            </li>
+            <li>
+              <a
+                href="#asesorias"
+                className="rounded transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+              >
+                Asesorías
               </a>
             </li>
             <li>

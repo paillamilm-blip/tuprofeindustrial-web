@@ -1,7 +1,11 @@
 import { SiteHeader } from "@/components/sections/site-header";
 import { Hero } from "@/components/sections/hero";
 import { CalculatorSection } from "@/components/sections/calculator-section";
+import { DiagnosticoSection } from "@/components/sections/diagnostico-section";
 import { Services } from "@/components/sections/services";
+import { PaesSection } from "@/components/sections/paes-section";
+import { RoadmapSection } from "@/components/sections/roadmap-section";
+import { Advisory } from "@/components/sections/advisory";
 import { About } from "@/components/sections/about";
 import { Testimonials } from "@/components/sections/testimonials";
 import { Faq } from "@/components/sections/faq";
@@ -16,9 +20,19 @@ const STICKY_MESSAGE =
  * Composition root de la landing. Cada sección vive en components/sections/
  * para mantener este archivo legible y el orden de la página explícito.
  *
- * Orden pensado para conversión: valor inmediato (hero + calculadora) →
- * oferta y confianza (servicios, quién soy, resultados) → objeciones (FAQ) →
- * cierre (CTA final + footer). El CTA sticky de WhatsApp acompaña en mobile.
+ * Orden pensado para conversión:
+ *  1. Valor inmediato: Hero + Calculadora enganchan con una utilidad gratis.
+ *  2. Diagnóstico interactivo: herramienta estrella que, tras 5 preguntas,
+ *     recomienda el servicio correcto y lo deja listo para WhatsApp. Va justo
+ *     antes de Servicios para "rutear" al alumno al plan adecuado.
+ *  3. Servicios: la oferta de clases ya segmentada por el diagnóstico.
+ *  4. Simulador de meta PAES y Ruta de aprendizaje: herramientas de apoyo que
+ *     refuerzan deseo ("cuánto me falta", "cuál es mi camino") tras ver la
+ *     oferta.
+ *  5. Asesorías e Innovación: la faceta Innovador (proyectos digitales y PYME),
+ *     separada de las clases para no confundir públicos.
+ *  6. Confianza y objeciones: Quién soy, Resultados, FAQ.
+ *  7. Cierre: CTA final + footer. El CTA sticky de WhatsApp acompaña en mobile.
  */
 export default function Home() {
   return (
@@ -27,7 +41,11 @@ export default function Home() {
       <main id="contenido" className="flex flex-col pb-24 md:pb-0">
         <Hero />
         <CalculatorSection />
+        <DiagnosticoSection />
         <Services />
+        <PaesSection />
+        <RoadmapSection />
+        <Advisory />
         <About />
         <Testimonials />
         <Faq />
