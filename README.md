@@ -15,7 +15,7 @@ Landing de conversion completa, dividida en secciones (una por componente en
   - **Mi promedio**: promedio ponderado de tus evaluaciones y si apruebas (desde 4.0).
   - **Que nota necesito**: la nota que necesitas en la evaluacion restante para llegar a tu meta, con mensajes claros cuando es imposible o cuando ya la tienes asegurada.
 - **Diagnostico interactivo PAES / Ingenieria**: test de 5 preguntas que entrega un plan recomendado (clases personalizadas, Intensivo PAES, nivelacion de Ingenieria o asesoria) y abre WhatsApp con ese plan ya pre-escrito.
-- **Servicios/Clases**: clases personalizadas, intensivo PAES y nivelacion de ingenieria (tarjetas diferenciadas), materias (matematica, fisica, ingenieria) y niveles (1° medio hasta ultimo año de ingenieria). CTA de WhatsApp al final.
+- **Servicios/Clases**: clases personalizadas, intensivo PAES y nivelacion de ingenieria (tarjetas diferenciadas), materias (Matemáticas, Física, ingenieria) y niveles (1° medio hasta ultimo año de ingenieria). CTA de WhatsApp al final.
 - **Simulador de meta PAES**: compara tu puntaje actual con tu puntaje objetivo, calcula cuanto debes subir y recomienda el intensivo o refuerzo que mas te conviene, con su propio CTA de WhatsApp.
 - **Ruta de aprendizaje visual**: roadmap que muestra el camino desde tu nivel actual hasta tu meta, etapa por etapa.
 - **Asesorias e Innovacion**: seccion aparte de las clases que refuerza su faceta de **Innovador en productos digitales con IA** y presenta los proyectos que asesora, tanto digitales como PYME: **paginas web, aplicaciones, pizzerias, confiterias saludables, innovacion en comidas y fundaciones**. Tiene su propio CTA de WhatsApp con un mensaje de asesoria distinto al del resto del sitio.

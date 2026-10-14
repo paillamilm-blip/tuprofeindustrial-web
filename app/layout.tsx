@@ -34,9 +34,9 @@ const plexMono = IBM_Plex_Mono({
 
 export const metadata: Metadata = {
   title:
-    "Tu Profe Industrial | Clases de matemática, física e ingeniería en Chile",
+    "Tu Profe Industrial | Clases de Matemáticas, Física e ingeniería en Chile",
   description:
-    "Ingeniero Industrial, Docente e Innovador con IA. Clases online de matemática, física e ingeniería desde 1° medio hasta universidad: personalizadas, intensivo PAES y nivelación. Agenda por WhatsApp.",
+    "Ingeniero Industrial, Docente e Innovador con IA. Clases online de Matemáticas, Física e ingeniería desde 1° medio hasta universidad: personalizadas, intensivo PAES y nivelación. Agenda por WhatsApp.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

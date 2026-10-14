@@ -18,12 +18,20 @@ export function SiteFooter() {
         <div className="flex flex-col items-center gap-2 sm:items-start">
           <Wordmark />
           <p className="text-sm text-muted-foreground">
-            Tu Profe Industrial · Clases particulares online en Chile
+            Tu Profe Industrial · Clases particulares presenciales y online en Chile
           </p>
         </div>
 
         <nav aria-label="Enlaces del pie de página">
           <ul className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-muted-foreground">
+            <li>
+              <a
+                href="#diagnostico"
+                className="rounded transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+              >
+                Diagnóstico
+              </a>
+            </li>
             <li>
               <a
                 href="#calculadora"
@@ -34,10 +42,18 @@ export function SiteFooter() {
             </li>
             <li>
               <a
-                href="#diagnostico"
+                href="#simulador-paes"
                 className="rounded transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
               >
-                Diagnóstico
+                Simulador PAES
+              </a>
+            </li>
+            <li>
+              <a
+                href="#ruta"
+                className="rounded transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+              >
+                Ruta
               </a>
             </li>
             <li>

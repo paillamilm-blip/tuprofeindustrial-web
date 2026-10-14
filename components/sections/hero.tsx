@@ -3,7 +3,7 @@ import { Sparkles, GraduationCap, Cpu } from "lucide-react";
 import { WhatsAppCta } from "@/components/whatsapp-cta";
 
 const HERO_MESSAGE =
-  "Hola! Vengo de la web de Tu Profe Industrial y quiero subir mis notas en matemática, física o ingeniería. Me ayudas?";
+  "Hola! Vengo de la web de Tu Profe Industrial y quiero subir mis notas en Matemáticas, Física o ingeniería. Me ayudas?";
 
 /**
  * Hero — propuesta de valor principal.
@@ -38,7 +38,7 @@ export function Hero() {
           </span>
 
           <h1 className="text-4xl font-extrabold tracking-tight text-balance sm:text-5xl lg:text-6xl">
-            Matemática, física e ingeniería que{" "}
+            Matemáticas, Física e ingeniería que{" "}
             <span className="text-primary">por fin se entienden</span>
           </h1>
 

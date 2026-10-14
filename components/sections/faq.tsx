@@ -31,7 +31,7 @@ const FAQS = [
   },
   {
     q: "¿Qué materias y niveles cubres?",
-    a: "Enseño matemática, física e ingeniería, desde 1° medio hasta el último año de ingeniería universitaria. Esto incluye escolares, preparación preuniversitaria (PAES) y nivelación de ramos universitarios.",
+    a: "Enseño Matemáticas, Física e ingeniería, desde 1° medio hasta el último año de ingeniería universitaria. Esto incluye escolares, preparación preuniversitaria (PAES) y nivelación de ramos universitarios.",
   },
 ] as const;
 

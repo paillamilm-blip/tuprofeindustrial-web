@@ -86,7 +86,7 @@ export const QUESTIONS: readonly Question[] = [
       { value: "puntaje-paes", label: "Subir mi puntaje en la PAES" },
       {
         value: "aprobar-ramos",
-        label: "Aprobar ramos de la carrera (calculo, fisica, etc.)",
+        label: "Aprobar ramos de la carrera (cálculo, Física, etc.)",
       },
       {
         value: "proyecto",
@@ -99,8 +99,8 @@ export const QUESTIONS: readonly Question[] = [
     prompt: "¿Que area se te hace mas cuesta arriba?",
     helper: "Donde sientes que necesitas mas apoyo.",
     options: [
-      { value: "matematica", label: "Matematica" },
-      { value: "fisica", label: "Fisica" },
+      { value: "matematica", label: "Matemáticas" },
+      { value: "fisica", label: "Física" },
       { value: "ciencias", label: "Quimica u otras ciencias" },
       { value: "gestion", label: "Gestion, procesos o emprendimiento" },
     ],
@@ -199,7 +199,7 @@ export function recommendPlan(answers: DiagnosticoAnswers): Recommendation {
     plan = "nivelacion-ingenieria";
     rationale =
       "Estas en la universidad y necesitas aprobar ramos exigentes. La " +
-      "Nivelacion para Ingenieria ataca calculo, fisica y los fundamentos " +
+      "Nivelacion para Ingenieria ataca cálculo, Física y los fundamentos " +
       "que mas se cobran.";
   } else if (objetivo === "puntaje-paes" || nivel === "egresado-paes") {
     plan = "intensivo-paes";

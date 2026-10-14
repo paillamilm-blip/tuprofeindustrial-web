@@ -97,5 +97,5 @@ test("buildDiagnosticoMessage incluye el plan recomendado y el perfil", () => {
 
   assert.ok(msg.includes("Tu Profe Industrial"));
   assert.ok(msg.includes("Intensivo PAES"));
-  assert.ok(msg.includes("Matematica"));
+  assert.ok(msg.includes("Matemáticas"));
 });
