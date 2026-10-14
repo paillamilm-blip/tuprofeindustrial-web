@@ -7,15 +7,24 @@ import { WhatsAppCta } from "@/components/whatsapp-cta";
 import { cn } from "@/lib/utils";
 
 /**
- * Enlaces de navegacion ancla. El orden sigue el recorrido de la landing para
- * que el salto por teclado sea predecible.
+ * Herramientas interactivas gratuitas. Se agrupan bajo un único rótulo
+ * "Herramientas gratis" para que la navegación superior quede ligera y para
+ * destacar que estas utilidades no tienen costo. El orden sigue el embudo de
+ * la landing (diagnóstico → calculadora → simulador → ruta).
+ */
+const FREE_TOOL_LINKS = [
+  { href: "#diagnostico", label: "Diagnóstico" },
+  { href: "#calculadora", label: "Calculadora de notas" },
+  { href: "#simulador-paes", label: "Simulador PAES" },
+  { href: "#ruta", label: "Ruta de aprendizaje" },
+] as const;
+
+/**
+ * Enlaces de navegacion ancla restantes (no herramientas). El orden sigue el
+ * recorrido de la landing para que el salto por teclado sea predecible.
  */
 const NAV_LINKS = [
-  { href: "#calculadora", label: "Calculadora" },
-  { href: "#diagnostico", label: "Diagnóstico" },
   { href: "#servicios", label: "Servicios" },
-  { href: "#simulador-paes", label: "PAES" },
-  { href: "#ruta", label: "Ruta" },
   { href: "#asesorias", label: "Asesorías" },
   { href: "#faq", label: "Preguntas" },
 ] as const;
@@ -30,6 +39,29 @@ const HEADER_MESSAGE =
  */
 export function SiteHeader() {
   const [open, setOpen] = React.useState(false);
+  const [toolsOpen, setToolsOpen] = React.useState(false);
+  const toolsRef = React.useRef<HTMLDivElement>(null);
+
+  // Cierra el desplegable de herramientas al hacer clic fuera o pulsar Escape.
+  React.useEffect(() => {
+    if (!toolsOpen) return;
+
+    function onPointerDown(event: PointerEvent) {
+      if (toolsRef.current && !toolsRef.current.contains(event.target as Node)) {
+        setToolsOpen(false);
+      }
+    }
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") setToolsOpen(false);
+    }
+
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [toolsOpen]);
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/70 bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70">
@@ -55,6 +87,43 @@ export function SiteHeader() {
           aria-label="Secciones del sitio"
           className="hidden items-center gap-1 md:flex"
         >
+          {/* Desplegable accesible con las herramientas gratuitas. */}
+          <div ref={toolsRef} className="relative">
+            <button
+              type="button"
+              aria-expanded={toolsOpen}
+              aria-controls="menu-herramientas"
+              onClick={() => setToolsOpen((v) => !v)}
+              className="inline-flex min-h-11 items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted/70 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+            >
+              Herramientas
+              <span className="rounded-full bg-accent px-2 py-0.5 text-xs font-semibold text-accent-foreground">
+                gratis
+              </span>
+              <Chevron open={toolsOpen} />
+            </button>
+
+            <div
+              id="menu-herramientas"
+              hidden={!toolsOpen}
+              className="absolute left-0 top-full z-50 mt-2 min-w-56 rounded-lg border border-border bg-background p-2 shadow-lg"
+            >
+              <ul className="flex flex-col">
+                {FREE_TOOL_LINKS.map((link) => (
+                  <li key={link.href}>
+                    <a
+                      href={link.href}
+                      onClick={() => setToolsOpen(false)}
+                      className="flex min-h-11 items-center rounded-md px-3 text-sm font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                    >
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
           {NAV_LINKS.map((link) => (
             <a
               key={link.href}
@@ -97,6 +166,36 @@ export function SiteHeader() {
         className="border-t border-border/70 bg-background md:hidden"
       >
         <nav aria-label="Secciones del sitio" className="mx-auto max-w-6xl px-4 py-3">
+          {/* Grupo de herramientas gratuitas con rótulo accesible. */}
+          <div
+            role="group"
+            aria-labelledby="menu-movil-herramientas"
+            className="mb-2 border-b border-border/70 pb-2"
+          >
+            <p
+              id="menu-movil-herramientas"
+              className="flex items-center gap-2 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground"
+            >
+              Herramientas
+              <span className="rounded-full bg-accent px-2 py-0.5 text-xs font-semibold normal-case tracking-normal text-accent-foreground">
+                gratis
+              </span>
+            </p>
+            <ul className="flex flex-col">
+              {FREE_TOOL_LINKS.map((link) => (
+                <li key={link.href}>
+                  <a
+                    href={link.href}
+                    onClick={() => setOpen(false)}
+                    className="flex min-h-11 items-center rounded-md px-3 text-base font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
           <ul className="flex flex-col">
             {NAV_LINKS.map((link) => (
               <li key={link.href}>
@@ -113,6 +212,28 @@ export function SiteHeader() {
         </nav>
       </div>
     </header>
+  );
+}
+
+/** Chevron que rota al abrir el desplegable de herramientas (no emoji). */
+function Chevron({ open }: { open: boolean }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
+      focusable="false"
+      className={cn(
+        "size-4 transition-transform duration-200 motion-reduce:transition-none",
+        open && "rotate-180"
+      )}
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <polyline points="6 9 12 15 18 9" />
+    </svg>
   );
 }
 

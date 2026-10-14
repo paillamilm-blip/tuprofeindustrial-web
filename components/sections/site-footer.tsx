@@ -26,6 +26,14 @@ export function SiteFooter() {
           <ul className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-muted-foreground">
             <li>
               <a
+                href="#diagnostico"
+                className="rounded transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+              >
+                Diagnóstico
+              </a>
+            </li>
+            <li>
+              <a
                 href="#calculadora"
                 className="rounded transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
               >
@@ -34,10 +42,18 @@ export function SiteFooter() {
             </li>
             <li>
               <a
-                href="#diagnostico"
+                href="#simulador-paes"
                 className="rounded transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
               >
-                Diagnóstico
+                Simulador PAES
+              </a>
+            </li>
+            <li>
+              <a
+                href="#ruta"
+                className="rounded transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+              >
+                Ruta
               </a>
             </li>
             <li>

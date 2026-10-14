@@ -20,19 +20,21 @@ const STICKY_MESSAGE =
  * Composition root de la landing. Cada sección vive en components/sections/
  * para mantener este archivo legible y el orden de la página explícito.
  *
- * Orden pensado para conversión:
- *  1. Valor inmediato: Hero + Calculadora enganchan con una utilidad gratis.
+ * Orden pensado como embudo de conversión (primero las herramientas gratis,
+ * luego los servicios, luego confianza y cierre):
+ *  1. Hero: propuesta de valor y gancho inicial.
  *  2. Diagnóstico interactivo: herramienta estrella que, tras 5 preguntas,
- *     recomienda el servicio correcto y lo deja listo para WhatsApp. Va justo
- *     antes de Servicios para "rutear" al alumno al plan adecuado.
- *  3. Servicios: la oferta de clases ya segmentada por el diagnóstico.
- *  4. Simulador de meta PAES y Ruta de aprendizaje: herramientas de apoyo que
- *     refuerzan deseo ("cuánto me falta", "cuál es mi camino") tras ver la
- *     oferta.
- *  5. Asesorías e Innovación: la faceta Innovador (proyectos digitales y PYME),
+ *     perfila al alumno y lo rutea al plan adecuado. Abre el bloque de
+ *     herramientas gratuitas.
+ *  3. Calculadora de notas: utilidad gratis que engancha mostrando valor
+ *     inmediato.
+ *  4. Simulador de meta PAES: refuerza deseo ("cuánto me falta").
+ *  5. Ruta de aprendizaje: cierra las herramientas gratis mostrando el camino.
+ *  6. Servicios: la oferta de clases, ya calentada por las herramientas.
+ *  7. Asesorías e Innovación: la faceta Innovador (proyectos digitales y PYME),
  *     separada de las clases para no confundir públicos.
- *  6. Confianza y objeciones: Quién soy, Resultados, FAQ.
- *  7. Cierre: CTA final + footer. El CTA sticky de WhatsApp acompaña en mobile.
+ *  8. Confianza y objeciones: Quién soy, Testimonios, Preguntas frecuentes.
+ *  9. Cierre: CTA final + footer. El CTA sticky de WhatsApp acompaña en mobile.
  */
 export default function Home() {
   return (
@@ -40,11 +42,11 @@ export default function Home() {
       <SiteHeader />
       <main id="contenido" className="flex flex-col pb-24 md:pb-0">
         <Hero />
-        <CalculatorSection />
         <DiagnosticoSection />
-        <Services />
+        <CalculatorSection />
         <PaesSection />
         <RoadmapSection />
+        <Services />
         <Advisory />
         <About />
         <Testimonials />
