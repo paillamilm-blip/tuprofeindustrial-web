@@ -46,7 +46,7 @@ const SERVICES = [
   },
   {
     icon: Building2,
-    name: "Nivelación de ingeniería",
+    name: "Nivelación de Ingeniería",
     tagline: "Para universitarios",
     description:
       "Apoyo en ramos de los primeros años de ingeniería: cálculo, álgebra, física y más. Ideal si vienes arrastrando bases o preparas un examen clave.",

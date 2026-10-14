@@ -44,11 +44,17 @@ export function About() {
             Quién soy
           </p>
           <h2 className="mt-2 text-3xl font-bold tracking-tight text-balance sm:text-4xl">
-            Tu profe: ingeniero, docente e innovador con IA
+            Tu profe: Ingeniero, Docente e Innovador con IA
           </h2>
           <div className="mt-4 flex flex-col gap-4 text-muted-foreground text-pretty">
+            {/*
+             * Mayúsculas de marca: "Ingeniero Industrial" y "Docente" nombran el
+             * rol/identidad del profe -> van capitalizados. "docencia e
+             * innovación" aquí es sustantivo común (nombre del diplomado) -> en
+             * minúscula para que la frase sea gramaticalmente correcta.
+             */}
             <p>
-              Soy ingeniero industrial y, además, diplomado en docencia e
+              Soy Ingeniero Industrial y Docente diplomado en docencia e
               innovación en educación superior. Esa combinación es clave: domino
               la materia a nivel profesional y también sé <em>cómo</em>{" "}
               enseñarla para que de verdad se entienda.
@@ -56,7 +62,7 @@ export function About() {
             <p>
               Vengo de dar clases particulares en superprofe.cl, donde he
               acompañado a alumnos reales de distintos niveles. Hoy sumo mi
-              trabajo como innovador en productos digitales con IA para
+              trabajo como Innovador en productos digitales con IA para
               personalizar cada clase, detectar tus vacíos más rápido y
               aprovechar mejor tu tiempo de estudio.
             </p>
@@ -65,7 +71,7 @@ export function About() {
           <ul className="mt-6 grid gap-3 sm:grid-cols-2">
             <Highlight
               icon={<BadgeCheck className="size-5" aria-hidden="true" />}
-              text="Ingeniero industrial + diplomado en docencia"
+              text="Ingeniero Industrial + Docente diplomado"
             />
             <Highlight
               icon={<Sparkles className="size-5" aria-hidden="true" />}

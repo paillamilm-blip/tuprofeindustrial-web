@@ -42,11 +42,42 @@ export function Hero() {
             <span className="text-primary">por fin se entienden</span>
           </h1>
 
+          {/*
+           * Eslogan de marca: texto real (no imagen) directamente bajo el <h1>.
+           * Usa `text-primary` (teal) en vez de `accent-foreground`: el ámbar
+           * oscuro casi desaparece en dark mode sobre fondos tenues (ver nota en
+           * testimonials.tsx), mientras que primary cumple AA (>=4.5:1) en claro
+           * y oscuro. Un punto ámbar aporta el "spark" de la identidad.
+           */}
+          <p className="flex items-center gap-2.5 font-display text-xl font-semibold text-primary sm:text-2xl">
+            <span
+              aria-hidden="true"
+              className="inline-block size-2.5 shrink-0 rounded-full bg-accent"
+            />
+            Aprender es para todos
+          </p>
+
           <p className="max-w-xl text-lg text-muted-foreground text-pretty">
-            Soy ingeniero industrial y diplomado en docencia e innovación en
-            educación superior. Preparo alumnos desde 1° medio hasta el último
-            año de ingeniería con un método claro y herramientas de IA que
-            aceleran tu aprendizaje.
+            Soy Ingeniero Industrial y Docente diplomado en docencia e
+            innovación en educación superior. Preparo alumnos desde 1° medio
+            hasta el último año de ingeniería con un método claro y herramientas
+            de IA que aceleran tu aprendizaje.
+          </p>
+
+          {/*
+           * Teaser de asesorías: adelanta que, además de clases, asesora
+           * proyectos digitales y PYME. Apunta a la sección #asesorias que se
+           * crea en una feature posterior (el ancla es esperada).
+           */}
+          <p className="max-w-xl text-sm text-muted-foreground text-pretty">
+            Además de las clases, también asesoro proyectos digitales y PYME
+            (y otros más).{" "}
+            <a
+              href="#asesorias"
+              className="font-semibold text-primary underline-offset-4 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+            >
+              Ver asesorías e innovación
+            </a>
           </p>
 
           <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center">
