@@ -1,3 +1,61 @@
+/* ============================================================================
+   TU PROFE INDUSTRIAL — BRAND DESIGN SYSTEM
+   ----------------------------------------------------------------------------
+   DESIGN READ (one-liner):
+   "Blueprint meets breakthrough" — the precision of an engineering plan plus the
+   warm spark of a great teacher, for an Industrial Engineer who also teaches and
+   innovates with AI. Confident, technical, modern, trustworthy — never generic.
+
+   OBRA-MAESTRA DIALS:
+     DESIGN_VARIANCE  = 7/10  → opinionated, asymmetric, distinctive layouts
+                                (not three identical centered cards).
+     MOTION_INTENSITY = 5/10  → purposeful 150–300ms transitions, subtle reveals;
+                                honors prefers-reduced-motion; no infinite loops.
+     VISUAL_DENSITY   = 3/10  → generous whitespace, large type, breathing room;
+                                content-first, not dashboard-dense.
+
+   PALETTE — THE WHY:
+     We reject the AI-slop defaults (no AI-purple, no lazy slate-900 + Inter).
+     • PRIMARY  = engineering teal (hue ~195). Teal reads as precision,
+       instrumentation and blueprints: technical trust without the overused
+       corporate blue. It is the brand's backbone.
+     • ACCENT   = signal amber (hue ~70). A warm, high-energy complement to the
+       cool teal — "the spark of understanding", achievement and the human,
+       motivating side of teaching. The teal↔amber tension is what makes the
+       identity feel innovative rather than clinical.
+     • NEUTRALS carry a faint cool chroma (hue ~230) so the greys feel engineered
+       and intentional, aligned with the primary, never flat pure-grey.
+     • Text/background pairs are tuned for WCAG AA (≥4.5:1): dark ink (L≈0.22) on
+       near-white, and near-white on dark surfaces in dark mode.
+
+   WCAG AA — MEASURED CONTRAST (computed from these oklch tokens via
+   oklch→linear-sRGB→relative-luminance; ratios are light / dark):
+     foreground on background .................... 16.96 / 17.03  PASS
+     foreground on card .......................... 17.25 / 15.76  PASS
+     muted-foreground on background ..............  6.37 /  7.74  PASS
+     muted-foreground on muted ...................  5.79 /  6.08  PASS
+     muted-foreground on muted/30-over-bg ........  6.20 /  7.15  PASS
+     primary-foreground on primary ...............  5.34 /  7.82  PASS
+     primary (text) on background ................  5.38 /  8.11  PASS
+     primary (text) on card ......................  5.47 /  7.50  PASS
+     accent-foreground on accent (solid badge) ...  6.94 /  8.51  PASS
+     testimonials "Ejemplo" badge text ...........  16.3 /  8.95  PASS
+         (uses `text-foreground` on `bg-accent/10`; `accent-foreground` there
+          was only 1.74:1 in dark mode — fixed at the component level.)
+   Decorative only (aria-hidden, exempt from WCAG 1.4.11, label carried by text):
+     featured service icon on accent/15 .........  2.02 /  4.02  (icon is
+         aria-hidden and labelled by the visible "Más solicitado" text badge).
+
+   TYPOGRAPHY — THE WHY (wired in app/layout.tsx + @theme inline below):
+     • DISPLAY = "Sora" — a geometric, slightly futuristic display face for
+       headings/wordmark; expressive and modern (deliberately NOT Inter/Geist).
+     • SANS    = "IBM Plex Sans" — engineered, scientific-heritage body face that
+       is highly legible at 16px/1.5 and pairs cleanly with Sora.
+     • MONO    = "IBM Plex Mono" — for numeric/calculator contexts, reinforcing
+       the engineering tone. The IBM Plex family + Sora is a cohesive,
+       intentional pairing, not a default.
+   ============================================================================ */
+
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -5,71 +63,78 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  /* Surfaces: near-white with a whisper of cool chroma (engineered neutral). */
+  --background: oklch(0.994 0.002 230);
+  --foreground: oklch(0.22 0.03 235);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
+  --card-foreground: oklch(0.22 0.03 235);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.22 0.03 235);
+  /* Primary: engineering teal — the brand backbone. */
+  --primary: oklch(0.5 0.11 195);
+  --primary-foreground: oklch(0.99 0.01 195);
+  /* Secondary: cool, quiet teal-tinted surface. */
+  --secondary: oklch(0.95 0.02 215);
+  --secondary-foreground: oklch(0.3 0.06 220);
+  --muted: oklch(0.96 0.012 225);
+  --muted-foreground: oklch(0.48 0.03 230);
+  /* Accent: signal amber — the warm spark. */
+  --accent: oklch(0.76 0.15 72);
+  --accent-foreground: oklch(0.27 0.06 60);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --border: oklch(0.9 0.013 225);
+  --input: oklch(0.9 0.013 225);
+  --ring: oklch(0.5 0.11 195);
+  /* Charts: teal → amber brand spectrum. */
+  --chart-1: oklch(0.5 0.11 195);
+  --chart-2: oklch(0.62 0.1 215);
+  --chart-3: oklch(0.76 0.15 72);
+  --chart-4: oklch(0.68 0.13 140);
+  --chart-5: oklch(0.6 0.14 25);
+  --sidebar: oklch(0.98 0.006 225);
+  --sidebar-foreground: oklch(0.22 0.03 235);
+  --sidebar-primary: oklch(0.5 0.11 195);
+  --sidebar-primary-foreground: oklch(0.99 0.01 195);
+  --sidebar-accent: oklch(0.76 0.15 72);
+  --sidebar-accent-foreground: oklch(0.27 0.06 60);
+  --sidebar-border: oklch(0.9 0.013 225);
+  --sidebar-ring: oklch(0.5 0.11 195);
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
+  /* Deep engineered ink — teal-tinted charcoal, never flat black. */
+  --background: oklch(0.17 0.02 235);
+  --foreground: oklch(0.96 0.008 220);
+  --card: oklch(0.21 0.025 233);
+  --card-foreground: oklch(0.96 0.008 220);
+  --popover: oklch(0.21 0.025 233);
+  --popover-foreground: oklch(0.96 0.008 220);
+  /* Primary brightens in dark mode for contrast and glow. */
+  --primary: oklch(0.72 0.12 192);
+  --primary-foreground: oklch(0.19 0.03 230);
+  --secondary: oklch(0.28 0.03 230);
+  --secondary-foreground: oklch(0.96 0.008 220);
+  --muted: oklch(0.27 0.025 230);
+  --muted-foreground: oklch(0.72 0.02 225);
+  --accent: oklch(0.78 0.15 72);
+  --accent-foreground: oklch(0.22 0.05 60);
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 16%);
+  --ring: oklch(0.72 0.12 192);
+  --chart-1: oklch(0.72 0.12 192);
+  --chart-2: oklch(0.68 0.1 215);
+  --chart-3: oklch(0.78 0.15 72);
+  --chart-4: oklch(0.72 0.13 140);
+  --chart-5: oklch(0.68 0.15 25);
+  --sidebar: oklch(0.21 0.025 233);
+  --sidebar-foreground: oklch(0.96 0.008 220);
+  --sidebar-primary: oklch(0.72 0.12 192);
+  --sidebar-primary-foreground: oklch(0.19 0.03 230);
+  --sidebar-accent: oklch(0.78 0.15 72);
+  --sidebar-accent-foreground: oklch(0.22 0.05 60);
+  --sidebar-border: oklch(1 0 0 / 12%);
+  --sidebar-ring: oklch(0.72 0.12 192);
 }
 
 @theme inline {
@@ -105,8 +170,10 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Body = IBM Plex Sans; headings/wordmark = Sora; numeric = IBM Plex Mono. */
+  --font-sans: var(--font-plex-sans);
+  --font-display: var(--font-sora);
+  --font-mono: var(--font-plex-mono);
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -120,5 +187,17 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  /* Headings adopt the expressive display face by default. */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display), var(--font-sans), ui-sans-serif, sans-serif;
+    letter-spacing: -0.015em;
   }
 }
