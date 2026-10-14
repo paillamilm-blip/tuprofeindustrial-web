@@ -105,8 +105,13 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
 
   return (
     <figure className="flex h-full flex-col rounded-2xl border border-border bg-card p-6 shadow-sm">
+      {/* El texto del badge usa `text-foreground` (no `accent-foreground`):
+          sobre el fondo tenue `accent/10` el ámbar oscuro de accent-foreground
+          quedaba casi invisible en dark mode (1.74:1). `foreground` cumple AA
+          en ambos modos (16.3:1 light / 8.9:1 dark) y el borde ámbar punteado
+          conserva la identidad de "ejemplo". */}
       {testimonial.placeholder && (
-        <span className="mb-3 inline-flex w-fit items-center rounded-full border border-dashed border-accent/60 bg-accent/10 px-2.5 py-1 text-[11px] font-semibold text-accent-foreground">
+        <span className="mb-3 inline-flex w-fit items-center rounded-full border border-dashed border-accent/60 bg-accent/10 px-2.5 py-1 text-[11px] font-semibold text-foreground">
           Ejemplo — reemplazar con un testimonio real
         </span>
       )}

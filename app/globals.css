@@ -28,6 +28,24 @@
      • Text/background pairs are tuned for WCAG AA (≥4.5:1): dark ink (L≈0.22) on
        near-white, and near-white on dark surfaces in dark mode.
 
+   WCAG AA — MEASURED CONTRAST (computed from these oklch tokens via
+   oklch→linear-sRGB→relative-luminance; ratios are light / dark):
+     foreground on background .................... 16.96 / 17.03  PASS
+     foreground on card .......................... 17.25 / 15.76  PASS
+     muted-foreground on background ..............  6.37 /  7.74  PASS
+     muted-foreground on muted ...................  5.79 /  6.08  PASS
+     muted-foreground on muted/30-over-bg ........  6.20 /  7.15  PASS
+     primary-foreground on primary ...............  5.34 /  7.82  PASS
+     primary (text) on background ................  5.38 /  8.11  PASS
+     primary (text) on card ......................  5.47 /  7.50  PASS
+     accent-foreground on accent (solid badge) ...  6.94 /  8.51  PASS
+     testimonials "Ejemplo" badge text ...........  16.3 /  8.95  PASS
+         (uses `text-foreground` on `bg-accent/10`; `accent-foreground` there
+          was only 1.74:1 in dark mode — fixed at the component level.)
+   Decorative only (aria-hidden, exempt from WCAG 1.4.11, label carried by text):
+     featured service icon on accent/15 .........  2.02 /  4.02  (icon is
+         aria-hidden and labelled by the visible "Más solicitado" text badge).
+
    TYPOGRAPHY — THE WHY (wired in app/layout.tsx + @theme inline below):
      • DISPLAY = "Sora" — a geometric, slightly futuristic display face for
        headings/wordmark; expressive and modern (deliberately NOT Inter/Geist).

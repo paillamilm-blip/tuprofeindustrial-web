@@ -18,7 +18,7 @@ export function Hero() {
   return (
     <section
       id="inicio"
-      className="relative overflow-hidden border-b border-border/60"
+      className="relative scroll-mt-24 overflow-hidden border-b border-border/60"
     >
       {/* Fondo tecnico sutil: grilla de blueprint + un halo teal, sin AI-purple. */}
       <div
