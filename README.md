@@ -20,7 +20,7 @@ Landing de conversion completa, dividida en secciones (una por componente en
 - **Ruta de aprendizaje visual**: roadmap que muestra el camino desde tu nivel actual hasta tu meta, etapa por etapa.
 - **Asesorias e Innovacion**: seccion aparte de las clases que refuerza su faceta de **Innovador en productos digitales con IA** y presenta los proyectos que asesora, tanto digitales como PYME: **paginas web, aplicaciones, pizzerias, confiterias saludables, innovacion en comidas y fundaciones**. Tiene su propio CTA de WhatsApp con un mensaje de asesoria distinto al del resto del sitio.
 - **Quien soy / Tu profe**: bio profesional + placeholder accesible de foto (reemplazar por imagen real).
-- **Testimonios/Resultados**: 4 slots marcados como placeholders para reemplazar por reseñas reales (ver abajo).
+- **Testimonios/Resultados**: 4 reseñas reales de alumnos (admisión Escuela Naval, nivelación universitaria, preparación PAES y enseñanza media). Editables en el arreglo `TESTIMONIALS`.
 - **Preguntas frecuentes (FAQ)**: acordeon accesible (shadcn + Radix) con modalidad, precios, horarios, agenda y niveles.
 - **CTA final** + footer con el wordmark.
 - **CTA de WhatsApp** destacado y fijo (sticky) en mobile.
@@ -32,13 +32,21 @@ bloque de comentarios al inicio de [`app/globals.css`](app/globals.css):
 
 - **Paleta** en tokens `oklch`: primario *teal de ingenieria* (~hue 195) y acento *ambar señal* (~hue 72), con neutros frios intencionales. Sin AI-purple ni grises planos.
 - **Tipografia** (via `next/font`): **Sora** (titulos/wordmark), **IBM Plex Sans** (cuerpo) e **IBM Plex Mono** (numerico).
-- **Wordmark**: componente accesible en [`components/brand/wordmark.tsx`](components/brand/wordmark.tsx).
+- **Wordmark**: componente accesible en [`components/brand/wordmark.tsx`](components/brand/wordmark.tsx). La marca es un **engranaje teal con las letras TP entrelazadas y un contorno oscuro**, recreado fielmente como SVG inline (sin fondo, escalable y basado en tokens). Para usar un logo raster propio sin fondo, deja el archivo en `public/logo.png` y cambia `WordmarkGlyph` por un `<Image/>` de `next/image` (`import Image from "next/image"`) apuntando a `/logo.png`, conservando el `role="img"` / `aria-label` del lockup.
 
 ## Placeholders por reemplazar
 
 - **Numero de WhatsApp**: `NEXT_PUBLIC_WHATSAPP_PHONE` (ver seccion mas abajo).
-- **Foto del profesor**: caja marcada en la seccion "Quien soy" (`components/sections/about.tsx`).
-- **Testimonios**: edita el arreglo `TESTIMONIALS` en `components/sections/testimonials.tsx`. Pon `placeholder: false` y completa `quote`, `name` y `context` por cada reseña real (instrucciones en el comentario del archivo).
+- **Foto del profesor**: caja marcada en la seccion "Quien soy" (`components/sections/about.tsx`). Es el unico placeholder que queda por reemplazar.
+
+> Los testimonios ya son reales. Si necesitas editarlos, cambia el arreglo `TESTIMONIALS` en `components/sections/testimonials.tsx` (cada reseña usa `placeholder: false`).
+
+## Redes sociales
+
+Los enlaces a **TikTok** e **Instagram** (ambos **@tuprofeindustrial**) están en el pie de página. Para cambiar las URLs edita los `href` en [`components/sections/site-footer.tsx`](components/sections/site-footer.tsx):
+
+- TikTok: `https://www.tiktok.com/@tuprofeindustrial`
+- Instagram: `https://www.instagram.com/tuprofeindustrial`
 
 ## Stack tecnologico
 

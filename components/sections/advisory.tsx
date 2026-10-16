@@ -2,6 +2,8 @@ import {
   Sparkles,
   Globe,
   Smartphone,
+  Boxes,
+  Workflow,
   Pizza,
   Cookie,
   Lightbulb,
@@ -47,6 +49,18 @@ const DIGITAL_PROJECTS: readonly Project[] = [
     name: "Aplicaciones",
     description:
       "Apps y herramientas interactivas que resuelven un problema concreto de tus clientes.",
+  },
+  {
+    icon: Boxes,
+    name: "Micro SaaS",
+    description:
+      "Pequeños productos de software por suscripción: micro-herramientas con IA que resuelven un nicho y generan ingresos recurrentes.",
+  },
+  {
+    icon: Workflow,
+    name: "Automatizaciones",
+    description:
+      "Flujos automatizados y automatizaciones con IA que conectan tus herramientas y te ahorran horas de trabajo manual.",
   },
 ] as const;
 

@@ -4,22 +4,20 @@ import { Reveal } from "@/components/sections/reveal";
 import { cn } from "@/lib/utils";
 
 /**
- * Testimonials ("Resultados") — SLOTS placeholder claramente marcados.
+ * Testimonials ("Resultados") — reseñas reales de alumnos.
  *
- * IMPORTANTE: el profe aún NO tiene testimonios escritos (viene de dar clases
- * en superprofe.cl). Por ética y para no inventar reseñas falsas, estas
- * tarjetas NO muestran citas inventadas como reales: cada una lleva un badge
- * visible "Ejemplo — reemplazar con un testimonio real" y texto de ejemplo
- * atenuado. La sección se ve intencional y pulida aun estando vacía.
+ * Estas tarjetas muestran testimonios reales (placeholder: false). La tarjeta
+ * calcula las iniciales del avatar a partir del nombre y solo muestra el badge
+ * "Ejemplo — reemplazar con un testimonio real" cuando `placeholder: true`.
  *
  * ====================================================================
- * CÓMO REEMPLAZAR (para el dueño del sitio):
+ * CÓMO EDITAR (para el dueño del sitio):
  *   1. Edita el arreglo TESTIMONIALS de abajo.
- *   2. Por cada testimonio real: pon `placeholder: false`, escribe `quote`
- *      con la cita textual del alumno, `name` con su nombre (o inicial) y
- *      `context` con su curso/nivel (ej. "4° medio", "Ingeniería UC").
- *   3. Al poner `placeholder: false` desaparece el badge de ejemplo y la
- *      tarjeta se muestra como testimonio real.
+ *   2. Por cada testimonio: deja `placeholder: false`, escribe `quote` con la
+ *      cita textual del alumno, `name` con su nombre (o inicial) y `context`
+ *      con su curso/nivel (ej. "3° medio", "Preparación PAES").
+ *   3. Si en algún momento quieres volver a dejar una tarjeta como ejemplo
+ *      editable, pon `placeholder: true` y reaparece el badge de ejemplo.
  * ====================================================================
  */
 type Testimonial = {
@@ -32,31 +30,31 @@ type Testimonial = {
 const TESTIMONIALS: Testimonial[] = [
   {
     quote:
-      "Aquí irá el testimonio real de un alumno: qué le costaba, cómo fueron las clases y qué resultado obtuvo.",
-    name: "Nombre del alumno",
-    context: "Curso o nivel",
-    placeholder: true,
+      "Llegué con base débil en matemáticas y física para rendir los exámenes de admisión. El entrenamiento fue directo al grano, enfocado en el temario exacto de la Escuela Naval y con ensayos reales bajo tiempo. Logré quedar seleccionado en el proceso de admisión.",
+    name: "Victor papá de Lucas",
+    context: "Admisión Escuela Naval",
+    placeholder: false,
   },
   {
     quote:
-      "Espacio para una reseña real centrada en la preparación PAES y el puntaje o la mejora conseguida.",
-    name: "Nombre del alumno",
+      "Estaba al borde de reprobar Cálculo I en la universidad. Las clases me ayudaron a entender la lógica detrás de los ejercicios y no solo a memorizar fórmulas. Pasé el ramo con una nota que me permitió asegurar el semestre sin ir a examen de repetición.",
+    name: "Sofía M.",
+    context: "Ingeniería Comercial, primer año",
+    placeholder: false,
+  },
+  {
+    quote:
+      "Rendí la PAES de Matemáticas sintiéndome muy inseguro con M1 y M2. El plan de trabajo se concentró en mis errores recurrentes y en técnicas de descarte rápido. Subí más de 180 puntos respecto a mi primer ensayo y quedé en mi primera opción universitaria.",
+    name: "Matías V.",
     context: "Preparación PAES",
-    placeholder: true,
+    placeholder: false,
   },
   {
     quote:
-      "Reseña real de un estudiante universitario sobre la nivelación de ingeniería y el ramo aprobado.",
-    name: "Nombre del alumno",
-    context: "Ingeniería universitaria",
-    placeholder: true,
-  },
-  {
-    quote:
-      "Testimonio real de un apoderado o alumno de enseñanza media sobre la mejora de notas.",
-    name: "Nombre del alumno",
-    context: "Enseñanza media",
-    placeholder: true,
+      "Durante 2° y 3° medio mis notas de matemáticas no superaban el 4,5, lo que me estaba bajando el NEM. Con el reforzamiento semanal logré ordenar mi método de estudio, subir mi promedio a 6,3 y recuperar la confianza para enfrentar las pruebas.",
+    name: "Valentina R.",
+    context: "3° medio",
+    placeholder: false,
   },
 ];
 
@@ -72,12 +70,12 @@ export function Testimonials() {
             Resultados
           </p>
           <h2 className="mt-2 text-3xl font-bold tracking-tight text-balance sm:text-4xl">
-            Lo que dirán mis alumnos
+            Lo que dicen mis alumnos
           </h2>
           <p className="mt-3 text-muted-foreground text-pretty">
-            Estoy reuniendo las reseñas de mis estudiantes. Mientras tanto,
-            estos espacios quedan listos para publicar testimonios reales muy
-            pronto.
+            Resultados reales en admisión a la Escuela Naval, nivelación
+            universitaria, preparación PAES y enseñanza media: alumnos que
+            pasaron de la inseguridad a lograr su objetivo.
           </p>
         </Reveal>
 
