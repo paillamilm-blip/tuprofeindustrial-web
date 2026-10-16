@@ -71,7 +71,7 @@ export const QUESTIONS: readonly Question[] = [
     prompt: "¿En que etapa estas hoy?",
     helper: "Elige la que mejor te describe ahora mismo.",
     options: [
-      { value: "media", label: "Ensenanza media (1ro a 4to medio)" },
+      { value: "media", label: "Enseñanza media (1° a 4° medio)" },
       { value: "egresado-paes", label: "Egresado/a preparando la PAES" },
       { value: "universitario", label: "Estudiante universitario/a" },
       { value: "profesional", label: "Profesional, emprendedor/a o empresa" },
@@ -86,11 +86,11 @@ export const QUESTIONS: readonly Question[] = [
       { value: "puntaje-paes", label: "Subir mi puntaje en la PAES" },
       {
         value: "aprobar-ramos",
-        label: "Aprobar ramos de la carrera (cálculo, Física, etc.)",
+        label: "Aprobar ramos de la carrera (Cálculo, Física, etc.)",
       },
       {
         value: "proyecto",
-        label: "Impulsar un proyecto, negocio o idea de innovacion",
+        label: "Impulsar un proyecto, negocio o idea de innovación",
       },
     ],
   },
@@ -101,8 +101,8 @@ export const QUESTIONS: readonly Question[] = [
     options: [
       { value: "matematica", label: "Matemáticas" },
       { value: "fisica", label: "Física" },
-      { value: "ciencias", label: "Quimica u otras ciencias" },
-      { value: "gestion", label: "Gestion, procesos o emprendimiento" },
+      { value: "ciencias", label: "Química u otras ciencias" },
+      { value: "gestion", label: "Gestión, procesos o emprendimiento" },
     ],
   },
   {
@@ -134,8 +134,8 @@ export const TOTAL_STEPS = QUESTIONS.length;
 export const PLAN_TITLES: Record<PlanId, string> = {
   "clases-personalizadas": "Clases personalizadas",
   "intensivo-paes": "Intensivo PAES",
-  "nivelacion-ingenieria": "Nivelacion para Ingenieria",
-  asesoria: "Asesoria e Innovacion",
+  "nivelacion-ingenieria": "Nivelación para Ingeniería",
+  asesoria: "Asesoría e Innovación",
 };
 
 /** Devuelve la pregunta correspondiente a un indice de paso (0-based). */
@@ -193,19 +193,19 @@ export function recommendPlan(answers: DiagnosticoAnswers): Recommendation {
     plan = "asesoria";
     rationale =
       "Buscas impulsar un proyecto o negocio, asi que te conviene una " +
-      "Asesoria con un Ingeniero Industrial que ordene procesos, numeros y " +
+      "Asesoría con un Ingeniero Industrial que ordene procesos, numeros y " +
       "la hoja de ruta de tu idea.";
   } else if (nivel === "universitario" || objetivo === "aprobar-ramos") {
     plan = "nivelacion-ingenieria";
     rationale =
       "Estas en la universidad y necesitas aprobar ramos exigentes. La " +
-      "Nivelacion para Ingenieria ataca cálculo, Física y los fundamentos " +
+      "Nivelación para Ingeniería ataca Cálculo, Física y los fundamentos " +
       "que mas se cobran.";
   } else if (objetivo === "puntaje-paes" || nivel === "egresado-paes") {
     plan = "intensivo-paes";
     rationale =
       "Tu meta es subir el puntaje PAES, por lo que el Intensivo PAES te da " +
-      "practica dirigida, ensayos y metodo para rendir mejor el dia de la prueba.";
+      "practica dirigida, ensayos y metodo para rendir mejor el día de la prueba.";
   } else {
     plan = "clases-personalizadas";
     rationale =
@@ -231,7 +231,7 @@ export function buildDiagnosticoMessage(
   recommendation: Recommendation
 ): string {
   const lines = [
-    "Hola! Hice el diagnostico en la web de Tu Profe Industrial.",
+    "Hola! Hice el diagnostico en la web de TuProfeIndustrial.",
     `Plan recomendado: ${recommendation.title}.`,
   ];
 

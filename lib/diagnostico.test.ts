@@ -80,7 +80,7 @@ test("isComplete detecta respuestas completas e incompletas", () => {
 
 test("summarizeAnswers usa las etiquetas visibles de las opciones", () => {
   const resumen = summarizeAnswers({ nivel: "media", objetivo: "puntaje-paes" });
-  assert.ok(resumen.includes("Ensenanza media"));
+  assert.ok(resumen.includes("Enseñanza media"));
   assert.ok(resumen.includes("puntaje"));
 });
 
@@ -95,7 +95,7 @@ test("buildDiagnosticoMessage incluye el plan recomendado y el perfil", () => {
   const recommendation = recommendPlan(answers);
   const msg = buildDiagnosticoMessage(answers, recommendation);
 
-  assert.ok(msg.includes("Tu Profe Industrial"));
+  assert.ok(msg.includes("TuProfeIndustrial"));
   assert.ok(msg.includes("Intensivo PAES"));
   assert.ok(msg.includes("Matemáticas"));
 });

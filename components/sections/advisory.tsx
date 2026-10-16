@@ -2,6 +2,8 @@ import {
   Sparkles,
   Globe,
   Smartphone,
+  Boxes,
+  Workflow,
   Pizza,
   Cookie,
   Lightbulb,
@@ -17,15 +19,15 @@ import { cn } from "@/lib/utils";
  * conversacion desde la faceta de asesorias (proyectos digitales o PYME).
  */
 const ADVISORY_MESSAGE =
-  "Hola! Vengo de la web de Tu Profe Industrial y quiero asesoria para un proyecto (digital o PYME). Te cuento mi idea.";
+  "Hola! Vengo de la web de TuProfeIndustrial y quiero asesoría para un proyecto (digital o PYME). Te cuento mi idea.";
 
 /**
- * Advisory — seccion "Asesorias e Innovacion", DISTINTA de Servicios a
+ * Advisory — seccion "Asesorías e Innovación", DISTINTA de Servicios a
  * proposito (anti-slop: no replica las tres tarjetas identicas de clases).
  *
  * Estructura: un panel lider que refuerza su faceta de Innovador en productos
  * digitales con IA, acompanado de una grilla de proyectos agrupados en dos
- * familias (productos digitales / PYME e innovacion). Cada tipo de proyecto es
+ * familias (productos digitales / PYME e innovación). Cada tipo de proyecto es
  * un item diferenciado con su propio icono lucide (nunca emoji).
  */
 
@@ -38,7 +40,7 @@ type Project = {
 const DIGITAL_PROJECTS: readonly Project[] = [
   {
     icon: Globe,
-    name: "Paginas web",
+    name: "Páginas web",
     description:
       "Sitios rapidos y a medida para que tu negocio o idea tenga presencia profesional en linea.",
   },
@@ -48,26 +50,38 @@ const DIGITAL_PROJECTS: readonly Project[] = [
     description:
       "Apps y herramientas interactivas que resuelven un problema concreto de tus clientes.",
   },
+  {
+    icon: Boxes,
+    name: "Micro SaaS",
+    description:
+      "Pequeños productos de software por suscripción: micro-herramientas con IA que resuelven un nicho y generan ingresos recurrentes.",
+  },
+  {
+    icon: Workflow,
+    name: "Automatizaciones",
+    description:
+      "Flujos automatizados y automatizaciones con IA que conectan tus herramientas y te ahorran horas de trabajo manual.",
+  },
 ] as const;
 
 const PYME_PROJECTS: readonly Project[] = [
   {
     icon: Pizza,
-    name: "Pizzerias",
+    name: "Pizzerías",
     description:
       "Procesos, costos y carta para ordenar la operacion y mejorar el margen.",
   },
   {
     icon: Cookie,
-    name: "Confiterias saludables",
+    name: "Confiterías saludables",
     description:
-      "Producto, formulacion y propuesta de valor para un nicho que crece.",
+      "Producto, formulación y propuesta de valor para un nicho que crece.",
   },
   {
     icon: Lightbulb,
-    name: "Innovacion en comidas",
+    name: "Innovación en comidas",
     description:
-      "Nuevos conceptos gastronomicos: de la idea al prototipo validado.",
+      "Nuevos conceptos gastronómicos: de la idea al prototipo validado.",
   },
   {
     icon: HeartHandshake,
@@ -89,7 +103,7 @@ export function Advisory() {
               <div className="max-w-2xl">
                 <p className="inline-flex items-center gap-2 font-mono text-xs tracking-widest text-accent-foreground uppercase">
                   <Sparkles className="size-4 text-accent" aria-hidden="true" />
-                  Asesorias e Innovacion
+                  Asesorías e Innovación
                 </p>
                 <h2 className="mt-3 text-3xl font-bold tracking-tight text-balance sm:text-4xl">
                   No solo enseño: ayudo a crear
@@ -117,12 +131,12 @@ export function Advisory() {
         <div className="mt-10 grid gap-8 lg:grid-cols-2">
           <ProjectGroup
             title="Productos digitales con IA"
-            caption="Tecnologia a tu medida"
+            caption="Tecnología a tu medida"
             projects={DIGITAL_PROJECTS}
             tone="primary"
           />
           <ProjectGroup
-            title="PYME e innovacion"
+            title="PYME e Innovación"
             caption="Negocios y proyectos de impacto"
             projects={PYME_PROJECTS}
             tone="accent"

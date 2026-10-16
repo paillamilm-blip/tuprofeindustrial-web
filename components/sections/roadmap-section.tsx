@@ -18,7 +18,7 @@ export function RoadmapSection() {
             Ruta de aprendizaje
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-muted-foreground text-pretty">
-            Desde 1ro medio hasta el ultimo ano de Ingenieria. Elige donde
+            Desde 1° medio hasta el último año de Ingeniería. Elige donde
             partes y hasta donde quieres llegar: te mostramos cada etapa del
             trayecto.
           </p>
