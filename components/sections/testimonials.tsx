@@ -39,7 +39,7 @@ const TESTIMONIALS: Testimonial[] = [
     quote:
       "Estaba al borde de reprobar Cálculo I en la universidad. Las clases me ayudaron a entender la lógica detrás de los ejercicios y no solo a memorizar fórmulas. Pasé el ramo con una nota que me permitió asegurar el semestre sin ir a examen de repetición.",
     name: "Sofía M.",
-    context: "Ingeniería Comercial, primer año",
+    context: "Ingeniería comercial, primer año",
     placeholder: false,
   },
   {
