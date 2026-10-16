@@ -2,7 +2,7 @@ import { Reveal } from "@/components/sections/reveal";
 import { WhatsAppCta } from "@/components/whatsapp-cta";
 
 const CLOSING_MESSAGE =
-  "Hola! Quiero empezar clases con Tu Profe Industrial. ¿Qué horarios tienes disponibles?";
+  "Hola! Quiero empezar clases con TuProfeIndustrial. ¿Qué horarios tienes disponibles?";
 
 /**
  * ClosingCta — sección de conversión final. Fondo primario (teal) para cerrar

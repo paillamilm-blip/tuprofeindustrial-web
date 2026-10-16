@@ -132,13 +132,13 @@ export function simulatePaesGoal(input: PaesInput): PaesResult {
 export function buildPaesMessage(result: PaesResult): string {
   if (result.outOfRange) {
     return (
-      "Hola! Quiero simular mi meta PAES en la web de Tu Profe Industrial y " +
+      "Hola! Quiero simular mi meta PAES en la web de TuProfeIndustrial y " +
       "necesito ayuda para definir mis puntajes."
     );
   }
 
   const lines = [
-    "Hola! Simule mi meta PAES en la web de Tu Profe Industrial.",
+    "Hola! Simule mi meta PAES en la web de TuProfeIndustrial.",
     `Puntaje actual: ${result.current}. Meta: ${result.goal}.`,
   ];
 

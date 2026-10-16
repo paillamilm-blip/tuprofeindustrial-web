@@ -30,7 +30,7 @@ const NAV_LINKS = [
 ] as const;
 
 const HEADER_MESSAGE =
-  "Hola! Vengo de la web de Tu Profe Industrial y quiero agendar una clase. Me ayudas?";
+  "Hola! Vengo de la web de TuProfeIndustrial y quiero agendar una clase. Me ayudas?";
 
 /**
  * SiteHeader — cabecera sticky accesible con wordmark, navegacion ancla y un
@@ -77,7 +77,7 @@ export function SiteHeader() {
         <a
           href="#inicio"
           className="flex items-center rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
-          aria-label="Tu Profe Industrial — ir al inicio"
+          aria-label="TuProfeIndustrial, ir al inicio"
         >
           <Wordmark />
         </a>

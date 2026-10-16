@@ -14,7 +14,7 @@ import { SiteFooter } from "@/components/sections/site-footer";
 import { WhatsAppCta } from "@/components/whatsapp-cta";
 
 const STICKY_MESSAGE =
-  "Hola! Vengo de la web de Tu Profe Industrial y quiero más información sobre las clases.";
+  "Hola! Vengo de la web de TuProfeIndustrial y quiero más información sobre las clases.";
 
 /**
  * Composition root de la landing. Cada sección vive en components/sections/

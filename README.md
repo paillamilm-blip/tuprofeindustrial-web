@@ -1,4 +1,4 @@
-# Tu Profe Industrial · Web de captacion
+# TuProfeIndustrial · Web de captacion
 
 Landing page publica orientada a alumnos para **captar trafico desde redes sociales**, ofrecer una **calculadora de notas interactiva** (escala chilena 1.0 - 7.0) y **cerrar alumnos por WhatsApp**.
 
@@ -57,7 +57,7 @@ app/
   globals.css        # Tailwind v4 + tokens de marca (oklch) + Design Read
 components/
   brand/
-    wordmark.tsx         # wordmark/logo accesible "Tu Profe Industrial"
+    wordmark.tsx         # wordmark/logo accesible "TuProfeIndustrial"
   sections/              # una seccion de la landing por archivo
     site-header.tsx, hero.tsx, calculator-section.tsx,
     diagnostico-section.tsx, services.tsx, paes-section.tsx,
