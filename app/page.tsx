@@ -6,6 +6,7 @@ import { Services } from "@/components/sections/services";
 import { PaesSection } from "@/components/sections/paes-section";
 import { RoadmapSection } from "@/components/sections/roadmap-section";
 import { Advisory } from "@/components/sections/advisory";
+import { Metodo } from "@/components/sections/metodo";
 import { About } from "@/components/sections/about";
 import { Testimonials } from "@/components/sections/testimonials";
 import { Faq } from "@/components/sections/faq";
@@ -33,8 +34,11 @@ const STICKY_MESSAGE =
  *  6. Servicios: la oferta de clases, ya calentada por las herramientas.
  *  7. Asesorías e Innovación: la faceta Innovador (proyectos digitales y PYME),
  *     separada de las clases para no confundir públicos.
- *  8. Confianza y objeciones: Quién soy, Testimonios, Preguntas frecuentes.
- *  9. Cierre: CTA final + footer. El CTA sticky de WhatsApp acompaña en mobile.
+ *  8. Mi método: los 3 pasos (diagnóstico con prueba real, análisis de
+ *     contenidos y distribución de horas según el nivel) que explican cómo
+ *     trabajo, justo antes de "Quién soy" para construir credibilidad.
+ *  9. Confianza y objeciones: Quién soy, Testimonios, Preguntas frecuentes.
+ * 10. Cierre: CTA final + footer. El CTA sticky de WhatsApp acompaña en mobile.
  */
 export default function Home() {
   return (
@@ -48,6 +52,7 @@ export default function Home() {
         <RoadmapSection />
         <Services />
         <Advisory />
+        <Metodo />
         <About />
         <Testimonials />
         <Faq />

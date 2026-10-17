@@ -14,12 +14,12 @@ import { Reveal } from "@/components/sections/reveal";
  */
 const FAQS = [
   {
-    q: "¿Las clases son online o presenciales?",
-    a: "Las clases son online, así que puedes tomarlas desde cualquier parte de Chile con buena conexión. Usamos videollamada y pizarra digital para que todo quede claro y, si quieres, con material de apoyo que puedes repasar después.",
+    q: "¿Las clases son presenciales u online?",
+    a: "Principalmente son presenciales, que es donde mejor rinde el acompañamiento cara a cara. Si te acomoda o quedas lejos, también podemos hacerlas online con videollamada y pizarra digital, y con material de apoyo que puedes repasar después. Coordinamos la modalidad por WhatsApp según tu caso.",
   },
   {
     q: "¿Cuánto cuestan las clases?",
-    a: "El valor se coordina según el servicio (clase personalizada, intensivo PAES o nivelación de ingeniería), el nivel y la frecuencia que necesites. Escríbeme por WhatsApp, cuéntame tu caso y te paso los valores al tiro, sin compromiso.",
+    a: "La clase personalizada individual parte desde $20.000. El intensivo PAES (M1 o M2) y la nivelación de Ingeniería son planes mensuales según su estructura y tu nivel. Escríbeme por WhatsApp, cuéntame tu caso y te paso los valores al tiro, sin compromiso.",
   },
   {
     q: "¿Qué horarios tienes disponibles?",

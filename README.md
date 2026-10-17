@@ -19,6 +19,7 @@ Landing de conversion completa, dividida en secciones (una por componente en
 - **Simulador de meta PAES**: compara tu puntaje actual con tu puntaje objetivo, calcula cuanto debes subir y recomienda el intensivo o refuerzo que mas te conviene, con su propio CTA de WhatsApp.
 - **Ruta de aprendizaje visual**: roadmap que muestra el camino desde tu nivel actual hasta tu meta, etapa por etapa.
 - **Asesorias e Innovacion**: seccion aparte de las clases que refuerza su faceta de **Innovador en productos digitales con IA** y presenta los proyectos que asesora, tanto digitales como PYME: **paginas web, aplicaciones, pizzerias, confiterias saludables, innovacion en comidas y fundaciones**. Tiene su propio CTA de WhatsApp con un mensaje de asesoria distinto al del resto del sitio.
+- **Mi metodo**: seccion que explica como se trabaja en **3 pasos** antes de la primera clase: (1) diagnostico con una prueba real para medir el nivel, (2) analisis de los contenidos que se deben reforzar y (3) distribucion de las horas segun el nivel del alumno. Cierra con su propio CTA de WhatsApp para agendar el diagnostico.
 - **Quien soy / Tu profe**: bio profesional + placeholder accesible de foto (reemplazar por imagen real).
 - **Testimonios/Resultados**: 4 reseñas reales de alumnos (admisión Escuela Naval, nivelación universitaria, preparación PAES y enseñanza media). Editables en el arreglo `TESTIMONIALS`.
 - **Preguntas frecuentes (FAQ)**: acordeon accesible (shadcn + Radix) con modalidad, precios, horarios, agenda y niveles.

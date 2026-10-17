@@ -6,6 +6,7 @@ import {
   Atom,
   Cog,
   Check,
+  CalendarClock,
 } from "lucide-react";
 
 import { Reveal } from "@/components/sections/reveal";
@@ -15,41 +16,67 @@ import { cn } from "@/lib/utils";
 const SERVICES_MESSAGE =
   "Hola! Quiero información sobre tus clases (personalizadas, intensivo PAES o nivelación de ingeniería). ¿Me cuentas?";
 
+type Service = {
+  icon: typeof Target;
+  name: string;
+  tagline: string;
+  description: string;
+  points: readonly string[];
+  /** Estructura del plan (frecuencia / duración), si aplica. */
+  structure: readonly string[] | null;
+  /** Precio visible (siempre en font-mono). null = sin precio mostrado. */
+  price: string | null;
+  priceLabel: string | null;
+  /** Mensaje precargado para el CTA de WhatsApp específico de la tarjeta. */
+  ctaMessage: string;
+  featured: boolean;
+};
+
 /**
  * Services — tres servicios DIFERENCIADOS (anti-slop: no tres tarjetas
  * identicas). El intensivo PAES se destaca como tarjeta featured (mas ancha y
  * con borde de acento) porque es el servicio de mayor demanda; los otros dos
  * ocupan tarjetas estandar. Iconos lucide (SVG), nunca emoji.
  */
-const SERVICES = [
+const SERVICES: readonly Service[] = [
   {
     icon: Target,
     name: "Clases personalizadas",
     tagline: "1 a 1, 100% personalizadas",
     description:
-      "Clases individuales enfocadas en tus dudas reales, presenciales u online. Son 100% personalizables: se adaptan a tu nivel, tu ritmo y las pruebas que necesitas preparar.",
+      "Clases individuales enfocadas en tus dudas reales, presenciales (o también online). Son 100% personalizables: se adaptan a tu nivel, tu ritmo y las pruebas que necesitas preparar.",
     points: [
-      "Presencial u online",
+      "Presencial (o también online)",
       "Plan 100% a tu medida",
       "Horario flexible",
     ],
+    structure: null,
     price: "desde $20.000",
     priceLabel: "Clase individual",
+    ctaMessage:
+      "Hola! Me interesa una clase personalizada individual (1 a 1). ¿Me cuentas valores y disponibilidad?",
     featured: false,
   },
   {
     icon: Rocket,
     name: "Intensivo PAES",
-    tagline: "Preparación con estrategia",
+    tagline: "Preparación con estrategia (M1 o M2)",
     description:
-      "Preparación enfocada para la PAES de Matemáticas (M1 y M2) y Ciencias: contenido, ensayos comentados y estrategia de puntaje para llegar firme al día de la prueba.",
+      "Preparación enfocada para la PAES de Matemáticas (M1 o M2) y Ciencias: contenido, ensayos comentados y estrategia de puntaje para llegar firme al día de la prueba. Preferentemente presencial (o también online).",
     points: [
       "Diagnóstico inicial de nivel",
       "Ensayos con retroalimentación",
       "Técnicas de tiempo y puntaje",
     ],
-    price: null,
-    priceLabel: null,
+    structure: [
+      "3 veces por semana",
+      "2 horas por sesión",
+      "Durante 1 mes",
+    ],
+    price: "Consultar valor",
+    priceLabel: "Plan mensual",
+    ctaMessage:
+      "Hola! Me interesa el intensivo PAES de Matemáticas (M1 o M2), con la estructura de 3 veces por semana y 2 horas por sesión durante 1 mes. ¿Me cuentas el valor del plan mensual?",
     featured: true,
   },
   {
@@ -57,13 +84,19 @@ const SERVICES = [
     name: "Nivelación de Ingeniería",
     tagline: "Para universitarios",
     description:
-      "Apoyo en ramos de los primeros años de ingeniería: cálculo, álgebra, Física y más. Ideal si vienes arrastrando bases o preparas un examen clave.",
+      "Apoyo en ramos de los primeros años de ingeniería: cálculo, álgebra, Física y más. Ideal si vienes arrastrando bases o preparas un examen clave. Preferentemente presencial (o también online).",
     points: ["Cálculo y álgebra", "Física universitaria", "Antes de certámenes"],
-    price: null,
-    priceLabel: null,
+    structure: [
+      "3 veces por semana",
+      "3 horas diarias",
+    ],
+    price: "$500.000 al mes (programa completo: 2 meses)",
+    priceLabel: "Plan mensual",
+    ctaMessage:
+      "Hola! Me interesa la nivelación de Ingeniería (3 veces por semana, 3 horas diarias). ¿Coordinamos el programa completo de 2 meses?",
     featured: false,
   },
-] as const;
+];
 
 const SUBJECTS = [
   { icon: Sigma, label: "Matemáticas" },
@@ -148,11 +181,7 @@ export function Services() {
   );
 }
 
-function ServiceCard({
-  service,
-}: {
-  service: (typeof SERVICES)[number];
-}) {
+function ServiceCard({ service }: { service: Service }) {
   const Icon = service.icon;
   return (
     <article
@@ -201,8 +230,33 @@ function ServiceCard({
         ))}
       </ul>
 
+      <div className="mt-auto" />
+
+      {service.structure && (
+        <div className="mt-4 rounded-xl border border-border/70 bg-muted/30 p-4">
+          <p className="flex items-center gap-2 font-mono text-xs tracking-widest text-primary uppercase">
+            <CalendarClock className="size-4 shrink-0" aria-hidden="true" />
+            Estructura
+          </p>
+          <ul className="mt-2.5 flex flex-col gap-1.5">
+            {service.structure.map((item) => (
+              <li
+                key={item}
+                className="flex items-center gap-2 text-sm text-foreground"
+              >
+                <span
+                  aria-hidden="true"
+                  className="inline-block size-1.5 shrink-0 rounded-full bg-accent"
+                />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       {service.price && (
-        <div className="mt-auto flex items-baseline gap-2 border-t border-border/70 pt-4">
+        <div className="mt-5 flex flex-col gap-1 border-t border-border/70 pt-4">
           <span className="text-sm text-muted-foreground">
             {service.priceLabel}
           </span>
@@ -211,6 +265,15 @@ function ServiceCard({
           </span>
         </div>
       )}
+
+      <div className="mt-5">
+        <WhatsAppCta
+          message={service.ctaMessage}
+          label="Consultar por WhatsApp"
+          ariaLabel={`Consultar por WhatsApp sobre ${service.name}`}
+          className="w-full min-h-11 px-5 py-2.5 text-sm"
+        />
+      </div>
     </article>
   );
 }
