@@ -95,8 +95,8 @@ export function Hero() {
           </div>
 
           <p className="text-sm text-muted-foreground">
-            Clases online en todo Chile · Primera coordinación por WhatsApp sin
-            costo
+            Clases presenciales (o también online) · Primera coordinación por
+            WhatsApp sin costo
           </p>
         </div>
 
