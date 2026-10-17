@@ -62,7 +62,7 @@ const SERVICES: readonly Service[] = [
     name: "Intensivo PAES",
     tagline: "Preparación con estrategia (M1 o M2)",
     description:
-      "Preparación enfocada para la PAES de Matemáticas, M1 o M2: contenido, ensayos comentados y estrategia de puntaje para llegar firme al día de la prueba. Preferentemente presencial (o también online).",
+      "Preparación enfocada para la PAES de Matemáticas (M1 o M2) y Ciencias: contenido, ensayos comentados y estrategia de puntaje para llegar firme al día de la prueba. Preferentemente presencial (o también online).",
     points: [
       "Diagnóstico inicial de nivel",
       "Ensayos con retroalimentación",
@@ -73,7 +73,7 @@ const SERVICES: readonly Service[] = [
       "2 horas por sesión",
       "Durante 1 mes",
     ],
-    price: "Consultar por WhatsApp",
+    price: "Consultar valor",
     priceLabel: "Plan mensual",
     ctaMessage:
       "Hola! Me interesa el intensivo PAES de Matemáticas (M1 o M2), con la estructura de 3 veces por semana y 2 horas por sesión durante 1 mes. ¿Me cuentas el valor del plan mensual?",
