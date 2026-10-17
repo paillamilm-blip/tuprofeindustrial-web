@@ -25,6 +25,7 @@ const FREE_TOOL_LINKS = [
  */
 const NAV_LINKS = [
   { href: "#servicios", label: "Servicios" },
+  { href: "#metodo", label: "Mi método" },
   { href: "#asesorias", label: "Asesorías" },
   { href: "#faq", label: "Preguntas" },
 ] as const;
