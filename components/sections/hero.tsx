@@ -103,8 +103,8 @@ export function Hero() {
               />
               <Credential
                 icon={<Cpu className="size-5" aria-hidden="true" />}
-                term="Innovador en productos digitales con IA"
-                detail="Uso inteligencia artificial para personalizar y acelerar tu avance."
+                term="Herramientas de IA en cada clase"
+                detail="Las uso para detectar tus vacíos más rápido y personalizar tu plan de estudio."
               />
             </dl>
           </div>
