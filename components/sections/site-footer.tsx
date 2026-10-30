@@ -18,7 +18,8 @@ export function SiteFooter() {
         <div className="flex flex-col items-center gap-2 sm:items-start">
           <Wordmark />
           <p className="text-sm text-muted-foreground">
-            TuProfeIndustrial · Clases particulares presenciales y online en Chile
+            TuProfeIndustrial · Clases particulares a domicilio en Santiago y
+            online en todo Chile
           </p>
           <ul className="mt-1 flex items-center gap-1">
             <li>

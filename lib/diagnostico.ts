@@ -121,8 +121,8 @@ export const QUESTIONS: readonly Question[] = [
     helper: "Puedes cambiarlo mas adelante segun te acomode.",
     options: [
       { value: "online", label: "Clases online" },
-      { value: "presencial", label: "Presencial" },
-      { value: "mixta", label: "Mixta (online y presencial)" },
+      { value: "presencial", label: "A domicilio (Santiago)" },
+      { value: "mixta", label: "Mixta (online y domicilio)" },
     ],
   },
 ] as const;

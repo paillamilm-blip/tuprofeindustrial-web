@@ -79,8 +79,8 @@ export function Hero() {
           </div>
 
           <p className="text-sm text-muted-foreground">
-            Clases online en todo Chile · Primera coordinación por WhatsApp sin
-            costo
+            Clases a domicilio en Santiago y alrededores, u online en todo Chile
+            · Primera coordinación por WhatsApp sin costo
           </p>
         </div>
 
