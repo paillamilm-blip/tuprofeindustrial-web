@@ -42,8 +42,8 @@ export function Roadmap() {
   const goalLabel = getMilestone(goalId)?.label ?? "";
 
   const whatsappMessage = route.invalid
-    ? "Hola! Quiero armar mi ruta de aprendizaje con Tu Profe Industrial."
-    : `Hola! Arme mi ruta de aprendizaje en la web de Tu Profe Industrial: ` +
+    ? "Hola! Quiero armar mi ruta de aprendizaje con TuProfeIndustrial."
+    : `Hola! Arme mi ruta de aprendizaje en la web de TuProfeIndustrial: ` +
       `desde ${startLabel} hasta ${goalLabel}. Quiero empezar.`;
 
   return (

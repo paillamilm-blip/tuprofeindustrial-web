@@ -14,7 +14,7 @@ import {
   milestoneIndex,
 } from "./roadmap";
 
-test("MILESTONES va de 1ro medio al ultimo ano de Ingenieria", () => {
+test("MILESTONES va de 1ro medio al último año de Ingeniería", () => {
   assert.equal(MILESTONES[0].id, "1-medio");
   assert.equal(MILESTONES[MILESTONES.length - 1].id, "ing-final");
   assert.ok(MILESTONES.length >= 6);
@@ -55,7 +55,7 @@ test("buildRoute marca unknown cuando un id no existe", () => {
   assert.equal(r2.unknown, true);
 });
 
-test("buildRoute cubre todo el recorrido de media a Ingenieria", () => {
+test("buildRoute cubre todo el recorrido de media a Ingeniería", () => {
   const r = buildRoute("1-medio", "ing-final");
   assert.equal(r.segment.length, MILESTONES.length);
   assert.equal(r.segment[0], "1-medio");

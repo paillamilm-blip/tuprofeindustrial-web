@@ -3,7 +3,7 @@ import { Sparkles, GraduationCap, Cpu } from "lucide-react";
 import { WhatsAppCta } from "@/components/whatsapp-cta";
 
 const HERO_MESSAGE =
-  "Hola! Vengo de la web de Tu Profe Industrial y quiero subir mis notas en Matemáticas, Física o ingeniería. Me ayudas?";
+  "Hola! Vengo de la web de TuProfeIndustrial y quiero subir mis notas en Matemáticas, Física o Ingeniería. Me ayudas?";
 
 /**
  * Hero — propuesta de valor principal.
@@ -34,11 +34,11 @@ export function Hero() {
         <div className="flex flex-col items-start gap-6">
           <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-3 py-1 text-xs font-semibold tracking-wide text-primary uppercase">
             <Sparkles className="size-3.5" aria-hidden="true" />
-            Clases con método de ingeniería e IA
+            Clases con método de Ingeniería e IA
           </span>
 
           <h1 className="text-4xl font-extrabold tracking-tight text-balance sm:text-5xl lg:text-6xl">
-            Matemáticas, Física e ingeniería que{" "}
+            Matemáticas, Física e Ingeniería que{" "}
             <span className="text-primary">por fin se entienden</span>
           </h1>
 
@@ -60,7 +60,7 @@ export function Hero() {
           <p className="max-w-xl text-lg text-muted-foreground text-pretty">
             Soy Ingeniero Industrial y Docente diplomado en docencia e
             innovación en educación superior. Preparo alumnos desde 1° medio
-            hasta el último año de ingeniería con un método claro y herramientas
+            hasta el último año de Ingeniería con un método claro y herramientas
             de IA que aceleran tu aprendizaje.
           </p>
 
@@ -76,7 +76,7 @@ export function Hero() {
               href="#asesorias"
               className="font-semibold text-primary underline-offset-4 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
             >
-              Ver asesorías e innovación
+              Ver Asesorías e Innovación
             </a>
           </p>
 

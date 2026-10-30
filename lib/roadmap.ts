@@ -1,8 +1,8 @@
 /**
  * Logica pura de la Ruta de aprendizaje visual.
  *
- * Define los hitos ordenados desde "1ro medio" hasta el "ultimo ano de
- * Ingenieria" y una funcion que, dados un punto de partida y una meta, calcula
+ * Define los hitos ordenados desde "1ro medio" hasta el "último año de
+ * Ingeniería" y una funcion que, dados un punto de partida y una meta, calcula
  * el tramo a resaltar. Refuerza la idea de marca "Aprender es para todos":
  * siempre hay una ruta desde donde estas hasta donde quieres llegar.
  *
@@ -21,8 +21,8 @@ export interface Milestone {
 
 /**
  * Hitos ordenados de la ruta. El orden del arreglo define la progresion: cada
- * elemento viene despues del anterior. Van desde 1ro medio hasta el ultimo ano
- * de Ingenieria.
+ * elemento viene despues del anterior. Van desde 1ro medio hasta el último año
+ * de Ingeniería.
  */
 export const MILESTONES: readonly Milestone[] = [
   {
@@ -33,37 +33,37 @@ export const MILESTONES: readonly Milestone[] = [
   {
     id: "2-medio",
     label: "2do medio",
-    description: "Algebra, geometria y habito de estudio.",
+    description: "Álgebra, geometría y hábito de estudio.",
   },
   {
     id: "3-medio",
     label: "3ro medio",
-    description: "Profundizacion y primeros ensayos tipo PAES.",
+    description: "Profundización y primeros ensayos tipo PAES.",
   },
   {
     id: "4-medio",
     label: "4to medio",
-    description: "Preparacion PAES y decision de carrera.",
+    description: "Preparación PAES y decisión de carrera.",
   },
   {
     id: "paes",
     label: "Rendir la PAES",
-    description: "Intensivo final, ensayos y estrategia para el dia de la prueba.",
+    description: "Intensivo final, ensayos y estrategia para el día de la prueba.",
   },
   {
     id: "ing-1",
-    label: "1er ano de Ingenieria",
-    description: "Nivelacion en cálculo, algebra y Física universitaria.",
+    label: "1er año de Ingeniería",
+    description: "Nivelación en Cálculo, Álgebra y Física universitaria.",
   },
   {
     id: "ing-2",
-    label: "2do ano de Ingenieria",
-    description: "Ecuaciones, mecanica y ramos de especialidad.",
+    label: "2do año de Ingeniería",
+    description: "Ecuaciones, mecánica y ramos de especialidad.",
   },
   {
     id: "ing-final",
-    label: "Ultimo ano de Ingenieria",
-    description: "Titulo, proyectos aplicados y salto al mundo profesional.",
+    label: "Último año de Ingeniería",
+    description: "Título, proyectos aplicados y salto al mundo profesional.",
   },
 ] as const;
 

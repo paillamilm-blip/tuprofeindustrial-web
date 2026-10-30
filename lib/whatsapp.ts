@@ -22,7 +22,7 @@ export const WHATSAPP_PHONE: string =
 
 /** Mensaje por defecto (en espanol) que se precarga en el chat de WhatsApp. */
 export const DEFAULT_WHATSAPP_MESSAGE =
-  "Hola! Vengo de la web de Tu Profe Industrial y quiero mas informacion sobre las clases.";
+  "Hola! Vengo de la web de TuProfeIndustrial y quiero mas informacion sobre las clases.";
 
 /**
  * Indica si un numero (ya sea crudo o saneado) corresponde al PLACEHOLDER de

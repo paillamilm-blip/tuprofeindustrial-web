@@ -72,7 +72,7 @@ test("simulatePaesGoal: fuera de rango -> outOfRange", () => {
 test("buildPaesMessage incluye puntajes, delta y plan recomendado", () => {
   const r = simulatePaesGoal({ current: 500, goal: 650 });
   const msg = buildPaesMessage(r);
-  assert.ok(msg.includes("Tu Profe Industrial"));
+  assert.ok(msg.includes("TuProfeIndustrial"));
   assert.ok(msg.includes("500"));
   assert.ok(msg.includes("650"));
   assert.ok(msg.includes("150"));
@@ -88,5 +88,5 @@ test("buildPaesMessage para meta ya cumplida menciona mantener el nivel", () => 
 test("buildPaesMessage fuera de rango pide ayuda sin inventar numeros", () => {
   const r = simulatePaesGoal({ current: 10, goal: 20 });
   const msg = buildPaesMessage(r);
-  assert.ok(msg.includes("Tu Profe Industrial"));
+  assert.ok(msg.includes("TuProfeIndustrial"));
 });

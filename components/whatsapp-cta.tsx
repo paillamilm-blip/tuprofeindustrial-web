@@ -40,7 +40,7 @@ export interface WhatsAppCtaProps {
 export function WhatsAppCta({
   message = DEFAULT_WHATSAPP_MESSAGE,
   label = "Hablar por WhatsApp",
-  ariaLabel = "Abrir conversacion de WhatsApp con Tu Profe Industrial",
+  ariaLabel = "Abrir conversacion de WhatsApp con TuProfeIndustrial",
   sticky = false,
   className,
 }: WhatsAppCtaProps) {
