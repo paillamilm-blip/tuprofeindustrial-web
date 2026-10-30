@@ -10,12 +10,13 @@ import { cn } from "@/lib/utils";
  * Herramientas interactivas gratuitas. Se agrupan bajo un único rótulo
  * "Herramientas gratis" para que la navegación superior quede ligera y para
  * destacar que estas utilidades no tienen costo. El orden sigue el embudo de
- * la landing (diagnóstico → calculadora → simulador → ruta).
+ * la landing (diagnóstico → calculadora → simulador → simulacro → ruta).
  */
 const FREE_TOOL_LINKS = [
   { href: "#diagnostico", label: "Diagnóstico" },
   { href: "#calculadora", label: "Calculadora de notas" },
   { href: "#simulador-paes", label: "Simulador PAES" },
+  { href: "#simulacro-m1", label: "Simulacro M1 gratis" },
   { href: "#ruta", label: "Ruta de aprendizaje" },
 ] as const;
 
