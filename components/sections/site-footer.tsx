@@ -70,7 +70,15 @@ export function SiteFooter() {
                 href="#simulador-paes"
                 className="rounded transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
               >
-                Simulador PAES
+                Calculadora PAES
+              </a>
+            </li>
+            <li>
+              <a
+                href="#simulacro-m1"
+                className="rounded transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+              >
+                Simulacro M1
               </a>
             </li>
             <li>

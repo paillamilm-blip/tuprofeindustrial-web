@@ -3,7 +3,7 @@ import { Sparkles, GraduationCap, Cpu } from "lucide-react";
 import { WhatsAppCta } from "@/components/whatsapp-cta";
 
 const HERO_MESSAGE =
-  "Hola! Vengo de la web de TuProfeIndustrial y quiero subir mis notas en Matemáticas, Física o Ingeniería. Me ayudas?";
+  "Hola! Vengo de la web de TuProfeIndustrial y quiero subir mis notas en Matemáticas, Física o Ingeniería. ¿Me ayudas?";
 
 /**
  * Hero — propuesta de valor principal.
@@ -71,10 +71,10 @@ export function Hero() {
               className="px-7 py-3.5 text-base"
             />
             <a
-              href="#calculadora"
+              href="#simulacro-m1"
               className="inline-flex min-h-11 items-center rounded-full px-5 text-sm font-semibold text-foreground underline-offset-4 transition-colors hover:text-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
             >
-              Prueba la calculadora de notas
+              Descarga el simulacro M1 gratis
             </a>
           </div>
 

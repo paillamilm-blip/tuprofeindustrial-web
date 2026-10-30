@@ -15,10 +15,10 @@ export function DiagnosticoSection() {
       <div className="mx-auto flex max-w-3xl flex-col gap-8">
         <Reveal className="text-center">
           <p className="font-mono text-xs tracking-widest text-primary uppercase">
-            Diagnostico en 1 minuto
+            Diagnóstico en 1 minuto
           </p>
           <h2 className="mt-2 text-3xl font-bold tracking-tight text-balance sm:text-4xl">
-            ¿Que plan necesitas?
+            ¿Qué plan necesitas?
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-muted-foreground text-pretty">
             Responde cinco preguntas y un Ingeniero y Docente Innovador te

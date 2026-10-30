@@ -43,7 +43,7 @@ export function Roadmap() {
 
   const whatsappMessage = route.invalid
     ? "Hola! Quiero armar mi ruta de aprendizaje con TuProfeIndustrial."
-    : `Hola! Arme mi ruta de aprendizaje en la web de TuProfeIndustrial: ` +
+    : `Hola! Armé mi ruta de aprendizaje en la web de TuProfeIndustrial: ` +
       `desde ${startLabel} hasta ${goalLabel}. Quiero empezar.`;
 
   return (
@@ -51,7 +51,7 @@ export function Roadmap() {
       <CardHeader>
         <CardTitle className="text-2xl">Arma tu ruta de aprendizaje</CardTitle>
         <CardDescription>
-          Elige donde estas hoy y hasta donde quieres llegar. Aprender es para
+          Elige dónde estás hoy y hasta dónde quieres llegar. Aprender es para
           todos: siempre hay un camino.
         </CardDescription>
       </CardHeader>
@@ -94,7 +94,7 @@ export function Roadmap() {
 
         {route.invalid && (
           <p role="alert" className="text-sm font-medium text-destructive">
-            Tu meta esta antes de tu nivel actual. Elige una meta posterior
+            Tu meta está antes de tu nivel actual. Elige una meta posterior
             para ver tu ruta.
           </p>
         )}
@@ -161,7 +161,7 @@ export function Roadmap() {
                     </span>
                     {isStart && (
                       <span className="rounded-full bg-primary px-2 py-0.5 text-xs font-medium text-primary-foreground">
-                        Partes aqui
+                        Partes aquí
                       </span>
                     )}
                     {isGoal && (
@@ -184,7 +184,7 @@ export function Roadmap() {
         <div className="flex flex-col items-center gap-3 text-center">
           <p className="text-sm text-muted-foreground">
             {route.invalid
-              ? "Ajusta tu meta y conversemos como llegar."
+              ? "Ajusta tu meta y conversemos cómo llegar."
               : `Tu ruta: ${route.segment.length} ${route.segment.length === 1 ? "etapa" : "etapas"}. Empecemos hoy.`}
           </p>
           <WhatsAppCta

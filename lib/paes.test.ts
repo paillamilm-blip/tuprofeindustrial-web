@@ -1,5 +1,5 @@
 /**
- * Pruebas unitarias de la logica del Simulador de meta PAES.
+ * Pruebas unitarias de la logica de la Calculadora de puntaje PAES.
  * Se ejecutan con `node --test` a traves de tsx (ver script npm "test").
  *
  * Importan las funciones REALES de ./paes.

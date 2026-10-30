@@ -67,7 +67,7 @@ export interface Recommendation {
 export const QUESTIONS: readonly Question[] = [
   {
     id: "nivel",
-    prompt: "¿En que etapa estas hoy?",
+    prompt: "¿En qué etapa estás hoy?",
     helper: "Elige la que mejor te describe ahora mismo.",
     options: [
       { value: "media", label: "Enseñanza media (1° a 4° medio)" },
@@ -81,8 +81,8 @@ export const QUESTIONS: readonly Question[] = [
   },
   {
     id: "objetivo",
-    prompt: "¿Cual es tu objetivo principal?",
-    helper: "Lo que mas te importa lograr con el acompanamiento.",
+    prompt: "¿Cuál es tu objetivo principal?",
+    helper: "Lo que más te importa lograr con el acompañamiento.",
     options: [
       { value: "subir-notas", label: "Subir mis notas del colegio" },
       { value: "puntaje-paes", label: "Subir mi puntaje en la PAES" },
@@ -98,8 +98,8 @@ export const QUESTIONS: readonly Question[] = [
   },
   {
     id: "materia",
-    prompt: "¿Que area se te hace mas cuesta arriba?",
-    helper: "Donde sientes que necesitas mas apoyo.",
+    prompt: "¿Qué área se te hace más cuesta arriba?",
+    helper: "Dónde sientes que necesitas más apoyo.",
     options: [
       { value: "matematica", label: "Matemáticas" },
       { value: "fisica", label: "Física" },
@@ -109,7 +109,7 @@ export const QUESTIONS: readonly Question[] = [
   },
   {
     id: "plazo",
-    prompt: "¿Con cuanto tiempo cuentas?",
+    prompt: "¿Con cuánto tiempo cuentas?",
     helper: "Nos ayuda a calibrar la intensidad del plan.",
     options: [
       { value: "urgente", label: "Menos de un mes (es urgente)" },
@@ -119,8 +119,8 @@ export const QUESTIONS: readonly Question[] = [
   },
   {
     id: "modalidad",
-    prompt: "¿Como prefieres trabajar?",
-    helper: "Puedes cambiarlo mas adelante segun te acomode.",
+    prompt: "¿Cómo prefieres trabajar?",
+    helper: "Puedes cambiarlo más adelante según te acomode.",
     options: [
       { value: "online", label: "Clases online" },
       { value: "presencial", label: "A domicilio (Santiago)" },
@@ -193,20 +193,20 @@ export function recommendPlan(answers: DiagnosticoAnswers): Recommendation {
   if (nivel === "universitario" || objetivo === "aprobar-ramos") {
     plan = "nivelacion-ingenieria";
     rationale =
-      "Estas en la universidad y necesitas aprobar ramos exigentes. La " +
+      "Estás en la universidad y necesitas aprobar ramos exigentes. La " +
       "Nivelación para Ingeniería ataca Cálculo, Física y los fundamentos " +
-      "que mas se cobran.";
+      "que más se cobran.";
   } else if (objetivo === "puntaje-paes" || nivel === "egresado-paes") {
     plan = "intensivo-paes";
     rationale =
       "Tu meta es subir el puntaje PAES, por lo que el Intensivo PAES te da " +
-      "practica dirigida, ensayos y metodo para rendir mejor el día de la prueba.";
+      "práctica dirigida, ensayos y método para rendir mejor el día de la prueba.";
   } else {
     plan = "clases-personalizadas";
     rationale =
       "Lo tuyo es recuperar o reforzar una base puntual, y las Clases " +
-      "personalizadas se arman segun tu nivel, tus tiempos y la materia que " +
-      "mas se te complica.";
+      "personalizadas se arman según tu nivel, tus tiempos y la materia que " +
+      "más se te complica.";
   }
 
   return {
@@ -227,7 +227,7 @@ export function buildDiagnosticoMessage(
   recommendation: Recommendation
 ): string {
   const lines = [
-    "Hola! Hice el diagnostico en la web de TuProfeIndustrial.",
+    "Hola! Hice el diagnóstico en la web de TuProfeIndustrial.",
     `Plan recomendado: ${recommendation.title}.`,
   ];
 
@@ -236,6 +236,6 @@ export function buildDiagnosticoMessage(
     lines.push(`Mi perfil: ${detalle}.`);
   }
 
-  lines.push("Quiero mas informacion sobre este plan.");
+  lines.push("Quiero más información sobre este plan.");
   return lines.join(" ");
 }

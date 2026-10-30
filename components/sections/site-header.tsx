@@ -10,12 +10,13 @@ import { cn } from "@/lib/utils";
  * Herramientas interactivas gratuitas. Se agrupan bajo un único rótulo
  * "Herramientas gratis" para que la navegación superior quede ligera y para
  * destacar que estas utilidades no tienen costo. El orden sigue el embudo de
- * la landing (diagnóstico → calculadora → simulador → simulacro → ruta).
+ * la landing (diagnóstico → calculadora de notas → calculadora PAES →
+ * simulacro → ruta).
  */
 const FREE_TOOL_LINKS = [
   { href: "#diagnostico", label: "Diagnóstico" },
   { href: "#calculadora", label: "Calculadora de notas" },
-  { href: "#simulador-paes", label: "Simulador PAES" },
+  { href: "#simulador-paes", label: "Calculadora PAES" },
   { href: "#simulacro-m1", label: "Simulacro M1 gratis" },
   { href: "#ruta", label: "Ruta de aprendizaje" },
 ] as const;
@@ -30,7 +31,7 @@ const NAV_LINKS = [
 ] as const;
 
 const HEADER_MESSAGE =
-  "Hola! Vengo de la web de TuProfeIndustrial y quiero agendar una clase. Me ayudas?";
+  "Hola! Vengo de la web de TuProfeIndustrial y quiero agendar una clase. ¿Me ayudas?";
 
 /**
  * SiteHeader — cabecera sticky accesible con wordmark, navegacion ancla y un

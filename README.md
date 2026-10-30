@@ -11,18 +11,19 @@ Landing de conversion completa, dividida en secciones (una por componente en
 
 - **Cabecera sticky** con wordmark, navegacion por anclas, enlace "saltar al contenido" y CTA compacto de WhatsApp.
 - **Hero** con la propuesta de valor (Ingeniero Industrial + diplomado en Docencia e innovacion + herramientas de IA en cada clase), el eslogan **"Aprender es para todos"** y CTA principal.
+- **Carrusel de herramientas gratis** (`#herramientas`): tablero de entrada bajo el hero con las cinco herramientas en tarjetas que se mueven con el dedo, arrastrando con el mouse o con las flechas del teclado. Cada tarjeta es un enlace real al ancla de su seccion (`#diagnostico`, `#calculadora`, `#simulador-paes`, `#simulacro-m1`, `#ruta`): el carrusel **no duplica** las herramientas, solo las muestra y rutea, asi que las secciones, los anclas ya compartidos y el SEO quedan intactos.
 - **Calculadora de notas** con dos modos:
   - **Mi promedio**: promedio ponderado de tus evaluaciones y si apruebas (desde 4.0).
   - **Que nota necesito**: la nota que necesitas en la evaluacion restante para llegar a tu meta, con mensajes claros cuando es imposible o cuando ya la tienes asegurada.
 - **Diagnostico interactivo PAES / Ingenieria**: test de 5 preguntas que entrega un plan recomendado (clases personalizadas, Intensivo PAES o nivelacion de Ingenieria) y abre WhatsApp con ese plan ya pre-escrito. La modalidad ofrece clases a domicilio en Santiago y alrededores, u online en todo Chile.
 - **Servicios/Clases**: clases personalizadas, intensivo PAES y nivelacion de ingenieria (tarjetas diferenciadas), materias (Matemáticas, Física, ingenieria) y niveles (1° medio hasta ultimo año de ingenieria). CTA de WhatsApp al final.
-- **Simulador de meta PAES**: compara tu puntaje actual con tu puntaje objetivo, calcula cuanto debes subir y recomienda el intensivo o refuerzo que mas te conviene, con su propio CTA de WhatsApp.
+- **Calculadora de puntaje PAES** (`#simulador-paes`): compara tu puntaje actual con tu puntaje objetivo, calcula cuanto debes subir y recomienda el intensivo o refuerzo que mas te conviene, con su propio CTA de WhatsApp. El ancla conserva `#simulador-paes` porque ese enlace ya circula en videos, PDFs y WhatsApp.
 - **Simulacro PAES M1 gratis** (`#simulacro-m1`): PDF real en `public/simulacro-paes-m1.pdf` + formulario de nombre, correo y consentimiento (Ley 21.719) que da de alta en MailerLite con la **Server Action** `app/actions/lead.ts`. El alta usa `MAILERLITE_API_TOKEN` y `MAILERLITE_GROUP_ID` (server-only, nunca `NEXT_PUBLIC_`, ver `.env.example`): si faltan o el proveedor falla, la UI **no finge el exito** - entrega el PDF igual y pide escribir por WhatsApp. Loguea solo el codigo de estado, nunca correos ni nombres.
 - **Ruta de aprendizaje visual**: roadmap que muestra el camino desde tu nivel actual hasta tu meta, etapa por etapa.
 - **Asesorias e Innovacion (OCULTA desde 2026-10-30)**: seccion aparte de las clases que refuerza su faceta de **Innovador en productos digitales con IA** y presenta los proyectos que asesora, tanto digitales como PYME: **paginas web, aplicaciones, pizzerias, confiterias saludables, innovacion en comidas y fundaciones**. El autor pidio que la landing hable solo de clases, asi que `advisory.tsx` sigue en el repo pero ya no se monta en `app/page.tsx`, ni aparece en el menu, el footer ni el hero. Para volver a mostrarla: importar y montar `<Advisory />` otra vez.
 - **Quien soy / Tu profe**: bio profesional + placeholder accesible de foto (reemplazar por imagen real).
 - **Testimonios/Resultados**: 4 reseñas reales de alumnos (admisión Escuela Naval, nivelación universitaria, preparación PAES y enseñanza media). Editables en el arreglo `TESTIMONIALS`.
-- **Preguntas frecuentes (FAQ)**: acordeon accesible (shadcn + Radix) con modalidad, precios, horarios, agenda y niveles.
+- **Preguntas frecuentes (FAQ)**: acordeon accesible (shadcn + Radix) con modalidad, cobertura del domicilio (Santiago y alrededores; fuera de eso, online), precios, horarios, agenda y niveles.
 - **CTA final** + footer con el wordmark.
 - **CTA de WhatsApp** destacado y fijo (sticky) en mobile.
 
@@ -64,18 +65,21 @@ app/
   layout.tsx         # metadata en espanol, lang="es", fuentes next/font
   page.tsx           # raiz de composicion de la landing (ordena las secciones)
   globals.css        # Tailwind v4 + tokens de marca (oklch) + Design Read
+  actions/
+    lead.ts          # Server Action del alta en MailerLite (token server-only)
 components/
   brand/
     wordmark.tsx         # wordmark/logo accesible "TuProfeIndustrial"
   sections/              # una seccion de la landing por archivo
-    site-header.tsx, hero.tsx, calculator-section.tsx,
-    diagnostico-section.tsx, services.tsx, paes-section.tsx,
-    roadmap-section.tsx, advisory.tsx (Asesorias e Innovacion),
+    site-header.tsx, hero.tsx, herramientas-carrusel.tsx,
+    calculator-section.tsx, diagnostico-section.tsx, services.tsx,
+    paes-section.tsx, simulacro-section.tsx (Simulacro M1 gratis),
+    roadmap-section.tsx, advisory.tsx (Asesorias e Innovacion, oculta),
     about.tsx, testimonials.tsx, faq.tsx, closing-cta.tsx,
     site-footer.tsx, reveal.tsx (entrada sutil respetando reduced-motion)
   grade-calculator.tsx   # calculadora interactiva (client component)
   diagnostico.tsx        # diagnostico interactivo PAES/Ingenieria (client)
-  paes-simulator.tsx     # simulador de meta PAES (client)
+  paes-simulator.tsx     # calculadora de puntaje PAES (client)
   roadmap.tsx            # ruta de aprendizaje visual (client)
   whatsapp-cta.tsx       # boton CTA de WhatsApp
   ui/                    # primitivas de Shadcn UI (incluye accordion)
@@ -84,7 +88,7 @@ lib/
   grades.test.ts     # pruebas unitarias de la logica
   calculator-input.ts / calculator-input.test.ts  # parseo de entradas
   diagnostico.ts / diagnostico.test.ts  # logica del diagnostico + mensaje WA
-  paes.ts / paes.test.ts            # logica del simulador de meta PAES
+  paes.ts / paes.test.ts            # logica de la calculadora de puntaje PAES
   roadmap.ts / roadmap.test.ts      # etapas de la ruta de aprendizaje
   whatsapp.ts        # constructor del enlace wa.me + numero placeholder
   utils.ts           # helper cn (clsx + tailwind-merge)
