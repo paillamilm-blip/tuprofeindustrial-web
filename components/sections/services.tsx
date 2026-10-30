@@ -27,14 +27,14 @@ const SERVICES = [
     name: "Clases personalizadas",
     tagline: "1 a 1, 100% personalizadas",
     description:
-      "Clases individuales enfocadas en tus dudas reales, presenciales u online. Son 100% personalizables: se adaptan a tu nivel, tu ritmo y las pruebas que necesitas preparar.",
+      "Clases individuales enfocadas en tus dudas reales, a domicilio en Santiago y alrededores u online. Son 100% personalizables: se adaptan a tu nivel, tu ritmo y las pruebas que necesitas preparar.",
     points: [
-      "Presencial u online",
+      "A domicilio u online",
       "Plan 100% a tu medida",
       "Horario flexible",
     ],
     price: "desde $20.000",
-    priceLabel: "Clase individual",
+    priceLabel: "Clase individual (online o a domicilio)",
     featured: false,
   },
   {
@@ -86,8 +86,10 @@ export function Services() {
             Clases pensadas para cada etapa
           </h2>
           <p className="mt-3 text-muted-foreground text-pretty">
-            Desde 1° medio hasta el último año de ingeniería. Elige el formato
-            que necesitas y lo adaptamos a tu nivel y tus objetivos.
+            Desde 1° medio hasta el último año de ingeniería, a domicilio en
+            Santiago y alrededores, y online desde cualquier parte de Chile.
+            Elige el formato que necesitas y lo adaptamos a tu nivel y tus
+            objetivos.
           </p>
         </Reveal>
 

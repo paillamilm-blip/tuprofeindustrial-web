@@ -8,6 +8,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 
 import {
+  PLAN_TITLES,
   QUESTIONS,
   TOTAL_STEPS,
   buildDiagnosticoMessage,
@@ -39,12 +40,12 @@ test("recommendPlan: universitario / aprobar ramos -> nivelacion-ingenieria", ()
   assert.equal(r2.plan, "nivelacion-ingenieria");
 });
 
-test("recommendPlan: proyecto / empresa -> asesoria", () => {
-  const r1 = recommendPlan({ nivel: "profesional", objetivo: "proyecto" });
-  assert.equal(r1.plan, "asesoria");
+test("recommendPlan: adulto que retoma o recupera bases -> clases personalizadas", () => {
+  const r1 = recommendPlan({ nivel: "profesional", objetivo: "bases" });
+  assert.equal(r1.plan, "clases-personalizadas");
 
-  const r2 = recommendPlan({ nivel: "media", objetivo: "proyecto" });
-  assert.equal(r2.plan, "asesoria");
+  const r2 = recommendPlan({ nivel: "media", objetivo: "bases" });
+  assert.equal(r2.plan, "clases-personalizadas");
 });
 
 test("recommendPlan: escolar general -> clases-personalizadas (fallback)", () => {
@@ -58,10 +59,21 @@ test("recommendPlan: respuestas vacias caen al fallback valido", () => {
   assert.ok(r.rationale.length > 0);
 });
 
-test("recommendPlan: prioridad asesoria sobre nivelacion cuando hay proyecto", () => {
-  // nivel universitario pero objetivo proyecto -> gana asesoria
-  const r = recommendPlan({ nivel: "universitario", objetivo: "proyecto" });
-  assert.equal(r.plan, "asesoria");
+test("recommendPlan: universidad gana a recuperar bases, nada de asesoria", () => {
+  // nivel universitario pero objetivo de bases -> sigue la nivelacion
+  const r = recommendPlan({ nivel: "universitario", objetivo: "bases" });
+  assert.equal(r.plan, "nivelacion-ingenieria");
+
+  // el plan de asesoria ya no existe: la landing vende solo clases
+  assert.deepEqual(Object.keys(PLAN_TITLES).sort(), [
+    "clases-personalizadas",
+    "intensivo-paes",
+    "nivelacion-ingenieria",
+  ]);
+  assert.equal(
+    QUESTIONS.some((q) => q.options.some((o) => o.value === "proyecto")),
+    false
+  );
 });
 
 test("isComplete detecta respuestas completas e incompletas", () => {

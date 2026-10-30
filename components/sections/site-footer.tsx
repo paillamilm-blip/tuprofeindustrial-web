@@ -18,7 +18,8 @@ export function SiteFooter() {
         <div className="flex flex-col items-center gap-2 sm:items-start">
           <Wordmark />
           <p className="text-sm text-muted-foreground">
-            TuProfeIndustrial · Clases particulares presenciales y online en Chile
+            TuProfeIndustrial · Clases particulares a domicilio en Santiago y
+            online en todo Chile
           </p>
           <ul className="mt-1 flex items-center gap-1">
             <li>
@@ -86,14 +87,6 @@ export function SiteFooter() {
                 className="rounded transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
               >
                 Servicios
-              </a>
-            </li>
-            <li>
-              <a
-                href="#asesorias"
-                className="rounded transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-              >
-                Asesorías
               </a>
             </li>
             <li>

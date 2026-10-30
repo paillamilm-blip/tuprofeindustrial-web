@@ -14,8 +14,8 @@ import { Reveal } from "@/components/sections/reveal";
  */
 const FAQS = [
   {
-    q: "¿Las clases son online o presenciales?",
-    a: "Las clases son online, así que puedes tomarlas desde cualquier parte de Chile con buena conexión. Usamos videollamada y pizarra digital para que todo quede claro y, si quieres, con material de apoyo que puedes repasar después.",
+    q: "¿Las clases son a domicilio o online?",
+    a: "Ambas cosas. Doy clases a domicilio en Santiago y alrededores, y online desde cualquier parte de Chile con buena conexión. En las online usamos videollamada y pizarra digital para que todo quede claro y, si quieres, con material de apoyo que puedes repasar después.",
   },
   {
     q: "¿Cuánto cuestan las clases?",
