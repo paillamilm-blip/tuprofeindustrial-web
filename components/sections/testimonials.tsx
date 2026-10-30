@@ -31,7 +31,7 @@ const TESTIMONIALS: Testimonial[] = [
   {
     quote:
       "Llegué con base débil en matemáticas y física para rendir los exámenes de admisión. El entrenamiento fue directo al grano, enfocado en el temario exacto de la Escuela Naval y con ensayos reales bajo tiempo. Logré quedar seleccionado en el proceso de admisión.",
-    name: "Victor papá de Lucas",
+    name: "Víctor papá de Lucas",
     context: "Admisión Escuela Naval",
     placeholder: false,
   },

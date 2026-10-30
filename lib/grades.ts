@@ -53,7 +53,7 @@ export function isValidWeight(weight: number): boolean {
  */
 export function weightedAverage(items: GradeItem[]): number {
   if (!Array.isArray(items) || items.length === 0) {
-    throw new Error("Debes ingresar al menos una nota con su ponderacion.");
+    throw new Error("Debes ingresar al menos una nota con su ponderación.");
   }
 
   let totalWeight = 0;
@@ -62,11 +62,11 @@ export function weightedAverage(items: GradeItem[]): number {
   for (const item of items) {
     if (!isValidGrade(item.grade)) {
       throw new Error(
-        `La nota ${item.grade} esta fuera de la escala 1.0 - 7.0.`
+        `La nota ${item.grade} está fuera de la escala 1.0 - 7.0.`
       );
     }
     if (!isValidWeight(item.weight)) {
-      throw new Error("Las ponderaciones deben ser numeros mayores que 0.");
+      throw new Error("Las ponderaciones deben ser números mayores que 0.");
     }
     totalWeight += item.weight;
     weightedSum += item.grade * item.weight;
@@ -139,7 +139,7 @@ export function requiredGrade(input: RequiredGradeInput): RequiredGradeResult {
     throw new Error("Debes ingresar al menos una nota ya rendida.");
   }
   if (!isValidWeight(remainingWeight)) {
-    throw new Error("La ponderacion restante debe ser un numero mayor que 0.");
+    throw new Error("La ponderación restante debe ser un número mayor que 0.");
   }
   if (!isValidGrade(target)) {
     throw new Error("La nota objetivo debe estar entre 1.0 y 7.0.");
@@ -151,11 +151,11 @@ export function requiredGrade(input: RequiredGradeInput): RequiredGradeResult {
   for (const item of currentItems) {
     if (!isValidGrade(item.grade)) {
       throw new Error(
-        `La nota ${item.grade} esta fuera de la escala 1.0 - 7.0.`
+        `La nota ${item.grade} está fuera de la escala 1.0 - 7.0.`
       );
     }
     if (!isValidWeight(item.weight)) {
-      throw new Error("Las ponderaciones deben ser numeros mayores que 0.");
+      throw new Error("Las ponderaciones deben ser números mayores que 0.");
     }
     currentWeight += item.weight;
     currentWeightedSum += item.grade * item.weight;

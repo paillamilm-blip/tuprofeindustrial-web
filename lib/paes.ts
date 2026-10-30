@@ -1,5 +1,5 @@
 /**
- * Logica pura del Simulador de meta PAES.
+ * Logica pura de la Calculadora de puntaje PAES.
  *
  * Compara el puntaje actual del alumno con su puntaje objetivo, calcula cuanto
  * debe subir y recomienda el plan mas conveniente. Tambien arma el mensaje de
@@ -26,19 +26,19 @@ export const PAES_MAX = 1000;
  */
 export const LARGE_GAP_THRESHOLD = 80;
 
-/** Identificador del plan recomendado por el simulador. */
+/** Identificador del plan recomendado por la calculadora. */
 export type PaesRecommendationId =
   | "intensivo-paes"
   | "clases-personalizadas"
   | "mantener";
 
-/** Entrada del simulador: puntaje actual y objetivo. */
+/** Entrada de la calculadora: puntaje actual y objetivo. */
 export interface PaesInput {
   current: number;
   goal: number;
 }
 
-/** Resultado del simulador de meta PAES. */
+/** Resultado de la calculadora de puntaje PAES. */
 export interface PaesResult {
   current: number;
   goal: number;
@@ -98,19 +98,19 @@ export function simulatePaesGoal(input: PaesInput): PaesResult {
   } else if (goalNotAbove) {
     recommendation = "mantener";
     message =
-      "Felicitaciones: ya estas en tu meta o por sobre ella. Lo importante " +
+      "Felicitaciones: ya estás en tu meta o por sobre ella. Lo importante " +
       "ahora es mantener el nivel y afinar los detalles para no retroceder.";
   } else if (delta >= LARGE_GAP_THRESHOLD) {
     recommendation = "intensivo-paes";
     message =
       `Necesitas subir ${delta} puntos, una brecha exigente. El Intensivo ` +
-      "PAES te da un plan dirigido, ensayos y metodo para cerrarla a tiempo.";
+      "PAES te da un plan dirigido, ensayos y método para cerrarla a tiempo.";
   } else {
     recommendation = "clases-personalizadas";
     message =
       `Te faltan ${delta} puntos, una brecha alcanzable. Con clases ` +
       "personalizadas de refuerzo apuntamos justo a los contenidos que te " +
-      "estan restando puntaje.";
+      "están restando puntaje.";
   }
 
   return {
@@ -126,31 +126,31 @@ export function simulatePaesGoal(input: PaesInput): PaesResult {
 }
 
 /**
- * Arma el mensaje de WhatsApp precargado con el resultado del simulador PAES.
- * Incluye puntaje actual, meta, brecha y el plan recomendado.
+ * Arma el mensaje de WhatsApp precargado con el resultado de la calculadora
+ * PAES. Incluye puntaje actual, meta, brecha y el plan recomendado.
  */
 export function buildPaesMessage(result: PaesResult): string {
   if (result.outOfRange) {
     return (
-      "Hola! Quiero simular mi meta PAES en la web de TuProfeIndustrial y " +
+      "Hola! Quiero proyectar mi puntaje PAES en la web de TuProfeIndustrial y " +
       "necesito ayuda para definir mis puntajes."
     );
   }
 
   const lines = [
-    "Hola! Simule mi meta PAES en la web de TuProfeIndustrial.",
+    "Hola! Proyecté mi puntaje PAES en la web de TuProfeIndustrial.",
     `Puntaje actual: ${result.current}. Meta: ${result.goal}.`,
   ];
 
   if (result.goalNotAbove) {
     lines.push(
-      "Ya estoy en mi meta y quiero mantener el nivel con tu acompanamiento."
+      "Ya estoy en mi meta y quiero mantener el nivel con tu acompañamiento."
     );
   } else {
     lines.push(
       `Debo subir ${result.delta} puntos. Plan recomendado: ${result.recommendationTitle}.`
     );
-    lines.push("Quiero mas informacion para empezar.");
+    lines.push("Quiero más información para empezar.");
   }
 
   return lines.join(" ");

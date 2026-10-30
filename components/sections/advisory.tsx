@@ -42,7 +42,7 @@ const DIGITAL_PROJECTS: readonly Project[] = [
     icon: Globe,
     name: "Páginas web",
     description:
-      "Sitios rapidos y a medida para que tu negocio o idea tenga presencia profesional en linea.",
+      "Sitios rápidos y a medida para que tu negocio o idea tenga presencia profesional en línea.",
   },
   {
     icon: Smartphone,
@@ -69,7 +69,7 @@ const PYME_PROJECTS: readonly Project[] = [
     icon: Pizza,
     name: "Pizzerías",
     description:
-      "Procesos, costos y carta para ordenar la operacion y mejorar el margen.",
+      "Procesos, costos y carta para ordenar la operación y mejorar el margen.",
   },
   {
     icon: Cookie,
@@ -119,7 +119,7 @@ export function Advisory() {
                 <WhatsAppCta
                   message={ADVISORY_MESSAGE}
                   label="Asesorar mi proyecto"
-                  ariaLabel="Abrir conversacion de WhatsApp para asesorar un proyecto digital o PYME"
+                  ariaLabel="Abrir conversación de WhatsApp para asesorar un proyecto digital o PYME"
                   className="px-7 py-3.5 text-base"
                 />
               </div>

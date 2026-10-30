@@ -94,7 +94,7 @@ export function Diagnostico() {
             <WhatsAppCta
               message={message}
               label="Agendar por WhatsApp"
-              ariaLabel="Abrir WhatsApp con el resultado del diagnostico"
+              ariaLabel="Abrir WhatsApp con el resultado del diagnóstico"
             />
           </div>
 
@@ -136,7 +136,7 @@ export function Diagnostico() {
           aria-valuenow={step + 1}
           aria-valuemin={1}
           aria-valuemax={TOTAL_STEPS}
-          aria-label={`Progreso del diagnostico: paso ${step + 1} de ${TOTAL_STEPS}`}
+          aria-label={`Progreso del diagnóstico: paso ${step + 1} de ${TOTAL_STEPS}`}
         >
           <div
             className="h-full rounded-full bg-accent motion-safe:transition-all motion-safe:duration-300 motion-safe:ease-out"
@@ -188,7 +188,7 @@ export function Diagnostico() {
             disabled={step === 0}
           >
             <ArrowLeft className="size-4" aria-hidden="true" />
-            Atras
+            Atrás
           </Button>
           <Button
             type="button"

@@ -45,8 +45,8 @@ function newRow(grade = "", weight = ""): Row {
 
 /** Aviso no bloqueante que se muestra bajo el resultado. */
 const PARTIAL_ROWS_WARNING =
-  "Ignoramos una o mas filas incompletas o con valores no numericos. " +
-  "Revisa que cada evaluacion tenga nota y ponderacion.";
+  "Ignoramos una o más filas incompletas o con valores no numéricos. " +
+  "Revisa que cada evaluación tenga nota y ponderación.";
 
 function GradeWeightRows({
   rows,
@@ -84,14 +84,14 @@ function GradeWeightRows({
           <Input
             inputMode="decimal"
             placeholder="Ej: 5.5"
-            aria-label={`Nota de la evaluacion ${index + 1}`}
+            aria-label={`Nota de la evaluación ${index + 1}`}
             value={row.grade}
             onChange={(e) => updateRow(row.id, "grade", e.target.value)}
           />
           <Input
             inputMode="decimal"
             placeholder="Ej: 30"
-            aria-label={`Ponderacion de la evaluacion ${index + 1}`}
+            aria-label={`Ponderación de la evaluación ${index + 1}`}
             value={row.weight}
             onChange={(e) => updateRow(row.id, "weight", e.target.value)}
           />
@@ -99,7 +99,7 @@ function GradeWeightRows({
             type="button"
             variant="ghost"
             size="icon"
-            aria-label={`Eliminar evaluacion ${index + 1}`}
+            aria-label={`Eliminar evaluación ${index + 1}`}
             disabled={rows.length <= 1}
             onClick={() => removeRow(row.id)}
           >
@@ -114,7 +114,7 @@ function GradeWeightRows({
         className="self-start"
         onClick={() => setRows((prev) => [...prev, newRow()])}
       >
-        + Agregar evaluacion
+        + Agregar evaluación
       </Button>
     </div>
   );
@@ -136,7 +136,7 @@ function AverageMode() {
     if (items.length === 0) {
       setResult({
         ok: false,
-        error: "Ingresa al menos una evaluacion con nota y ponderacion.",
+        error: "Ingresa al menos una evaluación con nota y ponderación.",
       });
       return;
     }
@@ -161,7 +161,7 @@ function AverageMode() {
       <GradeWeightRows
         rows={rows}
         setRows={setRows}
-        weightLabel="Ponderacion (%)"
+        weightLabel="Ponderación (%)"
       />
       <Button type="button" onClick={calcular} className="w-full">
         Calcular mi promedio
@@ -231,7 +231,7 @@ function RequiredMode() {
     if (items.length === 0) {
       setResult({
         ok: false,
-        error: "Ingresa al menos una nota ya rendida con su ponderacion.",
+        error: "Ingresa al menos una nota ya rendida con su ponderación.",
       });
       return;
     }
@@ -241,7 +241,7 @@ function RequiredMode() {
     if (remainingRaw === "" || Number.isNaN(remaining)) {
       setResult({
         ok: false,
-        error: "Ingresa la ponderacion de la evaluacion que te queda.",
+        error: "Ingresa la ponderación de la evaluación que te queda.",
       });
       return;
     }
@@ -249,7 +249,7 @@ function RequiredMode() {
     const targetRaw = normalizeNumericInput(target);
     const targetNum = Number(targetRaw);
     if (targetRaw === "" || Number.isNaN(targetNum)) {
-      setResult({ ok: false, error: "Ingresa una nota objetivo valida." });
+      setResult({ ok: false, error: "Ingresa una nota objetivo válida." });
       return;
     }
 
@@ -270,8 +270,8 @@ function RequiredMode() {
       if (hasIncoherentWeightSum(sumWeights(items), remaining)) {
         warnings.push(
           "Las ponderaciones ingresadas no suman un curso completo " +
-            "(deberian sumar ~100%). Revisa los datos: el resultado asume " +
-            "que lo rendido mas la evaluacion restante cubren todo el ramo."
+            "(deberían sumar ~100%). Revisa los datos: el resultado asume " +
+            "que lo rendido más la evaluación restante cubren todo el ramo."
         );
       }
 
@@ -294,7 +294,7 @@ function RequiredMode() {
       <GradeWeightRows
         rows={rows}
         setRows={setRows}
-        weightLabel="Ponderacion (%)"
+        weightLabel="Ponderación (%)"
       />
 
       <Separator />
@@ -302,7 +302,7 @@ function RequiredMode() {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="flex flex-col gap-2">
           <Label htmlFor="remaining-weight">
-            Ponderacion de la evaluacion restante (%)
+            Ponderación de la evaluación restante (%)
           </Label>
           <Input
             id="remaining-weight"
@@ -325,7 +325,7 @@ function RequiredMode() {
       </div>
 
       <Button type="button" onClick={calcular} className="w-full">
-        Calcular que nota necesito
+        Calcular qué nota necesito
       </Button>
 
       {result && !result.ok && (
@@ -337,11 +337,11 @@ function RequiredMode() {
       {result && result.ok && result.impossible && (
         <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-center text-red-900">
           <p className="text-sm">
-            Necesitarias un {result.required.toFixed(1)} en la evaluacion
+            Necesitarias un {result.required.toFixed(1)} en la evaluación
             restante.
           </p>
           <p className="mt-1 text-base font-semibold">
-            No es posible alcanzar un {result.target.toFixed(1)}: la nota maxima
+            No es posible alcanzar un {result.target.toFixed(1)}: la nota máxima
             es {MAX_GRADE.toFixed(1)}.
           </p>
         </div>
@@ -353,7 +353,7 @@ function RequiredMode() {
             Ya tienes asegurado el {result.target.toFixed(1)}.
           </p>
           <p className="mt-1 text-sm">
-            Incluso sacando la nota minima ({MIN_GRADE.toFixed(1)}) alcanzas tu
+            Incluso sacando la nota mínima ({MIN_GRADE.toFixed(1)}) alcanzas tu
             objetivo.
           </p>
         </div>
@@ -367,7 +367,7 @@ function RequiredMode() {
           <p className="text-4xl font-bold tabular-nums">
             {result.requiredClamped.toFixed(1)}
           </p>
-          <p className="mt-1 text-sm">en la evaluacion restante.</p>
+          <p className="mt-1 text-sm">en la evaluación restante.</p>
         </div>
       )}
 
@@ -394,14 +394,14 @@ export function GradeCalculator() {
         <CardTitle className="text-2xl">Calculadora de notas</CardTitle>
         <CardDescription>
           Escala chilena de {MIN_GRADE.toFixed(1)} a {MAX_GRADE.toFixed(1)}.
-          Aprobacion desde {PASSING_GRADE.toFixed(1)}.
+          Aprobación desde {PASSING_GRADE.toFixed(1)}.
         </CardDescription>
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="promedio" className="gap-6">
           <TabsList className="w-full">
             <TabsTrigger value="promedio">Mi promedio</TabsTrigger>
-            <TabsTrigger value="necesito">Que nota necesito</TabsTrigger>
+            <TabsTrigger value="necesito">Qué nota necesito</TabsTrigger>
           </TabsList>
           <TabsContent value="promedio">
             <AverageMode />
@@ -415,10 +415,10 @@ export function GradeCalculator() {
 
         <div className="flex flex-col items-center gap-3 text-center">
           <p className="text-sm text-muted-foreground">
-            Te quedo dando vueltas? Un profe te ayuda al tiro.
+            ¿Te quedo dando vueltas? Un profe te ayuda al tiro.
           </p>
           <WhatsAppCta
-            message="Hola! Use la calculadora de notas en la web y quiero ayuda para subir mis notas."
+            message="Hola! Usé la calculadora de notas en la web y quiero ayuda para subir mis notas."
             label="Pedir ayuda por WhatsApp"
           />
         </div>

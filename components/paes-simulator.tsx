@@ -29,7 +29,7 @@ function toNumber(value: string): number {
 }
 
 /**
- * Simulador de meta PAES.
+ * Calculadora de puntaje PAES.
  *
  * El alumno ingresa su puntaje actual y su objetivo; el componente calcula
  * cuanto debe subir y recomienda el intensivo o el refuerzo que mas le conviene
@@ -80,10 +80,10 @@ export function PaesSimulator() {
   return (
     <Card className="mx-auto w-full max-w-xl">
       <CardHeader>
-        <CardTitle className="text-2xl">Simulador de meta PAES</CardTitle>
+        <CardTitle className="text-2xl">Calculadora de puntaje PAES</CardTitle>
         <CardDescription>
           Escala de {PAES_MIN} a {PAES_MAX} puntos. Compara tu puntaje actual
-          con tu meta y descubre cuanto debes subir.
+          con tu meta y descubre cuánto debes subir.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-5">
@@ -188,7 +188,7 @@ export function PaesSimulator() {
               <WhatsAppCta
                 message={buildPaesMessage(result)}
                 label="Preparar la PAES por WhatsApp"
-                ariaLabel="Abrir WhatsApp con tu simulacion PAES"
+                ariaLabel="Abrir WhatsApp con tu proyección PAES"
               />
             </div>
           </>

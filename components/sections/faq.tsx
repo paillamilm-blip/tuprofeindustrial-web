@@ -18,6 +18,10 @@ const FAQS = [
     a: "Ambas cosas. Doy clases a domicilio en Santiago y alrededores, y online desde cualquier parte de Chile con buena conexión. En las online usamos videollamada y pizarra digital para que todo quede claro y, si quieres, con material de apoyo que puedes repasar después.",
   },
   {
+    q: "¿Puedo tomar clases si vivo fuera de Santiago?",
+    a: "Sí, de forma online. Las clases a domicilio son en Santiago y alrededores; si vives en otra región, nos conectamos por videollamada y pizarra digital como si estuviera ahí. Igual escríbeme por WhatsApp con tu comuna y lo revisamos.",
+  },
+  {
     q: "¿Cuánto cuestan las clases?",
     a: "El valor se coordina según el servicio (clase personalizada, intensivo PAES o nivelación de ingeniería), el nivel y la frecuencia que necesites. Escríbeme por WhatsApp, cuéntame tu caso y te paso los valores al tiro, sin compromiso.",
   },
