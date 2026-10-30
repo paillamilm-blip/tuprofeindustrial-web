@@ -4,6 +4,7 @@ import { CalculatorSection } from "@/components/sections/calculator-section";
 import { DiagnosticoSection } from "@/components/sections/diagnostico-section";
 import { Services } from "@/components/sections/services";
 import { PaesSection } from "@/components/sections/paes-section";
+import { SimulacroSection } from "@/components/sections/simulacro-section";
 import { RoadmapSection } from "@/components/sections/roadmap-section";
 import { Advisory } from "@/components/sections/advisory";
 import { About } from "@/components/sections/about";
@@ -29,12 +30,13 @@ const STICKY_MESSAGE =
  *  3. Calculadora de notas: utilidad gratis que engancha mostrando valor
  *     inmediato.
  *  4. Simulador de meta PAES: refuerza deseo ("cuánto me falta").
- *  5. Ruta de aprendizaje: cierra las herramientas gratis mostrando el camino.
- *  6. Servicios: la oferta de clases, ya calentada por las herramientas.
- *  7. Asesorías e Innovación: la faceta Innovador (proyectos digitales y PYME),
+ *  5. Simulacro M1 gratis: el imán que captura nombre y correo (Ley 21.719).
+ *  6. Ruta de aprendizaje: cierra las herramientas gratis mostrando el camino.
+ *  7. Servicios: la oferta de clases, ya calentada por las herramientas.
+ *  8. Asesorías e Innovación: la faceta Innovador (proyectos digitales y PYME),
  *     separada de las clases para no confundir públicos.
- *  8. Confianza y objeciones: Quién soy, Testimonios, Preguntas frecuentes.
- *  9. Cierre: CTA final + footer. El CTA sticky de WhatsApp acompaña en mobile.
+ *  9. Confianza y objeciones: Quién soy, Testimonios, Preguntas frecuentes.
+ *  10. Cierre: CTA final + footer. El CTA sticky de WhatsApp acompaña en mobile.
  */
 export default function Home() {
   return (
@@ -45,6 +47,7 @@ export default function Home() {
         <DiagnosticoSection />
         <CalculatorSection />
         <PaesSection />
+        <SimulacroSection />
         <RoadmapSection />
         <Services />
         <Advisory />
