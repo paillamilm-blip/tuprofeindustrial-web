@@ -22,8 +22,8 @@ export function DiagnosticoSection() {
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-muted-foreground text-pretty">
             Responde cinco preguntas y un Ingeniero y Docente Innovador te
-            recomienda el camino: clases personalizadas, Intensivo PAES,
-            nivelacion para Ingenieria o una asesoria para tu proyecto.
+            recomienda el camino: clases personalizadas, Intensivo PAES o
+            nivelación para Ingeniería, a domicilio en Santiago u online.
           </p>
         </Reveal>
         <Reveal delayMs={80}>

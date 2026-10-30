@@ -15,8 +15,7 @@
 export type PlanId =
   | "clases-personalizadas"
   | "intensivo-paes"
-  | "nivelacion-ingenieria"
-  | "asesoria";
+  | "nivelacion-ingenieria";
 
 /** Identificador de cada pregunta del diagnostico. */
 export type QuestionId =
@@ -74,7 +73,10 @@ export const QUESTIONS: readonly Question[] = [
       { value: "media", label: "Enseñanza media (1° a 4° medio)" },
       { value: "egresado-paes", label: "Egresado/a preparando la PAES" },
       { value: "universitario", label: "Estudiante universitario/a" },
-      { value: "profesional", label: "Profesional, emprendedor/a o empresa" },
+      {
+        value: "profesional",
+        label: "Profesional o adulto/a que retoma sus estudios",
+      },
     ],
   },
   {
@@ -89,8 +91,8 @@ export const QUESTIONS: readonly Question[] = [
         label: "Aprobar ramos de la carrera (Cálculo, Física, etc.)",
       },
       {
-        value: "proyecto",
-        label: "Impulsar un proyecto, negocio o idea de innovación",
+        value: "bases",
+        label: "Recuperar bases en Matemáticas o Física",
       },
     ],
   },
@@ -102,7 +104,7 @@ export const QUESTIONS: readonly Question[] = [
       { value: "matematica", label: "Matemáticas" },
       { value: "fisica", label: "Física" },
       { value: "ciencias", label: "Química u otras ciencias" },
-      { value: "gestion", label: "Gestión, procesos o emprendimiento" },
+      { value: "gestion", label: "Gestión y procesos (Ingeniería Industrial)" },
     ],
   },
   {
@@ -135,7 +137,6 @@ export const PLAN_TITLES: Record<PlanId, string> = {
   "clases-personalizadas": "Clases personalizadas",
   "intensivo-paes": "Intensivo PAES",
   "nivelacion-ingenieria": "Nivelación para Ingeniería",
-  asesoria: "Asesoría e Innovación",
 };
 
 /** Devuelve la pregunta correspondiente a un indice de paso (0-based). */
@@ -175,10 +176,10 @@ export function summarizeAnswers(answers: DiagnosticoAnswers): string {
  * Recomienda un plan a partir de las respuestas. Funcion pura y determinista.
  *
  * Reglas (en orden de prioridad):
- *  1. Proyecto / empresa / profesional  -> asesoria
- *  2. Universitario o aprobar ramos      -> nivelacion-ingenieria
- *  3. Objetivo PAES o egresado PAES       -> intensivo-paes
- *  4. Resto (escolar general)             -> clases-personalizadas (fallback)
+ *  1. Universitario o aprobar ramos       -> nivelacion-ingenieria
+ *  2. Objetivo PAES o egresado PAES       -> intensivo-paes
+ *  3. Resto (colegio, recuperar bases,
+ *     profesional que retoma)             -> clases-personalizadas (fallback)
  *
  * El fallback cubre tambien el caso de respuestas incompletas: siempre
  * devuelve un plan valido para que la UI nunca quede sin recomendacion.
@@ -189,13 +190,7 @@ export function recommendPlan(answers: DiagnosticoAnswers): Recommendation {
   let plan: PlanId;
   let rationale: string;
 
-  if (objetivo === "proyecto" || nivel === "profesional") {
-    plan = "asesoria";
-    rationale =
-      "Buscas impulsar un proyecto o negocio, asi que te conviene una " +
-      "Asesoría con un Ingeniero Industrial que ordene procesos, numeros y " +
-      "la hoja de ruta de tu idea.";
-  } else if (nivel === "universitario" || objetivo === "aprobar-ramos") {
+  if (nivel === "universitario" || objetivo === "aprobar-ramos") {
     plan = "nivelacion-ingenieria";
     rationale =
       "Estas en la universidad y necesitas aprobar ramos exigentes. La " +
@@ -209,8 +204,9 @@ export function recommendPlan(answers: DiagnosticoAnswers): Recommendation {
   } else {
     plan = "clases-personalizadas";
     rationale =
-      "Para avanzar en el colegio a tu ritmo, las Clases personalizadas se " +
-      "ajustan a tus notas, tus tiempos y la materia que mas se te complica.";
+      "Lo tuyo es recuperar o reforzar una base puntual, y las Clases " +
+      "personalizadas se arman segun tu nivel, tus tiempos y la materia que " +
+      "mas se te complica.";
   }
 
   return {
