@@ -64,22 +64,6 @@ export function Hero() {
             de IA que aceleran tu aprendizaje.
           </p>
 
-          {/*
-           * Teaser de asesorías: adelanta que, además de clases, asesora
-           * proyectos digitales y PYME. Apunta a la sección #asesorias que se
-           * crea en una feature posterior (el ancla es esperada).
-           */}
-          <p className="max-w-xl text-sm text-muted-foreground text-pretty">
-            Además de las clases, también asesoro proyectos digitales y PYME
-            (y otros más).{" "}
-            <a
-              href="#asesorias"
-              className="font-semibold text-primary underline-offset-4 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-            >
-              Ver Asesorías e Innovación
-            </a>
-          </p>
-
           <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center">
             <WhatsAppCta
               message={HERO_MESSAGE}

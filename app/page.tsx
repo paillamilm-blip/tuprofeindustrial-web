@@ -6,7 +6,6 @@ import { Services } from "@/components/sections/services";
 import { PaesSection } from "@/components/sections/paes-section";
 import { SimulacroSection } from "@/components/sections/simulacro-section";
 import { RoadmapSection } from "@/components/sections/roadmap-section";
-import { Advisory } from "@/components/sections/advisory";
 import { About } from "@/components/sections/about";
 import { Testimonials } from "@/components/sections/testimonials";
 import { Faq } from "@/components/sections/faq";
@@ -33,10 +32,12 @@ const STICKY_MESSAGE =
  *  5. Simulacro M1 gratis: el imán que captura nombre y correo (Ley 21.719).
  *  6. Ruta de aprendizaje: cierra las herramientas gratis mostrando el camino.
  *  7. Servicios: la oferta de clases, ya calentada por las herramientas.
- *  8. Asesorías e Innovación: la faceta Innovador (proyectos digitales y PYME),
- *     separada de las clases para no confundir públicos.
- *  9. Confianza y objeciones: Quién soy, Testimonios, Preguntas frecuentes.
- *  10. Cierre: CTA final + footer. El CTA sticky de WhatsApp acompaña en mobile.
+ *  8. Confianza y objeciones: Quién soy, Testimonios, Preguntas frecuentes.
+ *  9. Cierre: CTA final + footer. El CTA sticky de WhatsApp acompaña en mobile.
+ *
+ *  La faceta de asesorías (proyectos digitales y PYME) está oculta a pedido
+ *  del autor: components/sections/advisory.tsx sigue en el repo y se
+ *  restablece volviendo a importar y montar <Advisory /> aquí.
  */
 export default function Home() {
   return (
@@ -50,7 +51,6 @@ export default function Home() {
         <SimulacroSection />
         <RoadmapSection />
         <Services />
-        <Advisory />
         <About />
         <Testimonials />
         <Faq />
