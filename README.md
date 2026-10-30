@@ -10,13 +10,14 @@ Landing de conversion completa, dividida en secciones (una por componente en
 `components/sections/`, con `app/page.tsx` como raiz de composicion):
 
 - **Cabecera sticky** con wordmark, navegacion por anclas, enlace "saltar al contenido" y CTA compacto de WhatsApp.
-- **Hero** con la propuesta de valor (Ingeniero Industrial + diplomado en Docencia e innovacion + Innovador en productos digitales con IA), el eslogan **"Aprender es para todos"** y CTA principal.
+- **Hero** con la propuesta de valor (Ingeniero Industrial + diplomado en Docencia e innovacion + herramientas de IA en cada clase), el eslogan **"Aprender es para todos"** y CTA principal.
 - **Calculadora de notas** con dos modos:
   - **Mi promedio**: promedio ponderado de tus evaluaciones y si apruebas (desde 4.0).
   - **Que nota necesito**: la nota que necesitas en la evaluacion restante para llegar a tu meta, con mensajes claros cuando es imposible o cuando ya la tienes asegurada.
 - **Diagnostico interactivo PAES / Ingenieria**: test de 5 preguntas que entrega un plan recomendado (clases personalizadas, Intensivo PAES o nivelacion de Ingenieria) y abre WhatsApp con ese plan ya pre-escrito. La modalidad ofrece clases a domicilio en Santiago y alrededores, u online en todo Chile.
 - **Servicios/Clases**: clases personalizadas, intensivo PAES y nivelacion de ingenieria (tarjetas diferenciadas), materias (Matemáticas, Física, ingenieria) y niveles (1° medio hasta ultimo año de ingenieria). CTA de WhatsApp al final.
 - **Simulador de meta PAES**: compara tu puntaje actual con tu puntaje objetivo, calcula cuanto debes subir y recomienda el intensivo o refuerzo que mas te conviene, con su propio CTA de WhatsApp.
+- **Simulacro PAES M1 gratis** (`#simulacro-m1`): PDF real en `public/simulacro-paes-m1.pdf` + formulario de nombre, correo y consentimiento (Ley 21.719) que da de alta en MailerLite con la **Server Action** `app/actions/lead.ts`. El alta usa `MAILERLITE_API_TOKEN` y `MAILERLITE_GROUP_ID` (server-only, nunca `NEXT_PUBLIC_`, ver `.env.example`): si faltan o el proveedor falla, la UI **no finge el exito** - entrega el PDF igual y pide escribir por WhatsApp. Loguea solo el codigo de estado, nunca correos ni nombres.
 - **Ruta de aprendizaje visual**: roadmap que muestra el camino desde tu nivel actual hasta tu meta, etapa por etapa.
 - **Asesorias e Innovacion (OCULTA desde 2026-10-30)**: seccion aparte de las clases que refuerza su faceta de **Innovador en productos digitales con IA** y presenta los proyectos que asesora, tanto digitales como PYME: **paginas web, aplicaciones, pizzerias, confiterias saludables, innovacion en comidas y fundaciones**. El autor pidio que la landing hable solo de clases, asi que `advisory.tsx` sigue en el repo pero ya no se monta en `app/page.tsx`, ni aparece en el menu, el footer ni el hero. Para volver a mostrarla: importar y montar `<Advisory />` otra vez.
 - **Quien soy / Tu profe**: bio profesional + placeholder accesible de foto (reemplazar por imagen real).

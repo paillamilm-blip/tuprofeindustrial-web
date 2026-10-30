@@ -44,7 +44,7 @@ export function About() {
             Quién soy
           </p>
           <h2 className="mt-2 text-3xl font-bold tracking-tight text-balance sm:text-4xl">
-            Tu profe: Ingeniero, Docente e Innovador con IA
+            Tu profe: Ingeniero Industrial y Docente
           </h2>
           <div className="mt-4 flex flex-col gap-4 text-muted-foreground text-pretty">
             {/*
@@ -61,10 +61,9 @@ export function About() {
             </p>
             <p>
               Vengo de dar clases particulares en superprofe.cl, donde he
-              acompañado a alumnos reales de distintos niveles. Hoy sumo mi
-              trabajo como Innovador en productos digitales con IA para
-              personalizar cada clase, detectar tus vacíos más rápido y
-              aprovechar mejor tu tiempo de estudio.
+              acompañado a alumnos reales de distintos niveles. Hoy preparo cada
+              clase con herramientas de IA para detectar tus vacíos más rápido,
+              personalizar el plan y aprovechar mejor tu tiempo de estudio.
             </p>
           </div>
 
