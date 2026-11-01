@@ -6,8 +6,8 @@ import { Reveal } from "@/components/sections/reveal";
 import { cn } from "@/lib/utils";
 
 type Herramienta = {
-  /** Ancla de la seccion que ya existe mas abajo en la landing. */
-  href: string;
+  /** Id de la seccion (su ancla de siempre) sin el "#". */
+  key: string;
   /** Rotulo mono que encabeza esa seccion (se reusa aqui para no duplicar marcas). */
   eyebrow: string;
   name: string;
@@ -19,13 +19,11 @@ type Herramienta = {
 
 /**
  * Las cinco herramientas gratis de la landing, en el orden del embudo. Cada
- * tarjeta apunta al ancla de su seccion: el carrusel es un tablero de entrada,
- * no un reemplazo, asi que las secciones siguen existiendo y los enlaces
- * ya compartidos (#simulacro-m1, #diagnostico...) siguen funcionando.
+ * clave es el id de su seccion, que sigue viviendo en components/sections/.
  */
 const HERRAMIENTAS: readonly Herramienta[] = [
   {
-    href: "#diagnostico",
+    key: "diagnostico",
     eyebrow: "Diagnóstico en 1 minuto",
     name: "¿Qué plan necesitas?",
     description:
@@ -34,7 +32,7 @@ const HERRAMIENTAS: readonly Herramienta[] = [
     ctaLabel: "Hacer el diagnóstico",
   },
   {
-    href: "#calculadora",
+    key: "calculadora",
     eyebrow: "Herramienta gratis",
     name: "Calculadora de notas chilena",
     description:
@@ -43,7 +41,7 @@ const HERRAMIENTAS: readonly Herramienta[] = [
     ctaLabel: "Abrir la calculadora de notas",
   },
   {
-    href: "#simulador-paes",
+    key: "simulador-paes",
     eyebrow: "Proyecta tu puntaje",
     name: "Calculadora de puntaje PAES",
     description:
@@ -52,7 +50,7 @@ const HERRAMIENTAS: readonly Herramienta[] = [
     ctaLabel: "Proyectar mi puntaje",
   },
   {
-    href: "#simulacro-m1",
+    key: "simulacro-m1",
     eyebrow: "Descarga libre",
     name: "Simulacro PAES M1 con solucionario",
     description:
@@ -61,7 +59,7 @@ const HERRAMIENTAS: readonly Herramienta[] = [
     ctaLabel: "Bajar el simulacro M1",
   },
   {
-    href: "#ruta",
+    key: "ruta",
     eyebrow: "Tu camino, paso a paso",
     name: "Ruta de aprendizaje",
     description:
@@ -71,104 +69,166 @@ const HERRAMIENTAS: readonly Herramienta[] = [
   },
 ] as const;
 
+/** Respeta prefers-reduced-motion: sin esa preferencia, todo es suavecito. */
+function comportamiento(): ScrollBehavior {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ? "auto"
+    : "smooth";
+}
+
 /**
- * HerramientasCarrusel — tablero de entrada a las herramientas gratis.
+ * HerramientasCarrusel — tablero que decide que herramienta se usa.
  *
- * WHY: las cinco herramientas eran cinco secciones largas y el alumno bajaba a
- * ciegas para saber cuales existian. Aqui se ven todas en una pantalla y se
- * elige arrastrando (dedo o mouse) o con las flechas del teclado. Elegir no
- * duplica la herramienta: salta a su ancla de siempre, asi el SEO, el menu y
- * los enlaces ya compartidos quedan intactos.
+ * WHY: con las cinco secciones siempre visibles, el alumno bajaba cinco
+ * bloques largos para llegar a la unica que le interesaba. Aqui el tablero
+ * manda: se pincha una tarjeta y esa es la unica herramienta que queda abajo;
+ * las otras cuatro salen del scroll.
  *
- * Accessibilidad: cada tarjeta es un enlace real (click central, "abrir en
- * otra pestana" y lectores de pantalla siguen funcionando). El primer toque
- * sobre una tarjeta lateral solo la centra; el enlace se ejecuta cuando ya esta
- * en el centro, y el arrastre largo nunca navega por accidente.
+ * Dos reglas de diseno:
+ *  - Se abre lo que se PINCHA, no lo que queda en el centro: arrastrar el
+ *    tablero para mirar no cambia la herramienta en uso.
+ *  - El servidor entrega las cinco secciones completas y este cliente solo las
+ *    oculta en un layout effect (antes del primer paint, asi no se ve el
+ *    salto). Sin JavaScript, y para un crawler, la landing sigue siendo la
+ *    pagina larga de siempre: el SEO y anclas como #simulacro-m1 no dependen
+ *    de este interruptor.
+ *
+ * Accessibilidad: cada tarjeta es un boton real con aria-pressed, las flechas
+ * del teclado recorren las cinco y el cambio se anuncia por aria-live. Los
+ * enlaces directos (menu, footer, video, PDF) abren su herramienta sola.
  */
-export function HerramientasCarrusel() {
+export function HerramientasCarrusel({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const stripRef = React.useRef<HTMLOListElement | null>(null);
   const cardRefs = React.useRef<(HTMLLIElement | null)[]>([]);
-  const [activo, setActivo] = React.useState(0);
+  const panelRef = React.useRef<HTMLDivElement | null>(null);
 
   // Arrastre con mouse: punto de partida y distancia recorrida, para saber si
   // un click es intencion o el resto de un arrastre.
   const arrastre = React.useRef({ activo: false, x: 0, movido: 0 });
 
-  const herramienta = HERRAMIENTAS[activo];
+  const [abierta, setAbierta] = React.useState(HERRAMIENTAS[0].key);
+  // Valor actual leible desde listeners que no se reinstalan.
+  const abiertaRef = React.useRef(abierta);
+  // setAbierta con el mismo valor no re-renderiza: se guarda la intencion de
+  // acercar el panel para no perder el scroll pedido en ese caso.
+  const acercarPendiente = React.useRef<ScrollBehavior | null>(null);
 
-  // Marca la tarjeta centrada al hacer scroll (dedo, arrastre o teclado).
-  React.useEffect(() => {
-    const strip = stripRef.current;
-    if (!strip) return;
+  const indice = Math.max(
+    0,
+    HERRAMIENTAS.findIndex((item) => item.key === abierta)
+  );
+  const herramienta = HERRAMIENTAS[indice];
 
-    function medir() {
-      const el = stripRef.current;
-      if (!el) return;
-      const centro = el.getBoundingClientRect().left + el.clientWidth / 2;
-      let mejor = 0;
-      let distancia = Number.POSITIVE_INFINITY;
-      cardRefs.current.forEach((card, i) => {
-        if (!card) return;
-        const caja = card.getBoundingClientRect();
-        const d = Math.abs(caja.left + caja.width / 2 - centro);
-        if (d < distancia) {
-          distancia = d;
-          mejor = i;
-        }
-      });
-      setActivo((actual) => (actual === mejor ? actual : mejor));
+  // Unica dueña de la visibilidad de las secciones: mostrar/ocultar antes del
+  // paint para que elegir no se sienta como un salto de página.
+  React.useLayoutEffect(() => {
+    abiertaRef.current = abierta;
+    const panel = panelRef.current;
+    if (!panel) return;
+
+    for (const seccion of Array.from(
+      panel.querySelectorAll<HTMLElement>("[data-tool]")
+    )) {
+      if (seccion.dataset.tool === abierta) {
+        seccion.removeAttribute("hidden");
+      } else {
+        seccion.setAttribute("hidden", "");
+      }
     }
 
-    let frame = 0;
-    function onScroll() {
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(medir);
+    const pedir = acercarPendiente.current;
+    if (pedir) {
+      acercarPendiente.current = null;
+      panel
+        .querySelector<HTMLElement>(`[data-tool="${abierta}"]`)
+        ?.scrollIntoView({ behavior: pedir, block: "start" });
     }
+  }, [abierta]);
 
-    strip.addEventListener("scroll", onScroll, { passive: true });
-    const observador = new ResizeObserver(() => {
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(medir);
-    });
-    observador.observe(strip);
-    medir();
-
-    return () => {
-      cancelAnimationFrame(frame);
-      strip.removeEventListener("scroll", onScroll);
-      observador.disconnect();
-    };
-  }, []);
-
-  function comportamiento() {
-    return window.matchMedia("(prefers-reduced-motion: reduce)").matches
-      ? "auto"
-      : "smooth";
+  function acercaAlPanel(clave: string) {
+    document
+      .querySelector<HTMLElement>(`[data-tool="${clave}"]`)
+      ?.scrollIntoView({ behavior: comportamiento(), block: "start" });
   }
 
-  function centrar(indice: number) {
-    cardRefs.current[indice]?.scrollIntoView({
+  /** Pinchar una tarjeta: esa herramienta queda abierta y la página la acerca. */
+  function abrir(clave: string, tarjeta: number) {
+    cardRefs.current[tarjeta]?.scrollIntoView({
       behavior: comportamiento(),
       inline: "center",
       block: "nearest",
     });
+
+    if (clave === abiertaRef.current) {
+      acercaAlPanel(clave);
+      return;
+    }
+    acercarPendiente.current = comportamiento();
+    setAbierta(clave);
+    // Refrescar el enlace no navega, pero hace que al recargar siga abierta la
+    // misma herramienta (y que copiar la URL sirva para compartirla).
+    window.history.replaceState(null, "", `#${clave}`);
   }
+
+  // Los enlaces directos valen igual que pinchar la tarjeta: el menu, el
+  // footer, un video o el PDF pueden apuntar a #simulacro-m1 y esa herramienta
+  // es la que se abre.
+  React.useEffect(() => {
+    function claveDelHash(): string | null {
+      // Sin decodificar: las claves son ASCII puro, y decodeURIComponent revienta
+      // con un hash mal formado escrito a mano en la barra de direcciones.
+      const limpia = window.location.hash.replace(/^#/, "");
+      return HERRAMIENTAS.some((item) => item.key === limpia) ? limpia : null;
+    }
+
+    const inicial = claveDelHash();
+    if (inicial && inicial !== abiertaRef.current) {
+      // El navegador ya se posiciono con las cinco secciones visibles; al
+      // ocultar cuatro la pagina se recorta y ese punto queda en otro lado.
+      // Aca el acercamiento es instantaneo: no es una animacion desde un
+      // lugar equivocado, es corregir la posicion.
+      acercarPendiente.current = "auto";
+      setAbierta(inicial);
+    }
+
+    function onHashChange() {
+      const clave = claveDelHash();
+      if (!clave) return;
+      if (clave === abiertaRef.current) {
+        acercaAlPanel(clave);
+        return;
+      }
+      acercarPendiente.current = comportamiento();
+      setAbierta(clave);
+    }
+
+    window.addEventListener("hashchange", onHashChange);
+    return () => window.removeEventListener("hashchange", onHashChange);
+  }, []);
 
   function onKeyDown(event: React.KeyboardEvent<HTMLOListElement>) {
     if (event.key === "ArrowRight") {
       event.preventDefault();
-      centrar(Math.min(activo + 1, HERRAMIENTAS.length - 1));
+      const siguiente = Math.min(indice + 1, HERRAMIENTAS.length - 1);
+      abrir(HERRAMIENTAS[siguiente].key, siguiente);
     } else if (event.key === "ArrowLeft") {
       event.preventDefault();
-      centrar(Math.max(activo - 1, 0));
+      const anterior = Math.max(indice - 1, 0);
+      abrir(HERRAMIENTAS[anterior].key, anterior);
     }
   }
 
   // El swipe con el dedo lo hace el scroll nativo; aca solo se agrega el
   // arrastre con mouse, medido con clientX (movementX no esta en todos).
+  // El contador se reinicia en TODO pointerdown, tambien en el del dedo: si
+  // no, la distancia del ultimo arrastre con mouse bloquearia el toque siguiente.
   function onPointerDown(event: React.PointerEvent<HTMLOListElement>) {
-    if (event.pointerType === "touch" || event.button !== 0) return;
-    arrastre.current = { activo: true, x: event.clientX, movido: 0 };
+    const arrastra = event.pointerType !== "touch" && event.button === 0;
+    arrastre.current = { activo: arrastra, x: event.clientX, movido: 0 };
   }
 
   function onPointerMove(event: React.PointerEvent<HTMLOListElement>) {
@@ -181,134 +241,138 @@ export function HerramientasCarrusel() {
   }
 
   function onPointerUp() {
-    if (!arrastre.current.activo) return;
     arrastre.current.activo = false;
-    centrar(activo);
   }
 
-  // Un arrastre de verdad no debe navegar al soltar sobre una tarjeta.
+  // Un arrastre de verdad no debe abrir una herramienta por accidente.
   function onClickTarjeta(
-    event: React.MouseEvent<HTMLAnchorElement>,
-    indice: number
+    event: React.MouseEvent<HTMLButtonElement>,
+    tarjeta: number
   ) {
-    if (arrastre.current.movido > 8) {
-      event.preventDefault();
-      return;
-    }
-    if (indice !== activo) {
-      event.preventDefault();
-      centrar(indice);
-    }
+    event.preventDefault();
+    if (arrastre.current.movido > 8) return;
+    abrir(HERRAMIENTAS[tarjeta].key, tarjeta);
   }
 
   return (
-    <section
-      id="herramientas"
-      aria-labelledby="herramientas-titulo"
-      className="scroll-mt-24 border-b border-border/60 px-4 py-12 sm:px-6 sm:py-14"
-    >
-      <div className="mx-auto max-w-6xl">
-        <Reveal className="max-w-2xl">
-          <p className="font-mono text-xs tracking-widest text-primary uppercase">
-            Herramientas gratis
-          </p>
-          <h2
-            id="herramientas-titulo"
-            className="mt-2 text-2xl font-bold tracking-tight text-balance sm:text-3xl"
-          >
-            Elige por dónde empezar
-          </h2>
-          <p className="mt-3 text-sm text-muted-foreground">
-            Mueve con el dedo, arrastra con el mouse o usa las flechas del
-            teclado.
-          </p>
-        </Reveal>
-
-        <ol
-          ref={stripRef}
-          tabIndex={0}
-          aria-label="Herramientas gratis: arrastra para ver las cinco"
-          onKeyDown={onKeyDown}
-          onPointerDown={onPointerDown}
-          onPointerMove={onPointerMove}
-          onPointerUp={onPointerUp}
-          onPointerCancel={onPointerUp}
-          className={cn(
-            "mt-8 flex cursor-grab snap-x snap-mandatory gap-4 overflow-x-auto pb-2 outline-none active:cursor-grabbing",
-            "[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
-          )}
-        >
-          {HERRAMIENTAS.map((item, i) => (
-            <li
-              key={item.href}
-              ref={(node) => {
-                cardRefs.current[i] = node;
-              }}
-              className="flex shrink-0 basis-[80%] snap-center sm:basis-[52%] lg:basis-[36%]"
+    <>
+      <section
+        id="herramientas"
+        aria-labelledby="herramientas-titulo"
+        className="scroll-mt-24 border-b border-border/60 px-4 py-12 sm:px-6 sm:py-14"
+      >
+        <div className="mx-auto max-w-6xl">
+          <Reveal className="max-w-2xl">
+            <p className="font-mono text-xs tracking-widest text-primary uppercase">
+              Herramientas gratis
+            </p>
+            <h2
+              id="herramientas-titulo"
+              className="mt-2 text-2xl font-bold tracking-tight text-balance sm:text-3xl"
             >
-              <a
-                href={item.href}
-                aria-current={i === activo ? "true" : undefined}
-                onClick={(event) => onClickTarjeta(event, i)}
-                className={cn(
-                  "flex h-full w-full flex-col rounded-2xl border bg-card p-6 transition-all duration-200 motion-safe:ease-out motion-reduce:transition-none",
-                  "focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring",
-                  i === activo
-                    ? "motion-safe:-rotate-[0.6deg] motion-safe:scale-[1.02] border-primary/45 shadow-lg"
-                    : "border-border opacity-80 shadow-sm"
-                )}
-              >
-                <p className="font-mono text-[10.5px] tracking-widest text-primary uppercase">
-                  {item.eyebrow}
-                </p>
-                <h3 className="mt-3 font-display text-lg font-semibold text-balance">
-                  {item.name}
-                </h3>
-                <p className="mt-2 text-sm text-muted-foreground text-pretty">
-                  {item.description}
-                </p>
-                <span className="mt-auto flex items-center gap-2 pt-5">
-                  <span className="rounded-full bg-accent px-2.5 py-1 text-xs font-semibold text-accent-foreground">
-                    {item.chip}
-                  </span>
-                  <span className="ml-auto font-mono text-sm text-muted-foreground">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                </span>
-              </a>
-            </li>
-          ))}
-        </ol>
+              Elige por dónde empezar
+            </h2>
+            <p className="mt-3 text-sm text-muted-foreground">
+              Toca la herramienta que quieras usar: queda abierta aquí abajo y
+              las demás no te estorban. Mueve el tablero con el dedo, arrástralo
+              con el mouse o usa las flechas del teclado.
+            </p>
+          </Reveal>
 
-        {/* Anuncia cual queda en el centro: sin esto, el arrastre no tiene
-            retroalimentacion para un lector de pantalla. */}
-        <p aria-live="polite" className="sr-only">
-          Herramienta elegida: {herramienta.name}
-        </p>
-
-        <div className="mt-6 flex flex-col items-center gap-5">
-          <div className="flex gap-2" aria-hidden="true">
-            {HERRAMIENTAS.map((item, i) => (
-              <span
-                key={item.href}
-                className={cn(
-                  "h-1.5 rounded-full transition-all duration-200 motion-reduce:transition-none",
-                  i === activo ? "w-6 bg-primary" : "w-1.5 bg-border"
-                )}
-              />
-            ))}
-          </div>
-
-          <a
-            href={herramienta.href}
-            className="inline-flex min-h-11 items-center gap-2 rounded-full bg-primary px-7 py-3 text-base font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+          <ol
+            ref={stripRef}
+            tabIndex={0}
+            aria-label="Herramientas gratis: elige una para abrir"
+            onKeyDown={onKeyDown}
+            onPointerDown={onPointerDown}
+            onPointerMove={onPointerMove}
+            onPointerUp={onPointerUp}
+            onPointerCancel={onPointerUp}
+            className={cn(
+              "mt-8 flex cursor-grab snap-x snap-mandatory gap-4 overflow-x-auto pb-2 outline-none active:cursor-grabbing",
+              "[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+            )}
           >
-            {herramienta.ctaLabel}
-            <ChevronRight />
-          </a>
+            {HERRAMIENTAS.map((item, i) => (
+              <li
+                key={item.key}
+                ref={(node) => {
+                  cardRefs.current[i] = node;
+                }}
+                className="flex shrink-0 basis-[80%] snap-center sm:basis-[52%] lg:basis-[36%]"
+              >
+                <button
+                  type="button"
+                  aria-pressed={i === indice}
+                  onClick={(event) => onClickTarjeta(event, i)}
+                  className={cn(
+                    "flex h-full w-full flex-col rounded-2xl border bg-card p-6 text-left transition-all duration-200 motion-safe:ease-out motion-reduce:transition-none",
+                    "focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring",
+                    i === indice
+                      ? "motion-safe:-rotate-[0.6deg] motion-safe:scale-[1.02] border-primary/45 shadow-lg"
+                      : "border-border opacity-80 shadow-sm"
+                  )}
+                >
+                  <p className="font-mono text-[10.5px] tracking-widest text-primary uppercase">
+                    {item.eyebrow}
+                  </p>
+                  <h3 className="mt-3 font-display text-lg font-semibold text-balance">
+                    {item.name}
+                  </h3>
+                  <p className="mt-2 text-sm text-muted-foreground text-pretty">
+                    {item.description}
+                  </p>
+                  <span className="mt-auto flex items-center gap-2 pt-5">
+                    <span className="rounded-full bg-accent px-2.5 py-1 text-xs font-semibold text-accent-foreground">
+                      {item.chip}
+                    </span>
+                    {i === indice ? (
+                      <span className="rounded-full bg-primary px-2.5 py-1 text-xs font-semibold text-primary-foreground">
+                        Abierta
+                      </span>
+                    ) : null}
+                    <span className="ml-auto font-mono text-sm text-muted-foreground">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ol>
+
+          {/* Anuncia cual se abrio: sin esto, el cambio de panel es mudo para
+              un lector de pantalla. */}
+          <p aria-live="polite" className="sr-only">
+            Herramienta abierta: {herramienta.name}
+          </p>
+
+          <div className="mt-6 flex flex-col items-center gap-5">
+            <div className="flex gap-2" aria-hidden="true">
+              {HERRAMIENTAS.map((item, i) => (
+                <span
+                  key={item.key}
+                  className={cn(
+                    "h-1.5 rounded-full transition-all duration-200 motion-reduce:transition-none",
+                    i === indice ? "w-6 bg-primary" : "w-1.5 bg-border"
+                  )}
+                />
+              ))}
+            </div>
+
+            <a
+              href={`#${herramienta.key}`}
+              className="inline-flex min-h-11 items-center gap-2 rounded-full bg-primary px-7 py-3 text-base font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+            >
+              {herramienta.ctaLabel}
+              <ChevronRight />
+            </a>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      {/* Las cinco herramientas: solo la abierta se muestra. */}
+      <div ref={panelRef}>{children}</div>
+    </>
   );
 }
 

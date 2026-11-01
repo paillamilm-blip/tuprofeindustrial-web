@@ -8,7 +8,11 @@ import { Reveal } from "@/components/sections/reveal";
  */
 export function CalculatorSection() {
   return (
-    <section id="calculadora" className="scroll-mt-24 px-4 py-16 sm:px-6 sm:py-20">
+    <section
+      id="calculadora"
+      data-tool="calculadora"
+      className="scroll-mt-24 px-4 py-16 sm:px-6 sm:py-20"
+    >
       <div className="mx-auto flex max-w-3xl flex-col gap-8">
         <Reveal className="text-center">
           <p className="font-mono text-xs tracking-widest text-primary uppercase">
