@@ -19,6 +19,7 @@ export function SimulacroSection() {
   return (
     <section
       id="simulacro-m1"
+      data-tool="simulacro-m1"
       className="scroll-mt-24 px-4 py-16 sm:px-6 sm:py-20"
     >
       <div className="mx-auto flex max-w-3xl flex-col gap-8">

@@ -24,12 +24,13 @@ const STICKY_MESSAGE =
  * Orden pensado como embudo de conversión (primero las herramientas gratis,
  * luego los servicios, luego confianza y cierre):
  *  1. Hero: propuesta de valor y gancho inicial.
- *  2. Carrusel de herramientas: tablero de entrada donde el alumno elige con
- *     el dedo o el mouse a cuál herramienta ir. Salta a las secciones ya
- *     ancladas, así que no duplica contenido ni pierde SEO.
+ *  2. Carrusel de herramientas: tablero-interruptor. La herramienta que se
+ *     pincha es la unica que queda abierta abajo y las otras cuatro salen del
+ *     scroll. Recibe las cinco secciones como children, asi el HTML sigue
+ *     renderizando completo (SEO y enlaces directos intactos).
  *  3. Diagnóstico interactivo: herramienta estrella que, tras 5 preguntas,
  *     perfila al alumno y lo rutea al plan adecuado. Abre el bloque de
- *     herramientas gratuitas.
+ *     herramientas gratuitas y es la que aparece por defecto.
  *  4. Calculadora de notas: utilidad gratis que engancha mostrando valor
  *     inmediato.
  *  5. Calculadora de puntaje PAES: refuerza deseo ("cuánto me falta").
@@ -49,12 +50,13 @@ export default function Home() {
       <SiteHeader />
       <main id="contenido" className="flex flex-col pb-24 md:pb-0">
         <Hero />
-        <HerramientasCarrusel />
-        <DiagnosticoSection />
-        <CalculatorSection />
-        <PaesSection />
-        <SimulacroSection />
-        <RoadmapSection />
+        <HerramientasCarrusel>
+          <DiagnosticoSection />
+          <CalculatorSection />
+          <PaesSection />
+          <SimulacroSection />
+          <RoadmapSection />
+        </HerramientasCarrusel>
         <Services />
         <About />
         <Testimonials />

@@ -5,11 +5,15 @@ import { Reveal } from "@/components/sections/reveal";
  * DiagnosticoSection — presenta el Diagnostico interactivo PAES / Ingenieria.
  * Es la herramienta estrella: en pocos pasos entrega un plan recomendado y
  * abre la conversacion por WhatsApp con el contexto ya cargado.
+ *
+ * `data-tool` la conecta al tablero de HerramientasCarrusel: el resto de las
+ * herramientas se oculta mientras esta esta abierta.
  */
 export function DiagnosticoSection() {
   return (
     <section
       id="diagnostico"
+      data-tool="diagnostico"
       className="scroll-mt-24 px-4 py-16 sm:px-6 sm:py-20"
     >
       <div className="mx-auto flex max-w-3xl flex-col gap-8">
