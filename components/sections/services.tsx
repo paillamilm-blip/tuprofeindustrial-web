@@ -48,8 +48,8 @@ const SERVICES = [
       "Ensayos con retroalimentación",
       "Técnicas de tiempo y puntaje",
     ],
-    price: null,
-    priceLabel: null,
+    price: "$100.000",
+    priceLabel: "Pack Rescate (5 sesiones)",
     featured: true,
   },
   {
@@ -59,8 +59,8 @@ const SERVICES = [
     description:
       "Apoyo en ramos de los primeros años de ingeniería: cálculo, álgebra, Física y más. Ideal si vienes arrastrando bases o preparas un examen clave.",
     points: ["Cálculo y álgebra", "Física universitaria", "Antes de certámenes"],
-    price: null,
-    priceLabel: null,
+    price: "$20.000",
+    priceLabel: "Por hora pedagógica",
     featured: false,
   },
 ] as const;

@@ -23,7 +23,7 @@ const FAQS = [
   },
   {
     q: "¿Cuánto cuestan las clases?",
-    a: "El valor se coordina según el servicio (clase personalizada, intensivo PAES o nivelación de ingeniería), el nivel y la frecuencia que necesites. Escríbeme por WhatsApp, cuéntame tu caso y te paso los valores al tiro, sin compromiso.",
+    a: "Las clases individuales (a domicilio en Santiago o 100% online) tienen un valor desde $20.000 por hora pedagógica. Para la preparación intensiva de la PAES contamos con el Pack Rescate de 5 sesiones por $100.000, que incluye diagnóstico, ensayos comentados y resolución de dudas por WhatsApp. Escríbeme y coordinamos tu horario sin compromiso.",
   },
   {
     q: "¿Qué horarios tienes disponibles?",

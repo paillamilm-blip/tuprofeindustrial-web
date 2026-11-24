@@ -113,6 +113,16 @@ export function SiteFooter() {
                 Preguntas
               </a>
             </li>
+            <li>
+              <a
+                href="https://www.superprof.cl/ingeniero-industrial-docente-scuola-italiana-preparacion-intensiva-paes-matematica-calculo-domicilio-santiago.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded font-medium text-emerald-600 transition-colors hover:text-emerald-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+              >
+                Superprof (Verificado ⭐ 5.0) ↗
+              </a>
+            </li>
           </ul>
         </nav>
       </div>

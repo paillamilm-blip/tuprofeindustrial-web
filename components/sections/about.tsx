@@ -60,8 +60,16 @@ export function About() {
               enseñarla para que de verdad se entienda.
             </p>
             <p>
-              Vengo de dar clases particulares en superprofe.cl, donde he
-              acompañado a alumnos reales de distintos niveles. Hoy preparo cada
+              Vengo de dar clases particulares en{" "}
+              <a
+                href="https://www.superprof.cl/ingeniero-industrial-docente-scuola-italiana-preparacion-intensiva-paes-matematica-calculo-domicilio-santiago.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium text-foreground underline decoration-primary/50 underline-offset-4 hover:text-primary transition-colors"
+              >
+                Superprof
+              </a>
+              , donde cuento con perfil verificado y opiniones de alumnos reales. Hoy preparo cada
               clase con herramientas de IA para detectar tus vacíos más rápido,
               personalizar el plan y aprovechar mejor tu tiempo de estudio.
             </p>
@@ -78,7 +86,8 @@ export function About() {
             />
             <Highlight
               icon={<Users className="size-5" aria-hidden="true" />}
-              text="Experiencia con alumnos reales (superprofe.cl)"
+              text="Perfil verificado con 5.0 ⭐ en Superprof"
+              href="https://www.superprof.cl/ingeniero-industrial-docente-scuola-italiana-preparacion-intensiva-paes-matematica-calculo-domicilio-santiago.html"
             />
             <Highlight
               icon={<BadgeCheck className="size-5" aria-hidden="true" />}
@@ -91,11 +100,30 @@ export function About() {
   );
 }
 
-function Highlight({ icon, text }: { icon: React.ReactNode; text: string }) {
+function Highlight({
+  icon,
+  text,
+  href,
+}: {
+  icon: React.ReactNode;
+  text: string;
+  href?: string;
+}) {
   return (
     <li className="flex items-start gap-2.5">
       <span className="mt-0.5 text-primary">{icon}</span>
-      <span className="text-sm font-medium text-foreground">{text}</span>
+      {href ? (
+        <a
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm font-medium text-foreground underline decoration-primary/40 underline-offset-4 hover:text-primary transition-colors"
+        >
+          {text} ↗
+        </a>
+      ) : (
+        <span className="text-sm font-medium text-foreground">{text}</span>
+      )}
     </li>
   );
 }
