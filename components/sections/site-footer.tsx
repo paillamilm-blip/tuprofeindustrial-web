@@ -44,6 +44,17 @@ export function SiteFooter() {
                 <InstagramIcon className="size-5" />
               </a>
             </li>
+            <li>
+              <a
+                href="https://www.facebook.com/people/Tuprofeindustrial/61596403543170/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Facebook de TuProfeIndustrial (abre en una pestaña nueva)"
+                className="inline-flex size-11 items-center justify-center rounded-full text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+              >
+                <FacebookIcon className="size-5" />
+              </a>
+            </li>
           </ul>
         </div>
 
@@ -176,6 +187,27 @@ function InstagramIcon({ className }: { className?: string }) {
       <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
       <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37Z" />
       <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+    </svg>
+  );
+}
+
+/**
+ * Glyph de Facebook como SVG inline con el trazo de lucide (currentColor).
+ */
+function FacebookIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      focusable="false"
+      className={className}
+    >
+      <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
     </svg>
   );
 }
