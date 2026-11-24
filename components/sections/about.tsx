@@ -1,15 +1,11 @@
-import { UserRound, BadgeCheck, Users, Sparkles } from "lucide-react";
+import Image from "next/image";
+import { BadgeCheck, Users, Sparkles } from "lucide-react";
 
 import { Reveal } from "@/components/sections/reveal";
 
 /**
  * About ("Quién soy / Tu profe") — bio profesional con las credenciales clave
- * y senales de confianza (experiencia en superprofe.cl, alumnos reales).
- *
- * El retrato es un PLACEHOLDER accesible: una caja con relacion de aspecto
- * reservada (aspect-[4/5]) para evitar CLS cuando se reemplace por la foto
- * real. Lleva una etiqueta visible "Foto del profesor — reemplazar" y un
- * aria-label, sin usar fotos de stock falsas.
+ * y señales de confianza (perfil verificado en Superprof, alumnos reales).
  */
 export function About() {
   return (
@@ -18,23 +14,17 @@ export function About() {
       className="scroll-mt-24 border-y border-border/60 bg-muted/30 px-4 py-16 sm:px-6 sm:py-20"
     >
       <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-center lg:gap-14">
-        {/* Placeholder de foto con aspecto reservado */}
+        {/* Retrato oficial del profesor */}
         <Reveal className="order-1 lg:order-none">
-          <figure
-            role="img"
-            aria-label="Espacio reservado para la foto del profesor. Pendiente de reemplazar por una imagen real."
-            className="relative mx-auto aspect-[4/5] w-full max-w-xs overflow-hidden rounded-2xl border-2 border-dashed border-primary/40 bg-card"
-          >
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center">
-              <span className="inline-flex size-16 items-center justify-center rounded-full bg-primary/10 text-primary">
-                <UserRound className="size-8" aria-hidden="true" />
-              </span>
-              <figcaption className="text-sm font-medium text-muted-foreground">
-                Foto del profesor
-                <br />
-                <span className="text-xs">(reemplazar por imagen real)</span>
-              </figcaption>
-            </div>
+          <figure className="relative mx-auto aspect-[4/5] w-full max-w-xs overflow-hidden rounded-2xl border border-border bg-card shadow-lg ring-1 ring-border/50">
+            <Image
+              src="/profe.jpg"
+              alt="Matías, Ingeniero Civil Industrial y Docente - TuProfeIndustrial"
+              fill
+              sizes="(max-width: 768px) 100vw, 320px"
+              className="object-cover"
+              priority
+            />
           </figure>
         </Reveal>
 
