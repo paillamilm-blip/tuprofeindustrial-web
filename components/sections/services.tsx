@@ -24,17 +24,17 @@ const SERVICES_MESSAGE =
 const SERVICES = [
   {
     icon: Target,
-    name: "Clase suelta",
+    name: "Tutoría individual",
     tagline: "1 hora, a domicilio u online",
     description:
-      "Una hora de clase individual enfocada en tus dudas reales, a domicilio en Santiago o por videollamada. Ideal para preparar una prueba que viene pronto o repasar un tema específico a tu ritmo.",
+      "Una hora de tutoría personalizada enfocada en tus dudas reales, a domicilio en Santiago o por videollamada. Ideal para preparar una prueba que viene pronto o repasar un tema específico a tu ritmo.",
     points: [
-      "1 hora de clase 100% personalizada",
+      "1 hora de tutoría 100% personalizada",
       "A domicilio en Santiago u online en todo Chile",
       "Horario flexible coordinado por WhatsApp",
     ],
     price: "$20.000",
-    priceLabel: "por 1 hora de clase",
+    priceLabel: "por 1 hora de tutoría",
     featured: false,
   },
   {
@@ -42,11 +42,11 @@ const SERVICES = [
     name: "Pack PAES",
     tagline: "6 horas de preparación",
     description:
-      "Seis horas de clases individuales para la PAES de Matemáticas (M1 y M2). Vemos los temas clave, resolvemos ensayos juntos y aprendemos a no caer en las trampas del DEMRE.",
+      "Seis horas de tutorías individuales para la PAES de Matemáticas (M1 y M2). Vemos los temas clave, resolvemos ensayos juntos y aprendemos a no caer en las trampas del DEMRE.",
     points: [
-      "6 horas de clases individuales",
+      "6 horas de tutorías personalizadas",
       "Ensayos reales con retroalimentación ítem por ítem",
-      "Dudas resueltas por WhatsApp entre clases",
+      "Dudas resueltas por WhatsApp entre sesiones",
     ],
     price: "$100.000",
     priceLabel: "por las 6 horas",
@@ -57,10 +57,10 @@ const SERVICES = [
     name: "Intensivo de Ingeniería",
     tagline: "36 horas en el mes",
     description:
-      "Treinta y seis horas de clases en un mes para salvar o asegurar ramos difíciles de universidad: Cálculo, Álgebra y Física. Son 9 horas por semana (3 clases de 3 horas) resolviendo certámenes pasados.",
+      "Treinta y seis horas de tutorías en un mes para salvar o asegurar ramos difíciles de universidad: Cálculo, Álgebra y Física. Son 9 horas por semana (3 tutorías de 3 horas) resolviendo certámenes pasados.",
     points: [
-      "36 horas de clases en el mes",
-      "3 clases a la semana de 3 horas (9 horas semanales)",
+      "36 horas de tutorías en el mes",
+      "3 tutorías a la semana de 3 horas (9 horas semanales)",
       "Enfoque total en certámenes de Cálculo, Álgebra y Física",
     ],
     price: "$600.000",

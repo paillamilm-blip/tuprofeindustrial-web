@@ -50,7 +50,7 @@ export function About() {
               enseñarla para que de verdad se entienda.
             </p>
             <p>
-              Vengo de dar clases particulares en{" "}
+              Vengo de dar tutorías en{" "}
               <a
                 href="https://www.superprof.cl/ingeniero-industrial-docente-scuola-italiana-preparacion-intensiva-paes-matematica-calculo-domicilio-santiago.html"
                 target="_blank"
@@ -60,7 +60,7 @@ export function About() {
                 Superprof
               </a>
               , donde cuento con perfil verificado y opiniones de alumnos reales. Hoy preparo cada
-              clase con herramientas de IA para detectar tus vacíos más rápido,
+              tutoría con herramientas de IA para detectar tus vacíos más rápido,
               personalizar el plan y aprovechar mejor tu tiempo de estudio.
             </p>
           </div>

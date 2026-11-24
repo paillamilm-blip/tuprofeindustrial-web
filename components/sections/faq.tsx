@@ -22,8 +22,8 @@ const FAQS = [
     a: "Sí, de forma online. Las clases a domicilio son en Santiago y alrededores; si vives en otra región, nos conectamos por videollamada y pizarra digital como si estuviera ahí. Igual escríbeme por WhatsApp con tu comuna y lo revisamos.",
   },
   {
-    q: "¿Cuánto cuestan las clases?",
-    a: "Tengo tres opciones claras con precios fijos:\n• Clase suelta: $20.000 por 1 hora de clase (a domicilio en Santiago u online).\n• Pack PAES: $100.000 por 6 horas de clase individual, con ensayos reales y resolución de dudas por WhatsApp entre clases.\n• Intensivo de Ingeniería: $600.000 por 36 horas de clase en el mes (9 horas a la semana, divididas en 3 clases de 3 horas) para salvar o asegurar ramos como Cálculo, Álgebra y Física.",
+    q: "¿Cuánto cuestan las tutorías?",
+    a: "Tengo tres opciones claras con aranceles transparentes:\n• Tutoría individual: $20.000 por 1 hora (a domicilio en Santiago u online).\n• Pack PAES: $100.000 por 6 horas de tutoría personalizada, con ensayos reales y resolución de dudas por WhatsApp.\n• Intensivo de Ingeniería: $600.000 por 36 horas de tutoría en el mes (9 horas a la semana, divididas en 3 sesiones de 3 horas) para salvar o asegurar ramos como Cálculo, Álgebra y Física.",
   },
   {
     q: "¿Qué horarios tienes disponibles?",
