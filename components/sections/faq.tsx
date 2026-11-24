@@ -23,7 +23,7 @@ const FAQS = [
   },
   {
     q: "¿Cuánto cuestan las clases?",
-    a: "La clase suelta individual (a domicilio en Santiago o 100% online) tiene un valor de $20.000 por hora pedagógica. Para la PAES contamos con el Entrenamiento PAES de 6 sesiones por $100.000 con ensayos comentados y resolución de dudas por WhatsApp. Para universitarios ofrecemos el Intensivo de Ingeniería de 36 horas al mes (9h semanales, 3 veces a la semana por 4 semanas) por $600.000 para asegurar ramos críticos como Cálculo, Álgebra y Física.",
+    a: "Tengo tres opciones claras con precios fijos:\n• Clase suelta: $20.000 por 1 hora de clase (a domicilio en Santiago u online).\n• Pack PAES: $100.000 por 6 horas de clase individual, con ensayos reales y resolución de dudas por WhatsApp entre clases.\n• Intensivo de Ingeniería: $600.000 por 36 horas de clase en el mes (9 horas a la semana, divididas en 3 clases de 3 horas) para salvar o asegurar ramos como Cálculo, Álgebra y Física.",
   },
   {
     q: "¿Qué horarios tienes disponibles?",
