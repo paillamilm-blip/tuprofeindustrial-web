@@ -1,402 +1,270 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useMemo, useSyncExternalStore } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
-  Calendar,
-  CheckCircle2,
-  AlertCircle,
   Clock,
   Copy,
   Check,
-  Share2,
-  MessageCircle,
+  CheckCircle2,
   DollarSign,
-  TrendingUp,
-  Target,
-  Sparkles,
-  Layers,
-  ChevronRight,
-  ExternalLink,
-  Users,
-  Film,
-  Image as ImageIcon,
   Flame,
   Award,
   Download,
   Package,
-  Eye,
+  Film,
+  ExternalLink,
 } from "lucide-react";
+import {
+  DAYS_DATA,
+  QUOTES_WA,
+  CONVOCATORIAS_BASE,
+  SUPERPROF_URL,
+  getSantiagoNow,
+  diffDaysFromIso,
+  type DayKey,
+  type ActionItem,
+} from "./grilla-data";
 
-interface ActionItem {
-  id: string;
-  time: string;
-  category: "video" | "story" | "carrusel" | "facebook" | "whatsapp";
-  role: "matias" | "agente";
-  title: string;
-  detail: string;
-  copyKey?: string;
-  status: "alerta" | "proceso" | "listo";
-  assetPreview?: {
-    type: "portada" | "story" | "carrusel";
-    url: string;
-    downloadUrl: string;
-    name: string;
+const DEFAULT_MIE25_JSON = JSON.stringify({
+  "mie-1230-video": true,
+  "mie-1300-story": true,
+});
+const DEFAULT_JUE26_JSON = "{}";
+const SERVER_TIME_KEY = "2026-11-25|1185|19:45";
+
+function subscribeStorage(callback: () => void) {
+  window.addEventListener("storage", callback);
+  window.addEventListener("tpi-tracking-update", callback);
+  return () => {
+    window.removeEventListener("storage", callback);
+    window.removeEventListener("tpi-tracking-update", callback);
   };
 }
 
+function getStorageSnapshot(day: DayKey): string {
+  try {
+    const val = localStorage.getItem(`tpi_tracking_${day}`);
+    if (val !== null) return val;
+  } catch {
+    // Fallback
+  }
+  return day === "mie25" ? DEFAULT_MIE25_JSON : DEFAULT_JUE26_JSON;
+}
+
+function subscribeClock(callback: () => void) {
+  const id = setInterval(callback, 30000);
+  return () => clearInterval(id);
+}
+
+function getClockSnapshot(): string {
+  const now = getSantiagoNow();
+  return `${now.isoDate}|${now.minutes}|${now.timeStr}`;
+}
+
+function getCategoryBadge(category: ActionItem["category"]) {
+  switch (category) {
+    case "video":
+      return (
+        <span className="text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200 px-1.5 py-0.5 rounded">
+          🎬 Video
+        </span>
+      );
+    case "story":
+      return (
+        <span className="text-[10px] font-bold bg-purple-50 text-purple-700 border border-purple-200 px-1.5 py-0.5 rounded">
+          📸 Story
+        </span>
+      );
+    case "facebook":
+      return (
+        <span className="text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200 px-1.5 py-0.5 rounded">
+          👥 Grupo FB
+        </span>
+      );
+    case "whatsapp":
+      return (
+        <span className="text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 px-1.5 py-0.5 rounded">
+          💬 WhatsApp
+        </span>
+      );
+    default:
+      return null;
+  }
+}
+
 export default function GrillaDecisionPage() {
-  const [activeTab, setActiveTab] = useState<"dia" | "semana" | "proyectos" | "productos">("dia");
+  const [activeTab, setActiveTab] = useState<"dia" | "productos" | "semana" | "proyectos">("dia");
+  const [dayOverride, setDayOverride] = useState<DayKey | null>(null);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
-  // Checklist persistente en localStorage para seguimiento en tiempo real
-  const [completedTasks, setCompletedTasks] = useState<Record<string, boolean>>({
-    "task-1230-video": true,
-    "task-1300-story": true,
-  });
+  const clockKey = useSyncExternalStore(
+    subscribeClock,
+    getClockSnapshot,
+    () => SERVER_TIME_KEY
+  );
+  const [isoDate, minsStr, timeStr] = clockKey.split("|");
+  const santiagoNow = {
+    isoDate,
+    minutes: Number(minsStr),
+    timeStr,
+  };
 
-  useEffect(() => {
+  const selectedDay: DayKey =
+    dayOverride ?? (santiagoNow.isoDate >= "2026-11-26" ? "jue26" : "mie25");
+
+  const rawCompletedJson = useSyncExternalStore(
+    subscribeStorage,
+    () => getStorageSnapshot(selectedDay),
+    () => (selectedDay === "mie25" ? DEFAULT_MIE25_JSON : DEFAULT_JUE26_JSON)
+  );
+
+  const completedMap = useMemo<Record<string, boolean>>(() => {
     try {
-      const saved = localStorage.getItem("tpi_tracking_mie25");
-      if (saved) {
-        setCompletedTasks(JSON.parse(saved));
-      }
-    } catch (e) {}
-  }, []);
+      return JSON.parse(rawCompletedJson) as Record<string, boolean>;
+    } catch {
+      return {};
+    }
+  }, [rawCompletedJson]);
 
   const toggleTask = (taskId: string) => {
-    setCompletedTasks((prev) => {
-      const next = { ...prev, [taskId]: !prev[taskId] };
-      try {
-        localStorage.setItem("tpi_tracking_mie25", JSON.stringify(next));
-      } catch (e) {}
-      return next;
-    });
+    const nextMap = { ...completedMap, [taskId]: !completedMap[taskId] };
+    try {
+      localStorage.setItem(`tpi_tracking_${selectedDay}`, JSON.stringify(nextMap));
+      window.dispatchEvent(new Event("tpi-tracking-update"));
+    } catch {
+      // Ignorar si localStorage no está disponible
+    }
   };
 
   const copyToClipboard = (key: string, text: string) => {
     navigator.clipboard.writeText(text);
     setCopiedKey(key);
-    setTimeout(() => setCopiedKey(null), 2500);
+    setTimeout(() => setCopiedKey(null), 2200);
   };
 
-  // Textos y plantillas oficiales
-  const copyIg1730 = `Si duplicas la arista de un cubo, ¿su volumen se duplica? ⚠️ ¡La trampa clásica de geometría 3D en la PAES!
+  const currentDayData = DAYS_DATA[selectedDay];
+  const dayTasks = currentDayData.actions;
 
-El volumen se mide en las tres direcciones del espacio: largo, ancho y alto:
-V = a · a · a = a³.
+  // Clasificación dinámica del semáforo según checkboxes y hora real de Santiago
+  const isTaskUrgent = (task: ActionItem): boolean => {
+    if (completedMap[task.id]) return false;
+    if (currentDayData.isoDate < santiagoNow.isoDate) return true;
+    if (currentDayData.isoDate > santiagoNow.isoDate) return false;
+    return task.minutesFromMidnight <= santiagoNow.minutes + 45;
+  };
 
-Al duplicar la arista (2a), el factor 2 también se eleva al cubo:
-V₂ = (2a)³ = 2³ · a³ = 8a³.
+  const completedCount = dayTasks.filter((t) => completedMap[t.id]).length;
+  const alertaTasks = dayTasks.filter((t) => !completedMap[t.id] && isTaskUrgent(t));
+  const procesoTasks = dayTasks.filter((t) => !completedMap[t.id] && !isTaskUrgent(t));
+  const progressPercent = Math.round((completedCount / dayTasks.length) * 100);
 
-El volumen NO crece al doble: ¡crece 8 VECES!
-Comprobación con números reales:
-• Arista 4 cm ➔ V = 4³ = 64 cm³
-• Arista 8 cm ➔ V = 8³ = 512 cm³ (512 / 64 = exactamente 8 veces).
-
-✍️ RETO RÁPIDO: Si triplicas la arista de un cubo, ¿cuántas veces crece su volumen?
-📩 Mándaselo a quien dé la PAES para que no caiga en el cazabobos.
-
-Creado con IA. #tuprofeindustrial #paesm1 #geometria #cuerposgeometricos #demre`;
-
-  const copyTikTok1730 = `¿Duplicas la arista de un cubo? ⚠️ ¡No es el doble! El volumen crece 8 veces (2³ = 8). Si triplicas la arista, ¿cuántas veces crece? Déjamelo en comentarios 👇 Creado con IA. #tuprofeindustrial #paesm1 #geometria #cuerposgeometricos #demre`;
-
-  const comment1730 = `📌 Tutorías personalizadas 1 a 1 de Geometría y PAES M1 ($20k / h · Pack PAES $100k). Envíame un mensaje interno (DM) para revisar cupos disponibles 📲`;
-
-  const copyStory1800 = `🚨 RETO RÁPIDO PAES:
-Si duplicas la medida de la arista de un cubo, su volumen:
-A) Se duplica (x2)
-B) Se cuadruplica (x4)
-C) Crece 8 veces (x8)
-👇 Vota en la encuesta (¡El 85% se equivoca por apurado!)`;
-
-  const copyGruposFbWa = `¡Hola a todos! 👋 Para los que están en la recta final de la PAES M1 (o apoderados con hijos rindiéndola este lunes), les comparto esta cápsula explicativa de 1 minuto sobre la trampa clásica de Geometría 3D: ¿qué pasa con el volumen al duplicar la arista? (No es el doble, ¡crece 8 veces!).
-
-👉 Pueden ver la explicación paso a paso en: https://www.instagram.com/tuprofeindustrial/ o en TikTok @tuprofeindustrial
-
-Además, como docente e Ingeniero Civil Industrial, abrí los últimos 3 cupos para tutorías personalizadas intensivas de última semana ($20.000/h o Pack PAES de 6h a $100.000). Si alguien necesita reforzar, me puede escribir por interno. ¡Mucho éxito a todos! 🎯`;
-
-  const copyNoche2115 = `¿Por qué 1 / 0 rompe las matemáticas? 🌙 La gráfica de 1/x explota a +infinito y -infinito al mismo tiempo. ¿Cuánto da 0 / 0? Comenta tu teoría 👇 Creado con IA. #tuprofeindustrial #datosnocturnos #calculo #algebra #cienciachile`;
-
-  const waTutoria = `¡Hola! Con mucho gusto te puedo apoyar. La tutoría personalizada de 1 hora tiene un valor de $20.000 CLP (online o a domicilio en Santiago). Revisamos dudas puntuales, ejercicios tipo PAES y reforzamos la base paso a paso. ¿Qué día y horario te acomoda más coordinar?`;
-
-  const waPackPaes = `¡Hola! Para esta recta final te recomiendo directamente el Pack PAES: son 6 horas de tutorías personalizadas intensivas por $100.000 CLP (ahorras $20.000 frente a la hora individual). Trabajamos resolución de ensayos, trampas clásicas DEMRE y manejo de tiempo pregunta a pregunta. ¿Te gustaría agendar la primera sesión esta semana?`;
-
-  const waIngenieria = `¡Hola! El programa Intensivo de Ingeniería incluye 36 horas mensuales de acompañamiento integral (Cálculo diferencial/integral, Álgebra Lineal, Física y Nivelación universitaria) por $600.000 CLP al mes, con soporte continuo por WhatsApp para resolución de dudas. Cuéntame qué ramos estás cursando para diseñar tu plan de estudio.`;
-
-  // Lista de acciones del día Miércoles 25
-  const dailyActions: ActionItem[] = [
-    {
-      id: "task-1230-video",
-      time: "12:30",
-      category: "video",
-      role: "matias",
-      title: "Video Álgebra: Discriminante Δ = b² - 4ac",
-      detail: "Test de 5s para saber si tiene 2, 1 o 0 soluciones. Subir a Reels y TikTok.",
-      status: "listo",
-      assetPreview: {
-        type: "portada",
-        url: "/motor-assets/portadas/MIERCOLES-1230-portada-discriminante.jpg",
-        downloadUrl: "/motor-assets/portadas/MIERCOLES-1230-portada-discriminante.jpg",
-        name: "Portada 12:30 Discriminante",
-      },
-    },
-    {
-      id: "task-1300-story",
-      time: "13:00",
-      category: "story",
-      role: "matias",
-      title: "Story Encuesta Interacción",
-      detail: "Pregunta en Instagram Stories sobre si Δ > 0 corta en 1 o 2 puntos.",
-      status: "listo",
-      assetPreview: {
-        type: "story",
-        url: "/motor-assets/historias/miercoles-1230-historia-01-encuesta.png",
-        downloadUrl: "/motor-assets/historias/miercoles-1230-historia-01-encuesta.png",
-        name: "Historia 13:00 Encuesta",
-      },
-    },
-    {
-      id: "task-1730-video",
-      time: "17:30",
-      category: "video",
-      role: "matias",
-      title: "Video Geometría 3D: Duplica la Arista (Volumen)",
-      detail: "Trampa mortal PAES. Video 62.8s con cubo y 8 subcubos (2³=8). Listo en Mac.",
-      copyKey: "ig1730",
-      status: "alerta",
-      assetPreview: {
-        type: "portada",
-        url: "/motor-assets/portadas/MIERCOLES-1730-portada-duplica-arista.jpg",
-        downloadUrl: "/motor-assets/portadas/MIERCOLES-1730-portada-duplica-arista.jpg",
-        name: "Portada 17:30 Duplica Arista",
-      },
-    },
-    {
-      id: "task-1800-story",
-      time: "18:00",
-      category: "story",
-      role: "matias",
-      title: "Story Reto Arista vs Volumen (Sticker de encuesta)",
-      detail: "Subir sticker interactivo: ¿El volumen crece el doble o 8 veces?",
-      copyKey: "story1800",
-      status: "alerta",
-      assetPreview: {
-        type: "story",
-        url: "/motor-assets/historias/miercoles-1730-historia-01-encuesta.png",
-        downloadUrl: "/motor-assets/historias/miercoles-1730-historia-01-encuesta.png",
-        name: "Historia 18:00 Encuesta Arista",
-      },
-    },
-    {
-      id: "task-1830-fb",
-      time: "18:30",
-      category: "facebook",
-      role: "matias",
-      title: "Difusión en Grupos de Facebook Apoderados",
-      detail: "Compartir cápsula de geometría en grupos de Las Condes, Providencia, Maipú.",
-      copyKey: "gruposFbWa",
-      status: "proceso",
-    },
-    {
-      id: "task-1900-wa",
-      time: "19:00",
-      category: "whatsapp",
-      role: "matias",
-      title: "Difusión en Comunidades de WhatsApp",
-      detail: "Mandar mensaje de valor + cupos de tutorías a grupos de estudio PAES.",
-      copyKey: "gruposFbWa",
-      status: "proceso",
-    },
-    {
-      id: "task-2115-video",
-      time: "21:15",
-      category: "video",
-      role: "matias",
-      title: "Dato Nocturno 05: ¿Por qué 1 / 0 rompe las matemáticas?",
-      detail: "Asíntota hiperbólica 1/x y el infinito. Video 53.3s listo en Mac.",
-      copyKey: "noche2115",
-      status: "proceso",
-      assetPreview: {
-        type: "portada",
-        url: "/motor-assets/portadas/MIERCOLES-2115-portada-dividir-por-cero.jpg",
-        downloadUrl: "/motor-assets/portadas/MIERCOLES-2115-portada-dividir-por-cero.jpg",
-        name: "Portada 21:15 Dividir por 0",
-      },
-    },
-    {
-      id: "task-2130-story",
-      time: "21:30",
-      category: "story",
-      role: "matias",
-      title: "Story Cierre de Conversión (Pack PAES $100k)",
-      detail: "Llamado directo a DM para agendar los últimos cupos del Pack PAES.",
-      status: "proceso",
-      assetPreview: {
-        type: "story",
-        url: "/motor-assets/historias/miercoles-1730-historia-02-clases.png",
-        downloadUrl: "/motor-assets/historias/miercoles-1730-historia-02-clases.png",
-        name: "Historia 21:30 Flyer Clases",
-      },
-    },
-  ];
-
-  // Cálculo de progreso del día
-  const totalTasks = dailyActions.length;
-  const completedCount = dailyActions.filter((a) => completedTasks[a.id]).length;
-  const progressPercent = Math.round((completedCount / totalTasks) * 100);
-
-  // Radar de fondos y proyectos
-  const convocatorias = [
-    {
-      nombre: "Rendición PAES Regular 2026",
-      entidad: "DEMRE / Mineduc",
-      dias: 5,
-      fecha: "30-Nov-2026",
-      monto: "Ingreso Universidad 2027",
-      estado: "alerta",
-      accion: "Captación intensiva de última semana ($100k Pack PAES).",
-    },
-    {
-      nombre: "CORFO: Semilla Inicia",
-      entidad: "CORFO (Llamado Nacional)",
-      dias: 115,
-      fecha: "20-Mar-2027",
-      monto: "$15.000.000 CLP",
-      estado: "proceso",
-      accion: "Validar tracción de descargas del dossier y métricas de videos en redes.",
-    },
-    {
-      nombre: "Start-Up Chile: Build (Cohorte 1)",
-      entidad: "Start-Up Chile / CORFO",
-      dias: 141,
-      fecha: "15-Abr-2027",
-      monto: "$15.000.000 CLP",
-      estado: "proceso",
-      accion: "Tener video pitch de 90s mostrando el motor automatizado EdTech.",
-    },
-    {
-      nombre: "Sercotec: Capital Semilla Emprende",
-      entidad: "Sercotec Santiago",
-      dias: 151,
-      fecha: "25-Abr-2027",
-      monto: "$3.500.000 CLP",
-      estado: "listo",
-      accion: "Cotizaciones de equipamiento y formalización de empresa.",
-    },
-    {
-      nombre: "Santander X Award Chile",
-      entidad: "Banco Santander",
-      dias: 157,
-      fecha: "01-May-2027",
-      monto: "Capital + Aceleración",
-      estado: "listo",
-      accion: "Registrar perfil del proyecto en la plataforma Santander X.",
-    },
-  ];
+  const nextPriorityTask = alertaTasks[0] ?? procesoTasks[0] ?? null;
+  const isAllDone = completedCount === dayTasks.length;
+  const paesDaysLeft = diffDaysFromIso(santiagoNow.isoDate, "2026-11-30");
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans pb-24 antialiased selection:bg-amber-100 selection:text-amber-900">
-      {/* ======================================================== */}
-      {/* TOPBAR CLARA DE ALTA VISIBILIDAD                         */}
-      {/* ======================================================== */}
-      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 px-4 py-3 shadow-xs">
+      {/* TOPBAR CLARA DE ALTA VISIBILIDAD */}
+      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 px-4 py-2.5 shadow-xs">
         <div className="max-w-md mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
             <span className="font-extrabold text-sm tracking-tight text-slate-900">
               @tuprofeindustrial
             </span>
-            <span className="text-[10px] font-bold bg-slate-100 text-slate-600 border border-slate-200 px-1.5 py-0.5 rounded">
-              Motor TPI V2
+            <span className="text-[10px] font-bold bg-slate-100 text-slate-600 border border-slate-200 px-1.5 py-0.5 rounded font-mono">
+              {santiagoNow.timeStr} CLT
             </span>
           </div>
 
-          <div className="flex items-center gap-1.5 text-xs font-bold text-red-700 bg-red-50 border border-red-200 px-2 py-0.5 rounded-full">
+          <div className="flex items-center gap-1 text-xs font-bold text-red-700 bg-red-50 border border-red-200 px-2 py-0.5 rounded-full">
             <Clock className="w-3.5 h-3.5 text-red-600" />
-            <span>PAES: 5 DÍAS</span>
+            <span>PAES: {paesDaysLeft} DÍAS</span>
           </div>
         </div>
       </header>
 
-      {/* ======================================================== */}
-      {/* 4 PESTAÑAS: DÍA | SEMANA | PRODUCTOS MOTOR | PROYECTOS   */}
-      {/* ======================================================== */}
-      <div className="bg-white border-b border-slate-200 px-3 py-2 sticky top-[49px] z-40">
+      {/* 4 PESTAÑAS PRINCIPALES */}
+      <div className="bg-white border-b border-slate-200 px-3 py-2 sticky top-[45px] z-40">
         <div className="max-w-md mx-auto grid grid-cols-4 gap-1 p-1 bg-slate-100 rounded-lg">
-          <button
-            onClick={() => setActiveTab("dia")}
-            className={`py-2 text-[11px] font-extrabold rounded-md transition flex flex-col items-center justify-center ${
-              activeTab === "dia"
-                ? "bg-white text-slate-900 shadow-xs"
-                : "text-slate-600 hover:text-slate-900"
-            }`}
-          >
-            <span>Hoy</span>
-            <span className="text-[9px] font-mono text-amber-700">Mié 25</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab("productos")}
-            className={`py-2 text-[11px] font-extrabold rounded-md transition flex flex-col items-center justify-center ${
-              activeTab === "productos"
-                ? "bg-white text-slate-900 shadow-xs"
-                : "text-slate-600 hover:text-slate-900"
-            }`}
-          >
-            <span>Productos</span>
-            <span className="text-[9px] font-mono text-purple-700">Descargas</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab("semana")}
-            className={`py-2 text-[11px] font-extrabold rounded-md transition flex flex-col items-center justify-center ${
-              activeTab === "semana"
-                ? "bg-white text-slate-900 shadow-xs"
-                : "text-slate-600 hover:text-slate-900"
-            }`}
-          >
-            <span>Semana</span>
-            <span className="text-[9px] font-mono text-blue-700">Semana 2</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab("proyectos")}
-            className={`py-2 text-[11px] font-extrabold rounded-md transition flex flex-col items-center justify-center ${
-              activeTab === "proyectos"
-                ? "bg-white text-slate-900 shadow-xs"
-                : "text-slate-600 hover:text-slate-900"
-            }`}
-          >
-            <span>Proyectos</span>
-            <span className="text-[9px] font-mono text-emerald-700">Fondos</span>
-          </button>
+          {[
+            { id: "dia" as const, title: "Hoy / Día", sub: currentDayData.shortLabel, tone: "text-amber-700" },
+            { id: "productos" as const, title: "Productos", sub: "MP4 + PNG", tone: "text-purple-700" },
+            { id: "semana" as const, title: "Semana", sub: "23–29 Nov", tone: "text-blue-700" },
+            { id: "proyectos" as const, title: "Proyectos", sub: "Fondos", tone: "text-emerald-700" },
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`py-1.5 text-[11px] font-extrabold rounded-md transition flex flex-col items-center justify-center ${
+                activeTab === tab.id
+                  ? "bg-white text-slate-900 shadow-xs"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              <span>{tab.title}</span>
+              <span className={`text-[9px] font-mono ${tab.tone}`}>{tab.sub}</span>
+            </button>
+          ))}
         </div>
+
+        {/* SELECTOR DE DÍA (Mié 25 | Jue 26) visible en Hoy y Productos */}
+        {(activeTab === "dia" || activeTab === "productos") && (
+          <div className="max-w-md mx-auto grid grid-cols-2 gap-1.5 mt-2">
+            {(["mie25", "jue26"] as DayKey[]).map((key) => {
+              const d = DAYS_DATA[key];
+              const active = selectedDay === key;
+              return (
+                <button
+                  key={key}
+                  onClick={() => setDayOverride(key)}
+                  className={`py-1.5 px-2 rounded-md text-xs font-extrabold border transition flex items-center justify-center gap-1.5 ${
+                    active
+                      ? "bg-slate-900 text-white border-slate-900"
+                      : "bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100"
+                  }`}
+                >
+                  <span>{d.fullLabel}</span>
+                  {d.isoDate === santiagoNow.isoDate && (
+                    <span
+                      className={`text-[9px] px-1 rounded font-mono ${
+                        active ? "bg-emerald-500 text-black" : "bg-emerald-100 text-emerald-800"
+                      }`}
+                    >
+                      HOY
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       <main className="max-w-md mx-auto px-4 pt-3.5 space-y-4">
         {/* ======================================================== */}
-        {/* VISTA 1: PROGRAMACIÓN COMPLETA DEL DÍA (HOY)             */}
+        {/* VISTA 1: PROGRAMACIÓN COMPLETA DEL DÍA SELECCIONADO      */}
         {/* ======================================================== */}
         {activeTab === "dia" && (
           <>
-            {/* SEMÁFORO DE RESUMEN Y BARRA DE PROGRESO */}
+            {/* SEMÁFORO 100% DINÁMICO Y BARRA DE PROGRESO */}
             <section className="bg-white border border-slate-200 rounded-xl p-3.5 shadow-xs space-y-2.5">
               <div className="flex items-center justify-between">
                 <div>
                   <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wide">
-                    Ejecución Miércoles 25 Nov
+                    Ejecución {currentDayData.fullLabel}
                   </div>
                   <div className="text-base font-extrabold text-slate-900">
-                    {completedCount} de {totalTasks} Acciones Completadas
+                    {completedCount} de {dayTasks.length} Acciones Listas
                   </div>
                 </div>
-                <span className="text-sm font-extrabold font-mono text-emerald-600 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md">
+                <span className="text-sm font-extrabold font-mono text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md">
                   {progressPercent}%
                 </span>
               </div>
 
-              {/* Barra de progreso */}
               <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden border border-slate-200">
                 <div
                   className="bg-emerald-500 h-2 rounded-full transition-all duration-300"
@@ -404,7 +272,7 @@ Además, como docente e Ingeniero Civil Industrial, abrí los últimos 3 cupos p
                 />
               </div>
 
-              {/* Semáforo badges */}
+              {/* Semáforo calculado en vivo */}
               <div className="grid grid-cols-3 gap-1.5 pt-1 text-[11px] font-bold text-center">
                 <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 py-1 px-1 rounded flex items-center justify-center gap-1">
                   <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" />
@@ -412,159 +280,165 @@ Además, como docente e Ingeniero Civil Industrial, abrí los últimos 3 cupos p
                 </div>
                 <div className="bg-amber-50 border border-amber-200 text-amber-800 py-1 px-1 rounded flex items-center justify-center gap-1">
                   <span className="w-2 h-2 rounded-full bg-amber-500 inline-block" />
-                  <span>3 En Proceso</span>
+                  <span>{procesoTasks.length} En Proceso</span>
                 </div>
-                <div className="bg-red-50 border border-red-200 text-red-800 py-1 px-1 rounded flex items-center justify-center gap-1">
-                  <span className="w-2 h-2 rounded-full bg-red-500 animate-ping inline-block" />
-                  <span>2 En Alerta</span>
-                </div>
-              </div>
-            </section>
-
-            {/* ALERTA CRÍTICA INMINENTE (17:30 - GEOMETRÍA 3D) */}
-            <section className="bg-red-50 border-2 border-red-500 rounded-xl p-4 shadow-sm relative overflow-hidden">
-              <div className="flex items-center justify-between mb-2">
-                <div className="bg-red-600 text-white text-[11px] font-black uppercase px-2.5 py-0.5 rounded-md flex items-center gap-1 tracking-wider shadow-xs">
-                  <Flame className="w-3.5 h-3.5" />
-                  <span>🔴 EN ALERTA · ACCIÓN AHORA</span>
-                </div>
-                <span className="text-xs font-mono font-extrabold text-red-800 bg-white border border-red-200 px-2 py-0.5 rounded">
-                  17:30 HRS
-                </span>
-              </div>
-
-              <h2 className="text-base font-extrabold text-slate-900 leading-snug mb-1">
-                Video 17:30: Duplica la arista (Geometría 3D)
-              </h2>
-              <p className="text-xs text-slate-700 mb-2 leading-relaxed">
-                ¿Crece el doble o 8 veces? Trampa mortal PAES. Video listo en tu Mac (
-                <code className="text-red-700 bg-red-100 px-1 py-0.5 rounded text-[11px] font-mono">
-                  MIERCOLES-1730-video-duplica-arista.mp4
-                </code>
-                ).
-              </p>
-
-              {/* Miniatura de Portada Conectada */}
-              <div className="my-3 p-2 bg-white rounded-lg border border-red-200 flex items-center gap-3">
-                <img
-                  src="/motor-assets/portadas/MIERCOLES-1730-portada-duplica-arista.jpg"
-                  alt="Portada 17:30"
-                  className="w-14 h-20 object-cover rounded border border-slate-200 shrink-0"
-                />
-                <div className="flex-1 min-w-0">
-                  <div className="text-xs font-extrabold text-slate-900 truncate">
-                    Portada Horneada Frame 0
-                  </div>
-                  <div className="text-[10px] text-slate-500 mb-2">
-                    Lista para usar en Reels / TikTok
-                  </div>
-                  <a
-                    href="/motor-assets/portadas/MIERCOLES-1730-portada-duplica-arista.jpg"
-                    download="MIERCOLES-1730-portada-duplica-arista.jpg"
-                    className="inline-flex items-center gap-1 text-[11px] font-extrabold text-red-700 bg-red-100 hover:bg-red-200 px-2.5 py-1 rounded transition"
-                  >
-                    <Download className="w-3 h-3" /> Descargar al Celular
-                  </a>
-                </div>
-              </div>
-
-              {/* Botones de Copiado Rápido */}
-              <div className="space-y-2">
-                <button
-                  onClick={() => copyToClipboard("ig1730", copyIg1730)}
-                  className="w-full bg-red-600 hover:bg-red-700 active:scale-[0.99] transition text-white text-xs font-extrabold py-2.5 px-3 rounded-lg flex items-center justify-between shadow-xs"
+                <div
+                  className={`py-1 px-1 rounded flex items-center justify-center gap-1 border ${
+                    alertaTasks.length > 0
+                      ? "bg-red-50 border-red-300 text-red-800"
+                      : "bg-slate-50 border-slate-200 text-slate-500"
+                  }`}
                 >
-                  <span className="flex items-center gap-1.5">
-                    <Share2 className="w-3.5 h-3.5" />
-                    Copiar Copy Completo Instagram (Reel)
-                  </span>
-                  {copiedKey === "ig1730" ? (
-                    <span className="bg-white text-red-700 text-[10px] font-black px-1.5 py-0.5 rounded">
-                      ¡COPIADO!
-                    </span>
-                  ) : (
-                    <Copy className="w-3.5 h-3.5" />
-                  )}
-                </button>
-
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    onClick={() => copyToClipboard("tk1730", copyTikTok1730)}
-                    className="bg-white hover:bg-slate-50 border border-slate-300 text-slate-800 text-xs font-bold py-2 px-2.5 rounded-lg flex items-center justify-between"
-                  >
-                    <span>📱 Copy TikTok (5 tags)</span>
-                    {copiedKey === "tk1730" ? (
-                      <Check className="w-3 h-3 text-emerald-600" />
-                    ) : (
-                      <Copy className="w-3 h-3 text-slate-400" />
-                    )}
-                  </button>
-
-                  <button
-                    onClick={() => copyToClipboard("pin1730", comment1730)}
-                    className="bg-white hover:bg-slate-50 border border-slate-300 text-emerald-700 text-xs font-bold py-2 px-2.5 rounded-lg flex items-center justify-between"
-                  >
-                    <span>📌 Comentario Fijado</span>
-                    {copiedKey === "pin1730" ? (
-                      <Check className="w-3 h-3 text-emerald-600" />
-                    ) : (
-                      <Copy className="w-3 h-3 text-slate-400" />
-                    )}
-                  </button>
+                  <span
+                    className={`w-2 h-2 rounded-full inline-block ${
+                      alertaTasks.length > 0 ? "bg-red-500 animate-ping" : "bg-slate-300"
+                    }`}
+                  />
+                  <span>{alertaTasks.length} En Alerta</span>
                 </div>
               </div>
             </section>
 
-            {/* CHECKLIST COMPLETO DEL DÍA (CON ACTIVOS VISUALES) */}
+            {/* TARJETA DINÁMICA DE SIGUIENTE DECISIÓN */}
+            {isAllDone ? (
+              <section className="bg-emerald-50 border-2 border-emerald-500 rounded-xl p-4 shadow-xs">
+                <div className="flex items-center gap-2 text-emerald-800 font-black text-sm mb-1">
+                  <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+                  <span>🟢 ¡{currentDayData.fullLabel.toUpperCase()} 100% COMPLETADO!</span>
+                </div>
+                <p className="text-xs text-emerald-700">
+                  Todas las acciones del día están marcadas como subidas. Puedes revisar el día
+                  siguiente o monitorear cotizaciones.
+                </p>
+              </section>
+            ) : nextPriorityTask ? (
+              <section
+                className={`border-2 rounded-xl p-4 shadow-sm relative overflow-hidden ${
+                  alertaTasks.length > 0
+                    ? "bg-red-50 border-red-500"
+                    : "bg-amber-50 border-amber-400"
+                }`}
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <div
+                    className={`text-white text-[11px] font-black uppercase px-2.5 py-0.5 rounded-md flex items-center gap-1 tracking-wider shadow-xs ${
+                      alertaTasks.length > 0 ? "bg-red-600" : "bg-amber-600"
+                    }`}
+                  >
+                    <Flame className="w-3.5 h-3.5" />
+                    <span>
+                      {alertaTasks.length > 0
+                        ? "🔴 EN ALERTA · SIGUIENTE ACCIÓN"
+                        : "🟡 PRÓXIMO EN AGENDA"}
+                    </span>
+                  </div>
+                  <span className="text-xs font-mono font-extrabold text-slate-800 bg-white border border-slate-200 px-2 py-0.5 rounded">
+                    {nextPriorityTask.time} HRS
+                  </span>
+                </div>
+
+                <h2 className="text-base font-extrabold text-slate-900 leading-snug mb-1">
+                  {nextPriorityTask.title}
+                </h2>
+                <p className="text-xs text-slate-700 mb-3 leading-relaxed">
+                  {nextPriorityTask.detail}
+                </p>
+
+                {/* Preview de Portada / Story + Descarga MP4 si aplica */}
+                {(nextPriorityTask.assetPreview || nextPriorityTask.videoDownloadUrl) && (
+                  <div className="mb-3 p-2.5 bg-white rounded-lg border border-slate-200 flex items-center gap-3">
+                    {nextPriorityTask.assetPreview && (
+                      <Image
+                        src={nextPriorityTask.assetPreview.url}
+                        alt={nextPriorityTask.assetPreview.name}
+                        width={48}
+                        height={64}
+                        unoptimized
+                        className="w-12 h-16 object-cover rounded border border-slate-200 shrink-0"
+                      />
+                    )}
+                    <div className="flex-1 min-w-0 space-y-1.5">
+                      {nextPriorityTask.videoDownloadUrl && (
+                        <a
+                          href={nextPriorityTask.videoDownloadUrl}
+                          download
+                          className="w-full inline-flex items-center justify-center gap-1.5 text-[11px] font-black text-white bg-slate-900 hover:bg-slate-800 px-2.5 py-1.5 rounded transition"
+                        >
+                          <Film className="w-3.5 h-3.5" /> Descargar Video MP4 al Celular
+                        </a>
+                      )}
+                      {nextPriorityTask.assetPreview && (
+                        <a
+                          href={nextPriorityTask.assetPreview.downloadUrl}
+                          download
+                          className="w-full inline-flex items-center justify-center gap-1 text-[11px] font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 px-2.5 py-1 rounded transition"
+                        >
+                          <Download className="w-3 h-3" /> Bajar{" "}
+                          {nextPriorityTask.assetPreview.name}
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Botones de copiado de esa tarea */}
+                {nextPriorityTask.copies && nextPriorityTask.copies.length > 0 && (
+                  <div className="space-y-1.5">
+                    {nextPriorityTask.copies.map((c) => (
+                      <button
+                        key={c.key}
+                        onClick={() => copyToClipboard(c.key, c.text)}
+                        className={`w-full text-xs font-extrabold py-2 px-3 rounded-lg flex items-center justify-between transition active:scale-[0.99] ${
+                          c.tone === "primary"
+                            ? "bg-red-600 hover:bg-red-700 text-white"
+                            : c.tone === "green"
+                            ? "bg-emerald-600 hover:bg-emerald-700 text-white"
+                            : "bg-white hover:bg-slate-50 border border-slate-300 text-slate-800"
+                        }`}
+                      >
+                        <span>{c.label}</span>
+                        {copiedKey === c.key ? (
+                          <span className="text-[10px] font-black bg-white/90 text-slate-900 px-1.5 py-0.5 rounded">
+                            ¡COPIADO!
+                          </span>
+                        ) : (
+                          <Copy className="w-3.5 h-3.5 opacity-80" />
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                <button
+                  onClick={() => toggleTask(nextPriorityTask.id)}
+                  className="mt-3 w-full bg-white/90 hover:bg-white border border-slate-300 text-slate-800 text-[11px] font-extrabold py-1.5 px-3 rounded-lg flex items-center justify-center gap-1.5"
+                >
+                  <Check className="w-3.5 h-3.5 text-emerald-600" />
+                  Marcar esta acción como subida
+                </button>
+              </section>
+            ) : null}
+
+            {/* CRONOGRAMA COMPLETO INTERACTIVO */}
             <section className="bg-white border border-slate-200 rounded-xl p-4 shadow-xs space-y-3">
               <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                 <div>
                   <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-900">
-                    Cronograma Detallado de Hoy
+                    Cronograma {currentDayData.fullLabel}
                   </h3>
                   <div className="text-[11px] text-slate-500">
-                    Toca la casilla cuando lo hayas publicado
+                    Toca la casilla cuando lo hayas subido
                   </div>
                 </div>
                 <span className="text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">
-                  8 Tareas
+                  {dayTasks.length} Acciones
                 </span>
               </div>
 
               <div className="space-y-2.5">
-                {dailyActions.map((action) => {
-                  const isChecked = !!completedTasks[action.id];
-
-                  const getCategoryBadge = () => {
-                    switch (action.category) {
-                      case "video":
-                        return (
-                          <span className="text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200 px-1.5 py-0.5 rounded">
-                            🎬 Video
-                          </span>
-                        );
-                      case "story":
-                        return (
-                          <span className="text-[10px] font-bold bg-purple-50 text-purple-700 border border-purple-200 px-1.5 py-0.5 rounded">
-                            📸 Story
-                          </span>
-                        );
-                      case "facebook":
-                        return (
-                          <span className="text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200 px-1.5 py-0.5 rounded">
-                            👥 Grupo FB
-                          </span>
-                        );
-                      case "whatsapp":
-                        return (
-                          <span className="text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 px-1.5 py-0.5 rounded">
-                            💬 WhatsApp
-                          </span>
-                        );
-                      default:
-                        return null;
-                    }
-                  };
+                {dayTasks.map((action) => {
+                  const isChecked = !!completedMap[action.id];
+                  const urgent = isTaskUrgent(action);
 
                   return (
                     <div
@@ -572,7 +446,7 @@ Además, como docente e Ingeniero Civil Industrial, abrí los últimos 3 cupos p
                       className={`p-3 rounded-lg border transition ${
                         isChecked
                           ? "bg-slate-50/70 border-slate-200 opacity-60"
-                          : action.status === "alerta"
+                          : urgent
                           ? "bg-red-50/40 border-red-300"
                           : "bg-white border-slate-200 hover:border-slate-300"
                       }`}
@@ -580,6 +454,7 @@ Además, como docente e Ingeniero Civil Industrial, abrí los últimos 3 cupos p
                       <div className="flex items-start gap-2.5">
                         <button
                           onClick={() => toggleTask(action.id)}
+                          aria-label={`Marcar ${action.title}`}
                           className={`mt-0.5 w-5 h-5 rounded-md flex items-center justify-center border transition shrink-0 ${
                             isChecked
                               ? "bg-emerald-600 border-emerald-600 text-white"
@@ -590,13 +465,17 @@ Además, como docente e Ingeniero Civil Industrial, abrí los últimos 3 cupos p
                         </button>
 
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 flex-wrap mb-1">
+                          <div className="flex items-center gap-1.5 flex-wrap mb-1">
                             <span className="font-mono font-bold text-xs text-slate-800">
                               {action.time}
                             </span>
-                            {getCategoryBadge()}
+                            {getCategoryBadge(action.category)}
                             <span className="text-[10px] font-semibold text-slate-500">
-                              {action.role === "matias" ? "👤 Tú ejecutas" : "🤖 IA produce"}
+                              {isChecked
+                                ? "🟢 Listo"
+                                : urgent
+                                ? "🔴 En Alerta"
+                                : "🟡 En Proceso"}
                             </span>
                           </div>
 
@@ -612,47 +491,60 @@ Además, como docente e Ingeniero Civil Industrial, abrí los últimos 3 cupos p
                             {action.detail}
                           </div>
 
-                          {/* Previsualización de Imagen Conectada */}
-                          {action.assetPreview && !isChecked && (
+                          {/* Previsualización y descarga rápida cuando está pendiente */}
+                          {!isChecked && (action.assetPreview || action.videoDownloadUrl) && (
                             <div className="mt-2.5 p-2 bg-slate-50 rounded-lg border border-slate-200 flex items-center justify-between gap-2">
                               <div className="flex items-center gap-2 min-w-0">
-                                <img
-                                  src={action.assetPreview.url}
-                                  alt={action.assetPreview.name}
-                                  className="w-10 h-14 object-cover rounded border border-slate-300 shrink-0"
-                                />
-                                <div className="truncate text-[11px] font-bold text-slate-700">
-                                  {action.assetPreview.name}
+                                {action.assetPreview && (
+                                  <Image
+                                    src={action.assetPreview.url}
+                                    alt={action.assetPreview.name}
+                                    width={36}
+                                    height={48}
+                                    unoptimized
+                                    className="w-9 h-12 object-cover rounded border border-slate-300 shrink-0"
+                                  />
+                                )}
+                                <div className="truncate text-[10.5px] font-bold text-slate-700">
+                                  {action.assetPreview?.name || action.videoLabel}
                                 </div>
                               </div>
-                              <a
-                                href={action.assetPreview.downloadUrl}
-                                download
-                                className="shrink-0 text-[11px] font-bold text-blue-700 bg-blue-50 border border-blue-200 hover:bg-blue-100 px-2 py-1 rounded flex items-center gap-1 transition"
-                              >
-                                <Download className="w-3 h-3" /> Descargar
-                              </a>
+                              <div className="flex flex-col gap-1 shrink-0">
+                                {action.videoDownloadUrl && (
+                                  <a
+                                    href={action.videoDownloadUrl}
+                                    download
+                                    className="text-[10px] font-extrabold text-white bg-slate-900 hover:bg-slate-800 px-2 py-1 rounded flex items-center gap-1"
+                                  >
+                                    <Film className="w-2.5 h-2.5" /> MP4
+                                  </a>
+                                )}
+                                {action.assetPreview && (
+                                  <a
+                                    href={action.assetPreview.downloadUrl}
+                                    download
+                                    className="text-[10px] font-bold text-blue-700 bg-blue-50 border border-blue-200 hover:bg-blue-100 px-2 py-1 rounded flex items-center gap-1"
+                                  >
+                                    <Download className="w-2.5 h-2.5" /> Imagen
+                                  </a>
+                                )}
+                              </div>
                             </div>
                           )}
 
-                          {/* Botón rápido si tiene copy asociado */}
-                          {action.copyKey && !isChecked && (
-                            <div className="mt-2 pt-1.5 border-t border-slate-100 flex items-center justify-between">
-                              <span className="text-[10px] font-bold text-slate-400 uppercase">
-                                Copy preparado
-                              </span>
-                              <button
-                                onClick={() => {
-                                  if (action.copyKey === "ig1730") copyToClipboard("ig1730", copyIg1730);
-                                  if (action.copyKey === "story1800") copyToClipboard("story1800", copyStory1800);
-                                  if (action.copyKey === "gruposFbWa") copyToClipboard("gruposFbWa", copyGruposFbWa);
-                                  if (action.copyKey === "noche2115") copyToClipboard("noche2115", copyNoche2115);
-                                }}
-                                className="text-[11px] font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1 active:scale-95"
-                              >
-                                <Copy className="w-3 h-3" />
-                                {copiedKey === action.copyKey ? "¡Copiado!" : "Copiar texto"}
-                              </button>
+                          {/* Botones de copia rápida */}
+                          {!isChecked && action.copies && action.copies.length > 0 && (
+                            <div className="mt-2 pt-1.5 border-t border-slate-100 flex flex-wrap gap-1.5">
+                              {action.copies.map((c) => (
+                                <button
+                                  key={c.key}
+                                  onClick={() => copyToClipboard(c.key, c.text)}
+                                  className="text-[10.5px] font-bold text-blue-700 bg-blue-50/70 hover:bg-blue-100 border border-blue-200 px-2 py-1 rounded flex items-center gap-1 active:scale-95"
+                                >
+                                  <Copy className="w-2.5 h-2.5" />
+                                  {copiedKey === c.key ? "¡Copiado!" : c.label}
+                                </button>
+                              ))}
                             </div>
                           )}
                         </div>
@@ -663,77 +555,70 @@ Además, como docente e Ingeniero Civil Industrial, abrí los últimos 3 cupos p
               </div>
             </section>
 
-            {/* SECCIÓN RESPUESTAS RÁPIDAS (TUTORÍAS & PRECIOS) */}
+            {/* RESPUESTAS RÁPIDAS PARA COTIZACIONES WHATSAPP */}
             <section className="bg-white border border-slate-200 rounded-xl p-4 shadow-xs space-y-3">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-900 flex items-center gap-1">
-                    <DollarSign className="w-4 h-4 text-emerald-600" />
-                    Respuestas Rápidas para Cotizaciones
-                  </h3>
-                  <div className="text-[11px] text-slate-500">
-                    Copia y envía directo cuando te pregunten por WhatsApp
-                  </div>
+              <div>
+                <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-900 flex items-center gap-1">
+                  <DollarSign className="w-4 h-4 text-emerald-600" />
+                  Respuestas Rápidas para Cotizaciones
+                </h3>
+                <div className="text-[11px] text-slate-500">
+                  Copia y envía directo por WhatsApp o DM
                 </div>
               </div>
 
               <div className="space-y-2">
-                <div className="p-2.5 rounded-lg border border-slate-200 bg-slate-50/50 flex items-center justify-between gap-2">
-                  <div>
-                    <div className="text-xs font-bold text-slate-900">
-                      Tutoría individual (1 hora) ·{" "}
-                      <span className="font-mono text-emerald-600 font-extrabold">$20.000 CLP</span>
-                    </div>
-                    <div className="text-[10px] text-slate-500">Online o domicilio Santiago</div>
-                  </div>
-                  <button
-                    onClick={() => copyToClipboard("wa1", waTutoria)}
-                    className="shrink-0 bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 text-xs font-bold px-2.5 py-1 rounded-md shadow-xs active:scale-95 transition"
+                {QUOTES_WA.map((q) => (
+                  <div
+                    key={q.key}
+                    className={`p-2.5 rounded-lg flex items-center justify-between gap-2 ${
+                      q.featured
+                        ? "border-2 border-emerald-500 bg-emerald-50/40"
+                        : q.purple
+                        ? "border border-purple-200 bg-purple-50/30"
+                        : "border border-slate-200 bg-slate-50/50"
+                    }`}
                   >
-                    {copiedKey === "wa1" ? "¡Listo!" : "Copiar"}
-                  </button>
-                </div>
-
-                <div className="p-2.5 rounded-lg border-2 border-emerald-500 bg-emerald-50/40 flex items-center justify-between gap-2">
-                  <div>
-                    <div className="text-xs font-bold text-slate-900">
-                      Pack PAES (6 horas) ·{" "}
-                      <span className="font-mono text-emerald-700 font-black">$100.000 CLP</span>
+                    <div>
+                      <div className="text-xs font-bold text-slate-900">
+                        {q.name} ·{" "}
+                        <span
+                          className={`font-mono font-black ${
+                            q.purple ? "text-purple-700" : "text-emerald-700"
+                          }`}
+                        >
+                          {q.price}
+                        </span>
+                      </div>
+                      <div
+                        className={`text-[10px] ${
+                          q.featured ? "text-amber-700 font-bold" : "text-slate-500"
+                        }`}
+                      >
+                        {q.sub}
+                      </div>
                     </div>
-                    <div className="text-[10px] text-amber-700 font-bold">
-                      Ahorro $20k · Ensayos y cazabobos intensivos
-                    </div>
+                    <button
+                      onClick={() => copyToClipboard(q.key, q.message)}
+                      className={`shrink-0 text-xs font-bold px-2.5 py-1 rounded-md shadow-xs active:scale-95 transition ${
+                        q.featured
+                          ? "bg-emerald-600 hover:bg-emerald-700 text-white font-black"
+                          : q.purple
+                          ? "bg-white hover:bg-purple-100 border border-purple-300 text-purple-800"
+                          : "bg-white hover:bg-slate-100 border border-slate-300 text-slate-800"
+                      }`}
+                    >
+                      {copiedKey === q.key ? "¡Listo!" : "Copiar"}
+                    </button>
                   </div>
-                  <button
-                    onClick={() => copyToClipboard("wa2", waPackPaes)}
-                    className="shrink-0 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black px-2.5 py-1 rounded-md shadow-xs active:scale-95 transition"
-                  >
-                    {copiedKey === "wa2" ? "¡Listo!" : "Copiar"}
-                  </button>
-                </div>
-
-                <div className="p-2.5 rounded-lg border border-purple-200 bg-purple-50/30 flex items-center justify-between gap-2">
-                  <div>
-                    <div className="text-xs font-bold text-slate-900">
-                      Intensivo Ingeniería (36h) ·{" "}
-                      <span className="font-mono text-purple-700 font-bold">$600.000 CLP</span>
-                    </div>
-                    <div className="text-[10px] text-slate-500">Mensual · Cálculo, Álgebra y Nivelación</div>
-                  </div>
-                  <button
-                    onClick={() => copyToClipboard("wa3", waIngenieria)}
-                    className="shrink-0 bg-white hover:bg-purple-100 border border-purple-300 text-purple-800 text-xs font-bold px-2.5 py-1 rounded-md shadow-xs active:scale-95 transition"
-                  >
-                    {copiedKey === "wa3" ? "¡Listo!" : "Copiar"}
-                  </button>
-                </div>
+                ))}
               </div>
             </section>
           </>
         )}
 
         {/* ======================================================== */}
-        {/* VISTA 2: 📦 CATÁLOGO COMPLETO DE PRODUCTOS DEL MOTOR     */}
+        {/* VISTA 2: PRODUCTOS GENERADOS POR EL MOTOR (MP4 + PNG)    */}
         {/* ======================================================== */}
         {activeTab === "productos" && (
           <section className="space-y-4">
@@ -741,130 +626,163 @@ Además, como docente e Ingeniero Civil Industrial, abrí los últimos 3 cupos p
               <div className="flex items-center justify-between mb-1">
                 <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-900 flex items-center gap-1.5">
                   <Package className="w-4 h-4 text-purple-600" />
-                  Productos Generados por tu Motor
+                  Productos {currentDayData.fullLabel}
                 </h3>
                 <span className="text-[10px] font-bold bg-purple-50 text-purple-700 border border-purple-200 px-2 py-0.5 rounded-full">
-                  Descarga Móvil
+                  MP4 + PNG + PDF
                 </span>
               </div>
               <p className="text-xs text-slate-600">
-                Láminas, portadas, carruseles y PDFs listos para guardar en tu celular y subir a
-                redes.
+                Todos los videos MP4, portadas, láminas de carrusel, historias y el simulacro listos
+                para bajar directo al celular.
               </p>
             </div>
 
-            {/* CARRUSEL 17:30 (6 SLIDES COMPLETAS) */}
+            {/* VIDEOS MP4 Y PORTADAS DEL DÍA */}
             <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-xs space-y-3">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="text-xs font-extrabold text-slate-900">
-                    📸 Carrusel 17:30 · Duplica la Arista
-                  </div>
-                  <div className="text-[10px] text-slate-500">
-                    6 Láminas HD (1080×1350 px · Formato 4:5)
-                  </div>
-                </div>
-                <span className="text-[10px] font-bold bg-blue-50 text-blue-700 px-2 py-0.5 rounded">
-                  6 Slides
+              <div className="text-xs font-extrabold text-slate-900 flex items-center justify-between">
+                <span>🎬 Videos Verticales 9:16 + Portadas</span>
+                <span className="text-[10px] font-mono text-slate-500">
+                  {currentDayData.videos.length} Videos
                 </span>
               </div>
-
-              {/* Grid de 6 Láminas con botón de descarga individual */}
-              <div className="grid grid-cols-3 gap-2">
-                {[
-                  { id: "01", name: "Portada", file: "slide_01_portada.png" },
-                  { id: "02", name: "Enunciado", file: "slide_02_enunciado.png" },
-                  { id: "03", name: "Desarrollo", file: "slide_03_desarrollo.png" },
-                  { id: "04", name: "Descarte", file: "slide_04_descarte.png" },
-                  { id: "05", name: "Formulario", file: "slide_05_formulario.png" },
-                  { id: "06", name: "Cierre DM", file: "slide_06_cta_dm.png" },
-                ].map((s) => (
+              <div className="space-y-2.5">
+                {currentDayData.videos.map((v) => (
                   <div
-                    key={s.id}
-                    className="p-1.5 bg-slate-50 border border-slate-200 rounded-lg flex flex-col items-center gap-1 text-center"
+                    key={v.id}
+                    className="p-2.5 bg-slate-50 border border-slate-200 rounded-lg flex items-center gap-3"
                   >
-                    <img
-                      src={`/motor-assets/carrusel-1730/${s.file}`}
-                      alt={s.name}
-                      className="w-full h-24 object-cover rounded border border-slate-200"
+                    <Image
+                      src={v.coverUrl}
+                      alt={v.title}
+                      width={48}
+                      height={64}
+                      unoptimized
+                      className="w-12 h-16 object-cover rounded border border-slate-300 shrink-0"
                     />
-                    <div className="text-[9.5px] font-bold text-slate-700 truncate w-full">
-                      {s.id}. {s.name}
+                    <div className="flex-1 min-w-0">
+                      <div className="text-[10px] font-mono font-bold text-blue-700">
+                        {v.time} hrs · {v.duration}
+                      </div>
+                      <div className="text-xs font-extrabold text-slate-900 truncate">
+                        {v.title}
+                      </div>
+                      <div className="flex flex-wrap gap-1.5 mt-1.5">
+                        <a
+                          href={v.mp4Url}
+                          download={v.mp4Name}
+                          className="text-[10px] font-extrabold text-white bg-slate-900 hover:bg-slate-800 px-2.5 py-1 rounded flex items-center gap-1"
+                        >
+                          <Film className="w-3 h-3" /> Descargar MP4
+                        </a>
+                        <a
+                          href={v.coverUrl}
+                          download={v.coverName}
+                          className="text-[10px] font-bold text-slate-700 bg-white border border-slate-300 hover:bg-slate-100 px-2 py-1 rounded flex items-center gap-1"
+                        >
+                          <Download className="w-3 h-3" /> Portada JPG
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* CARRUSELES HD DE 6 LÁMINAS */}
+            {currentDayData.carousels.map((car) => (
+              <div
+                key={car.id}
+                className="bg-white border border-slate-200 rounded-xl p-4 shadow-xs space-y-3"
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="text-xs font-extrabold text-slate-900">{car.title}</div>
+                    <div className="text-[10px] text-slate-500">{car.subtitle}</div>
+                  </div>
+                  <span className="text-[10px] font-bold bg-blue-50 text-blue-700 px-2 py-0.5 rounded">
+                    6 Slides
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-3 gap-2">
+                  {car.slides.map((s) => (
+                    <div
+                      key={s.num}
+                      className="p-1.5 bg-slate-50 border border-slate-200 rounded-lg flex flex-col items-center gap-1 text-center"
+                    >
+                      <Image
+                        src={`${car.folderPath}/${s.file}`}
+                        alt={s.name}
+                        width={108}
+                        height={135}
+                        unoptimized
+                        className="w-full h-24 object-cover rounded border border-slate-200"
+                      />
+                      <div className="text-[9.5px] font-bold text-slate-700 truncate w-full">
+                        {s.num}. {s.name}
+                      </div>
+                      <a
+                        href={`${car.folderPath}/${s.file}`}
+                        download={`${car.id}-${s.file}`}
+                        className="w-full text-[9px] font-bold text-blue-700 bg-white border border-blue-200 hover:bg-blue-50 py-0.5 rounded flex items-center justify-center gap-0.5"
+                      >
+                        <Download className="w-2.5 h-2.5" /> Bajar
+                      </a>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+
+            {/* PACK COMPLETO DE HISTORIAS 9:16 */}
+            <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-xs space-y-3">
+              <div>
+                <div className="text-xs font-extrabold text-slate-900">
+                  📱 Historias {currentDayData.fullLabel} (Pack 9:16)
+                </div>
+                <div className="text-[10px] text-slate-500">
+                  Todas las láminas de encuesta y banners de captación del día
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2.5">
+                {currentDayData.stories.map((st) => (
+                  <div
+                    key={st.id}
+                    className="p-2 bg-slate-50 border border-slate-200 rounded-lg flex flex-col items-center gap-1.5 text-center"
+                  >
+                    <Image
+                      src={st.url}
+                      alt={st.title}
+                      width={135}
+                      height={240}
+                      unoptimized
+                      className="w-full h-36 object-cover rounded border border-slate-300"
+                    />
+                    <div className="text-[10.5px] font-extrabold text-slate-800 leading-tight">
+                      {st.title}
                     </div>
                     <a
-                      href={`/motor-assets/carrusel-1730/${s.file}`}
-                      download={`carrusel-1730-${s.file}`}
-                      className="w-full text-[9px] font-bold text-blue-700 bg-white border border-blue-200 hover:bg-blue-50 py-0.5 rounded flex items-center justify-center gap-0.5"
+                      href={st.url}
+                      download={st.downloadName}
+                      className="w-full py-1 text-[10px] font-extrabold text-purple-700 bg-purple-50 border border-purple-200 hover:bg-purple-100 rounded flex items-center justify-center gap-1"
                     >
-                      <Download className="w-2.5 h-2.5" /> Bajar
+                      <Download className="w-3 h-3" /> {st.tag}
                     </a>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* PACK DE HISTORIAS PARA INSTAGRAM & WHATSAPP */}
-            <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-xs space-y-3">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="text-xs font-extrabold text-slate-900">
-                    📱 Historias del Día (Pack Dual 9:16)
-                  </div>
-                  <div className="text-[10px] text-slate-500">
-                    Stickers de encuesta y banners de captación de alumnos
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                {/* Historia 17:30 Encuesta */}
-                <div className="p-2 bg-slate-50 border border-slate-200 rounded-lg flex flex-col items-center gap-2 text-center">
-                  <img
-                    src="/motor-assets/historias/miercoles-1730-historia-01-encuesta.png"
-                    alt="Historia 17:30 Encuesta"
-                    className="w-full h-36 object-cover rounded border border-slate-300"
-                  />
-                  <div className="text-[11px] font-extrabold text-slate-800">
-                    17:30 Encuesta Arista
-                  </div>
-                  <a
-                    href="/motor-assets/historias/miercoles-1730-historia-01-encuesta.png"
-                    download="miercoles-1730-historia-01-encuesta.png"
-                    className="w-full py-1 text-[10px] font-extrabold text-purple-700 bg-purple-50 border border-purple-200 hover:bg-purple-100 rounded flex items-center justify-center gap-1"
-                  >
-                    <Download className="w-3 h-3" /> Descargar PNG
-                  </a>
-                </div>
-
-                {/* Historia 17:30 Clases */}
-                <div className="p-2 bg-slate-50 border border-slate-200 rounded-lg flex flex-col items-center gap-2 text-center">
-                  <img
-                    src="/motor-assets/historias/miercoles-1730-historia-02-clases.png"
-                    alt="Historia 17:30 Clases"
-                    className="w-full h-36 object-cover rounded border border-slate-300"
-                  />
-                  <div className="text-[11px] font-extrabold text-slate-800">
-                    Flyer Tutorías $20k/$100k
-                  </div>
-                  <a
-                    href="/motor-assets/historias/miercoles-1730-historia-02-clases.png"
-                    download="miercoles-1730-historia-02-clases.png"
-                    className="w-full py-1 text-[10px] font-extrabold text-purple-700 bg-purple-50 border border-purple-200 hover:bg-purple-100 rounded flex items-center justify-center gap-1"
-                  >
-                    <Download className="w-3 h-3" /> Descargar PNG
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            {/* LEAD MAGNET / SIMULACRO PAES M1 PDF */}
+            {/* SIMULACRO OFICIAL PAES M1 PDF (20 ÍTEMS REALES) */}
             <div className="bg-emerald-50 border-2 border-emerald-500 rounded-xl p-4 shadow-xs flex items-center justify-between gap-3">
               <div>
                 <div className="text-xs font-black text-emerald-900">
-                  📄 Simulacro Oficial PAES M1 (PDF)
+                  📄 Simulacro PAES M1 con Solucionario (PDF)
                 </div>
                 <div className="text-[11px] text-emerald-700 mt-0.5">
-                  65 preguntas resueltas · Imán para captar apoderados y alumnos
+                  20 ítems de alternativas resueltos paso a paso · Sin calculadora
                 </div>
               </div>
               <a
@@ -894,99 +812,103 @@ Además, como docente e Ingeniero Civil Industrial, abrí los últimos 3 cupos p
                 </span>
               </div>
               <div className="text-[11px] text-slate-500 mt-0.5">
-                3 videos diarios + Stories de interacción + Grupos
+                3 videos diarios + Carruseles + Stories + Grupos
               </div>
             </div>
 
             <div className="space-y-2">
-              <div className="p-2.5 rounded-lg border border-slate-200 bg-slate-50">
-                <div className="flex items-center justify-between text-xs font-bold text-slate-700 mb-1">
-                  <span>Lunes 23 Noviembre</span>
-                  <span className="text-[10px] text-emerald-700 font-extrabold bg-emerald-100 px-1.5 py-0.5 rounded">
-                    100% Completado
-                  </span>
-                </div>
-                <div className="text-[11px] text-slate-600">
-                  • 12:30: Álgebra (x+2)/2 · 17:30: 1 m² a cm² · 21:15: i² = -1 · Carrusel 6 slides
-                </div>
-              </div>
-
-              <div className="p-2.5 rounded-lg border border-slate-200 bg-slate-50">
-                <div className="flex items-center justify-between text-xs font-bold text-slate-700 mb-1">
-                  <span>Martes 24 Noviembre</span>
-                  <span className="text-[10px] text-emerald-700 font-extrabold bg-emerald-100 px-1.5 py-0.5 rounded">
-                    100% Completado
-                  </span>
-                </div>
-                <div className="text-[11px] text-slate-600">
-                  • 12:30: x² = 25 · 17:30: Vértice parábola · 21:15: ¿Por qué π no tiene esquinas?
-                </div>
-              </div>
-
-              <div className="p-3 rounded-lg border-2 border-red-500 bg-red-50/30">
-                <div className="flex items-center justify-between text-xs font-extrabold text-slate-900 mb-1">
-                  <span className="flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-red-600 animate-ping" />
-                    Miércoles 25 Noviembre (HOY)
-                  </span>
-                  <span className="text-[10px] text-red-700 font-black bg-red-100 px-1.5 py-0.5 rounded">
-                    En Ejecución
-                  </span>
-                </div>
-                <div className="text-[11px] text-slate-800 space-y-0.5">
-                  <div>• 12:30: Discriminante Cuadrática (✅ Publicado)</div>
-                  <div>• 17:30: Duplica la arista (🔴 Pendiente)</div>
-                  <div>• 21:15: Dato 05: Dividir por cero (🟡 Noche)</div>
-                </div>
-              </div>
-
-              <div className="p-2.5 rounded-lg border border-slate-200 bg-white">
-                <div className="flex items-center justify-between text-xs font-bold text-slate-800 mb-1">
-                  <span>Jueves 26 Noviembre (Mañana)</span>
-                  <span className="text-[10px] text-blue-700 font-bold bg-blue-50 px-1.5 py-0.5 rounded">
-                    Producido
-                  </span>
-                </div>
-                <div className="text-[11px] text-slate-600">
-                  • 12:30: Intersección Parábola-Recta · 17:30: Truco de Viète · 21:15: Identidad Euler e^(iπ)+1=0
-                </div>
-              </div>
-
-              <div className="p-2.5 rounded-lg border border-slate-200 bg-white">
-                <div className="flex items-center justify-between text-xs font-bold text-slate-800 mb-1">
-                  <span>Viernes 27 Noviembre</span>
-                  <span className="text-[10px] text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded">
-                    Programado
-                  </span>
-                </div>
-                <div className="text-[11px] text-slate-600">
-                  • 12:30: Inecuaciones trampa · 17:30: Máxima Ganancia · 21:15: Geometría Fractal
-                </div>
-              </div>
-
-              <div className="p-2.5 rounded-lg border border-slate-200 bg-white">
-                <div className="flex items-center justify-between text-xs font-bold text-slate-800 mb-1">
-                  <span>Sábado 28 Noviembre</span>
-                  <span className="text-[10px] text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded">
-                    Programado
-                  </span>
-                </div>
-                <div className="text-[11px] text-slate-600">
-                  • 12:30: Intersección con los ejes · 17:30: Función Inversa · 21:15: Infinito de Hilbert
-                </div>
-              </div>
-
-              <div className="p-2.5 rounded-lg border border-slate-200 bg-white">
-                <div className="flex items-center justify-between text-xs font-bold text-slate-800 mb-1">
-                  <span>Domingo 29 Noviembre</span>
-                  <span className="text-[10px] text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded">
-                    Víspera PAES
-                  </span>
-                </div>
-                <div className="text-[11px] text-slate-600">
-                  • 12:30: Puntos Clave PAES · 17:30: Ritual de Calma · 21:15: Mensaje de Confianza
-                </div>
-              </div>
+              {[
+                {
+                  day: "Lunes 23 Noviembre",
+                  iso: "2026-11-23",
+                  badge: "Completado",
+                  summary: "(x+2)/2 · 1 m² a cm² · i² = -1 · Carrusel 6 slides",
+                },
+                {
+                  day: "Martes 24 Noviembre",
+                  iso: "2026-11-24",
+                  badge: "Completado",
+                  summary: "x² = 25 (±5) · Vértice f(x) · ¿Por qué π?",
+                },
+                {
+                  day: "Miércoles 25 Noviembre",
+                  iso: "2026-11-25",
+                  badge: "En Operación",
+                  summary: "12:30 Discriminante · 17:30 Arista 3D · 21:15 Dividir por 0",
+                  switchKey: "mie25" as DayKey,
+                },
+                {
+                  day: "Jueves 26 Noviembre",
+                  iso: "2026-11-26",
+                  badge: "100% Producido",
+                  summary: "12:30 Parábola-Recta · 17:30 Viète · 21:15 Euler e^(iπ)+1=0",
+                  switchKey: "jue26" as DayKey,
+                },
+                {
+                  day: "Viernes 27 Noviembre",
+                  iso: "2026-11-27",
+                  badge: "Programado",
+                  summary: "Inecuaciones trampa · Máxima Ganancia · Fractales",
+                },
+                {
+                  day: "Sábado 28 Noviembre",
+                  iso: "2026-11-28",
+                  badge: "Programado",
+                  summary: "Intersección Ejes · Función Inversa · Infinito de Hilbert",
+                },
+                {
+                  day: "Domingo 29 Noviembre",
+                  iso: "2026-11-29",
+                  badge: "Víspera PAES",
+                  summary: "Puntos Clave PAES · Ritual Calma · Mensaje de Confianza",
+                },
+              ].map((row) => {
+                const isToday = row.iso === santiagoNow.isoDate;
+                return (
+                  <div
+                    key={row.iso}
+                    className={`p-2.5 rounded-lg border ${
+                      isToday
+                        ? "border-2 border-red-500 bg-red-50/30"
+                        : row.iso < santiagoNow.isoDate
+                        ? "border-slate-200 bg-slate-50"
+                        : "border-slate-200 bg-white"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between text-xs font-bold text-slate-900 mb-1">
+                      <span className="flex items-center gap-1.5">
+                        {isToday && <span className="w-2 h-2 rounded-full bg-red-600 animate-ping" />}
+                        {row.day} {isToday && "(HOY)"}
+                      </span>
+                      <div className="flex items-center gap-1.5">
+                        <span
+                          className={`text-[10px] font-extrabold px-1.5 py-0.5 rounded ${
+                            isToday
+                              ? "bg-red-100 text-red-700"
+                              : row.iso < santiagoNow.isoDate
+                              ? "bg-emerald-100 text-emerald-700"
+                              : "bg-blue-50 text-blue-700"
+                          }`}
+                        >
+                          {row.badge}
+                        </span>
+                        {row.switchKey && (
+                          <button
+                            onClick={() => {
+                              setDayOverride(row.switchKey!);
+                              setActiveTab("dia");
+                            }}
+                            className="text-[10px] font-bold text-slate-700 underline"
+                          >
+                            Abrir
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                    <div className="text-[11px] text-slate-600">• {row.summary}</div>
+                  </div>
+                );
+              })}
             </div>
           </section>
         )}
@@ -997,62 +919,65 @@ Además, como docente e Ingeniero Civil Industrial, abrí los últimos 3 cupos p
         {activeTab === "proyectos" && (
           <section className="bg-white border border-slate-200 rounded-xl p-4 shadow-xs space-y-3">
             <div>
-              <div className="flex items-center justify-between">
-                <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-900 flex items-center gap-1.5">
-                  <Award className="w-4 h-4 text-emerald-600" />
-                  Radar de Fondos y Proyectos 2026-2027
-                </h3>
-              </div>
+              <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-900 flex items-center gap-1.5">
+                <Award className="w-4 h-4 text-emerald-600" />
+                Radar de Fondos y Proyectos 2026-2027
+              </h3>
               <div className="text-[11px] text-slate-500 mt-0.5">
-                Días restantes calculados para convocatorias CORFO, Sercotec y Start-Up Chile
+                Cuenta regresiva automática desde hoy ({santiagoNow.isoDate})
               </div>
             </div>
 
             <div className="space-y-2.5">
-              {convocatorias.map((c, i) => (
-                <div
-                  key={i}
-                  className={`p-3 rounded-lg border ${
-                    c.estado === "alerta"
-                      ? "bg-red-50/50 border-red-300"
-                      : "bg-slate-50/50 border-slate-200"
-                  }`}
-                >
-                  <div className="flex items-start justify-between gap-2 mb-1">
-                    <div>
-                      <div className="text-xs font-extrabold text-slate-900">{c.nombre}</div>
-                      <div className="text-[10px] text-slate-500">{c.entidad}</div>
+              {CONVOCATORIAS_BASE.map((c, i) => {
+                const dias = diffDaysFromIso(santiagoNow.isoDate, c.fechaIso);
+                return (
+                  <div
+                    key={i}
+                    className={`p-3 rounded-lg border ${
+                      c.estado === "alerta"
+                        ? "bg-red-50/50 border-red-300"
+                        : "bg-slate-50/50 border-slate-200"
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-2 mb-1">
+                      <div>
+                        <div className="text-xs font-extrabold text-slate-900">{c.nombre}</div>
+                        <div className="text-[10px] text-slate-500">{c.entidad}</div>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <div
+                          className={`text-sm font-extrabold font-mono ${
+                            c.estado === "alerta" ? "text-red-700" : "text-emerald-700"
+                          }`}
+                        >
+                          {dias} DÍAS
+                        </div>
+                        <div className="text-[10px] font-semibold text-slate-400">
+                          {c.fechaLabel}
+                        </div>
+                      </div>
                     </div>
-                    <div className="text-right shrink-0">
-                      <div
-                        className={`text-sm font-extrabold font-mono ${
-                          c.estado === "alerta" ? "text-red-700" : "text-emerald-700"
+
+                    <div className="flex items-center justify-between text-[11px] pt-1.5 border-t border-slate-200/60 mt-1">
+                      <span className="font-semibold text-slate-700">Monto: {c.monto}</span>
+                      <span
+                        className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
+                          c.estado === "alerta"
+                            ? "bg-red-100 text-red-800"
+                            : "bg-emerald-100 text-emerald-800"
                         }`}
                       >
-                        {c.dias} DÍAS
-                      </div>
-                      <div className="text-[10px] font-semibold text-slate-400">{c.fecha}</div>
+                        {c.estado === "alerta" ? "Prioridad Inmediata" : "En Planificación"}
+                      </span>
+                    </div>
+
+                    <div className="text-[11px] text-slate-600 mt-1 bg-white p-2 rounded border border-slate-200/80">
+                      🎯 <strong>Acción Requerida:</strong> {c.accion}
                     </div>
                   </div>
-
-                  <div className="flex items-center justify-between text-[11px] pt-1.5 border-t border-slate-200/60 mt-1">
-                    <span className="font-semibold text-slate-700">Monto: {c.monto}</span>
-                    <span
-                      className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
-                        c.estado === "alerta"
-                          ? "bg-red-100 text-red-800"
-                          : "bg-emerald-100 text-emerald-800"
-                      }`}
-                    >
-                      {c.estado === "alerta" ? "Prioridad Inmediata" : "En Planificación"}
-                    </span>
-                  </div>
-
-                  <div className="text-[11px] text-slate-600 mt-1 bg-white p-2 rounded border border-slate-200/80">
-                    🎯 <strong>Acción Requerida:</strong> {c.accion}
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg text-xs text-blue-900">
@@ -1063,9 +988,7 @@ Además, como docente e Ingeniero Civil Industrial, abrí los últimos 3 cupos p
           </section>
         )}
 
-        {/* ======================================================== */}
-        {/* ENLACES Y FOOTER CLARO                                   */}
-        {/* ======================================================== */}
+        {/* FOOTER CON ENLACES VERIFICADOS */}
         <footer className="pt-2 flex flex-col gap-2">
           <div className="grid grid-cols-2 gap-2 text-center text-xs font-bold">
             <Link
@@ -1075,17 +998,17 @@ Además, como docente e Ingeniero Civil Industrial, abrí los últimos 3 cupos p
               🌐 Ver Landing Web
             </Link>
             <a
-              href="https://www.superprof.cl/profesor-particular-matematicas-calculo-algebra-fisica-estadistica-preparacion-paes-ingeniero-civil-industrial.html"
+              href={SUPERPROF_URL}
               target="_blank"
               rel="noreferrer"
               className="bg-amber-50 hover:bg-amber-100 text-amber-800 py-2.5 px-3 rounded-lg border border-amber-300 shadow-xs flex items-center justify-center gap-1.5"
             >
-              ⭐ Superprof 5.0
+              ⭐ Superprof 5.0 <ExternalLink className="w-3 h-3" />
             </a>
           </div>
 
           <div className="text-center text-[10px] font-mono text-slate-500 pt-1">
-            TuProfeIndustrial · Grilla Móvil de Decisión · Santiago de Chile
+            TuProfeIndustrial · Uso Interno (noindex) · Santiago de Chile
           </div>
         </footer>
       </main>

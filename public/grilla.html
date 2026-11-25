@@ -3,14 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Grilla Móvil de Decisión · @tuprofeindustrial</title>
+<meta name="robots" content="noindex, nofollow">
+<title>Cockpit Operativo · @tuprofeindustrial</title>
 <style>
   :root {
     --bg: #f8fafc;
     --card: #ffffff;
     --border: #e2e8f0;
     --text: #0f172a;
-    --text-muted: #64748b;
+    --muted: #64748b;
     --green: #16a34a;
     --amber: #d97706;
     --red: #dc2626;
@@ -21,11 +22,9 @@
     background: var(--bg);
     color: var(--text);
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
-    padding-bottom: 40px;
+    padding-bottom: 50px;
     line-height: 1.4;
   }
-  
-  /* Topbar Clara */
   .topbar {
     position: sticky;
     top: 0;
@@ -34,14 +33,27 @@
     backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--border);
     padding: 10px 16px;
+  }
+  .topbar-inner {
+    max-width: 480px;
+    margin: 0 auto;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
   }
   .brand { display: flex; align-items: center; gap: 6px; }
   .dot-live { width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
   .brand-title { font-size: 14px; font-weight: 800; color: #0f172a; }
+  .clock-pill {
+    font-size: 10px;
+    font-weight: 700;
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid var(--border);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: monospace;
+  }
   .pill-paes {
     background: #fef2f2;
     color: #b91c1c;
@@ -53,45 +65,62 @@
     font-family: monospace;
   }
 
-  /* Pestañas */
   .tabs-bar {
-    background: #ffffff;
+    background: #fff;
     border-bottom: 1px solid var(--border);
     padding: 8px 14px;
     position: sticky;
-    top: 48px;
+    top: 44px;
     z-index: 90;
   }
-  .tabs-grid {
+  .tabs-grid, .day-grid {
     max-width: 480px;
     margin: 0 auto;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 6px;
+    gap: 5px;
+  }
+  .tabs-grid {
+    grid-template-columns: repeat(4, 1fr);
     background: #f1f5f9;
     padding: 3px;
     border-radius: 8px;
   }
+  .day-grid {
+    grid-template-columns: 1fr 1fr;
+    margin-top: 8px;
+  }
   .tab-btn {
     border: none;
     background: transparent;
-    padding: 8px 6px;
+    padding: 6px 4px;
     border-radius: 6px;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 800;
-    color: var(--text-muted);
+    color: var(--muted);
     cursor: pointer;
-    transition: all 0.15s;
   }
   .tab-btn.active {
-    background: #ffffff;
+    background: #fff;
     color: #0f172a;
     box-shadow: 0 1px 3px rgba(0,0,0,0.08);
   }
+  .day-btn {
+    padding: 6px 8px;
+    border-radius: 6px;
+    font-size: 11.5px;
+    font-weight: 800;
+    border: 1px solid var(--border);
+    background: #f8fafc;
+    color: #475569;
+    cursor: pointer;
+  }
+  .day-btn.active {
+    background: #0f172a;
+    color: #fff;
+    border-color: #0f172a;
+  }
 
   .container { max-width: 480px; margin: 0 auto; padding: 14px 16px; display: flex; flex-direction: column; gap: 14px; }
-
-  /* Tarjetas Claras */
   .card {
     background: var(--card);
     border: 1px solid var(--border);
@@ -99,83 +128,49 @@
     padding: 14px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.03);
   }
+  .sem-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 8px; text-align: center; font-size: 11px; font-weight: 800; }
+  .sem-box { padding: 5px 4px; border-radius: 6px; border: 1px solid; }
+  .sem-green { background: #f0fdf4; border-color: #bbf7d0; color: #166534; }
+  .sem-amber { background: #fffbeb; border-color: #fde68a; color: #92400e; }
+  .sem-red { background: #fef2f2; border-color: #fca5a5; color: #991b1b; }
 
-  /* 🔴 Alerta Roja */
-  .card-alert {
-    background: #fef2f2;
-    border: 2px solid #ef4444;
-    border-radius: 12px;
-    padding: 14px;
-    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.08);
-  }
-  .badge-red {
-    background: #dc2626;
-    color: #fff;
-    font-size: 10.5px;
-    font-weight: 900;
-    text-transform: uppercase;
-    padding: 3px 8px;
-    border-radius: 6px;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    letter-spacing: 0.5px;
-  }
+  .card-priority { border: 2px solid #ef4444; background: #fef2f2; border-radius: 12px; padding: 14px; }
+  .card-priority.amber { border-color: #f59e0b; background: #fffbeb; }
+  .card-priority.done { border-color: #16a34a; background: #f0fdf4; }
 
-  /* Botones de Acción */
-  .btn-action-red {
+  .btn {
     width: 100%;
-    background: #dc2626;
-    border: none;
-    color: #fff;
-    font-size: 12.5px;
-    font-weight: 800;
-    padding: 11px 14px;
+    border: 1px solid #cbd5e1;
+    background: #fff;
+    color: #0f172a;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 9px 12px;
     border-radius: 8px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     cursor: pointer;
-    margin-top: 10px;
-    box-shadow: 0 2px 6px rgba(220, 38, 38, 0.25);
+    margin-top: 6px;
+    text-decoration: none;
   }
-  .btn-action-red:active { transform: scale(0.98); background: #b91c1c; }
+  .btn-red { background: #dc2626; border-color: #dc2626; color: #fff; font-weight: 800; }
+  .btn-green { background: #16a34a; border-color: #16a34a; color: #fff; font-weight: 800; }
+  .btn-dark { background: #0f172a; border-color: #0f172a; color: #fff; font-weight: 800; justify-content: center; gap: 6px; }
 
-  .btn-copy-white {
-    background: #ffffff;
-    border: 1px solid #cbd5e1;
-    color: #1e293b;
-    font-size: 11px;
-    font-weight: 700;
-    padding: 7px 10px;
-    border-radius: 6px;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-  }
-  .btn-copy-white:active { background: #f8fafc; transform: scale(0.96); }
-
-  /* Checklist Interactivo */
   .task-item {
     padding: 10px;
     border: 1px solid var(--border);
     border-radius: 8px;
     margin-bottom: 8px;
-    background: #ffffff;
+    background: #fff;
     display: flex;
     gap: 10px;
     align-items: flex-start;
-    transition: opacity 0.2s;
   }
-  .task-item.done {
-    background: #f8fafc;
-    opacity: 0.6;
-  }
-  .task-item.done .task-title {
-    text-decoration: line-through;
-    color: var(--text-muted);
-  }
+  .task-item.urgent { background: #fff5f5; border-color: #fca5a5; }
+  .task-item.done { background: #f8fafc; opacity: 0.6; }
+  .task-item.done .task-title { text-decoration: line-through; color: var(--muted); }
   .chk {
     width: 22px;
     height: 22px;
@@ -188,24 +183,25 @@
     background: #fff;
     flex-shrink: 0;
     margin-top: 2px;
-  }
-  .chk.checked {
-    background: var(--green);
-    border-color: var(--green);
-    color: #fff;
+    font-size: 12px;
     font-weight: 900;
   }
+  .chk.checked { background: var(--green); border-color: var(--green); color: #fff; }
   .task-title { font-size: 12.5px; font-weight: 800; color: #0f172a; }
   .task-desc { font-size: 11px; color: #475569; margin-top: 2px; }
-
-  /* Tags */
   .tag { font-size: 9.5px; font-weight: 800; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; }
-  .tag-video { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
-  .tag-story { background: #faf5ff; color: #7e22ce; border: 1px solid #e9d5ff; }
-  .tag-fb { background: #eef2ff; color: #4338ca; border: 1px solid #c7d2fe; }
-  .tag-wa { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+  .tag-video { background: #eff6ff; color: #1d4ed8; }
+  .tag-story { background: #faf5ff; color: #7e22ce; }
+  .tag-facebook { background: #eef2ff; color: #4338ca; }
+  .tag-whatsapp { background: #f0fdf4; color: #15803d; }
 
-  /* Toast */
+  .slides-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; }
+  .slide-card { padding: 6px; background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; text-align: center; }
+  .slide-card img { width: 100%; height: 90px; object-fit: cover; border-radius: 4px; }
+  .stories-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+  .story-card { padding: 8px; background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; text-align: center; }
+  .story-card img { width: 100%; height: 130px; object-fit: cover; border-radius: 4px; }
+
   #toast {
     position: fixed;
     bottom: 20px;
@@ -217,8 +213,7 @@
     font-weight: 700;
     padding: 9px 18px;
     border-radius: 20px;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.15);
-    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform 0.25s;
     z-index: 999;
     pointer-events: none;
   }
@@ -227,384 +222,359 @@
 </head>
 <body>
 
-<!-- Topbar -->
 <div class="topbar">
-  <div class="brand">
-    <div class="dot-live"></div>
-    <span class="brand-title">@tuprofeindustrial</span>
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="dot-live"></div>
+      <span class="brand-title">@tuprofeindustrial</span>
+      <span id="clock-clt" class="clock-pill">--:-- CLT</span>
+    </div>
+    <div id="paes-pill" class="pill-paes">PAES: 5 DÍAS</div>
   </div>
-  <div class="pill-paes">PAES: 5 DÍAS</div>
 </div>
 
-<!-- Tabs -->
 <div class="tabs-bar">
   <div class="tabs-grid">
-    <button class="tab-btn active" onclick="switchTab('dia')">Hoy Mié 25</button>
-    <button class="tab-btn" onclick="switchTab('semana')">Semana 2</button>
+    <button class="tab-btn active" onclick="switchTab('dia')">Hoy / Día</button>
+    <button class="tab-btn" onclick="switchTab('productos')">Productos</button>
+    <button class="tab-btn" onclick="switchTab('semana')">Semana</button>
     <button class="tab-btn" onclick="switchTab('proyectos')">Proyectos</button>
+  </div>
+  <div id="day-switcher" class="day-grid">
+    <button class="day-btn active" onclick="switchDay('mie25')">Miércoles 25 Nov</button>
+    <button class="day-btn" onclick="switchDay('jue26')">Jueves 26 Nov</button>
   </div>
 </div>
 
 <div class="container">
+  <div id="view-dia"></div>
+  <div id="view-productos" style="display:none;"></div>
+  <div id="view-semana" style="display:none;"></div>
+  <div id="view-proyectos" style="display:none;"></div>
 
-  <!-- ========================================== -->
-  <!-- VISTA 1: DÍA (HOY MIÉRCOLES 25)           -->
-  <!-- ========================================== -->
-  <div id="view-dia">
-    <!-- Barra Semáforo y Progreso -->
-    <div class="card" style="margin-bottom:12px;">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-        <span style="font-size:12px; font-weight:800; color:#334155;">Progreso de Hoy</span>
-        <span id="prog-text" style="font-size:12px; font-weight:900; color:#16a34a; font-family:monospace;">2 / 8 Tareas</span>
-      </div>
-      <div style="width:100%; height:8px; background:#f1f5f9; border-radius:4px; overflow:hidden;">
-        <div id="prog-bar" style="width:25%; height:100%; background:#16a34a; transition:width 0.3s;"></div>
-      </div>
-    </div>
-
-    <!-- Alerta Roja 17:30 -->
-    <div class="card-alert" style="margin-bottom:14px;">
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <span class="badge-red">🔴 EN ALERTA · ACCIÓN AHORA</span>
-        <span style="font-size:12px; font-weight:800; font-family:monospace; color:#991b1b;">17:30 HRS</span>
-      </div>
-      <div style="font-size:14px; font-weight:900; color:#0f172a; margin-top:8px;">
-        Duplica la arista: ¿crece el doble o 8 veces?
-      </div>
-      <div style="font-size:11.5px; color:#475569; margin-top:4px;">
-        Trampa de Geometría 3D. Video de 62.8s listo en tu Mac (<code>MIERCOLES-1730-video-duplica-arista.mp4</code>).
-      </div>
-      <button class="btn-action-red" onclick="copyText('ig1730')">
-        <span>📸 Copiar Copy Instagram Reels</span>
-        <span>COPIAR</span>
-      </button>
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:8px;">
-        <button class="btn-copy-white" onclick="copyText('tk1730')">📱 Copy TikTok</button>
-        <button class="btn-copy-white" onclick="copyText('pin1730')">📌 Comentario Fijado</button>
-      </div>
-    </div>
-
-    <!-- Cronograma Completo Interactivo -->
-    <div class="card">
-      <div style="font-size:12px; font-weight:800; text-transform:uppercase; color:#334155; margin-bottom:10px;">
-        Cronograma Completo (Toca para marcar lo subido)
-      </div>
-
-      <!-- 12:30 -->
-      <div class="task-item done" id="t-1230">
-        <div class="chk checked" onclick="toggleTask('t-1230')">✓</div>
-        <div style="flex:1;">
-          <div style="display:flex; align-items:center; gap:6px; margin-bottom:2px;">
-            <span style="font-size:11px; font-weight:800; font-family:monospace;">12:30</span>
-            <span class="tag tag-video">Video</span>
-            <span style="font-size:10px; color:#64748b;">👤 Matías</span>
-          </div>
-          <div class="task-title">Video Álgebra: Discriminante Δ = b² - 4ac</div>
-          <div class="task-desc">Test de 5s para saber si tiene 2, 1 o 0 soluciones.</div>
-        </div>
-      </div>
-
-      <!-- 13:00 -->
-      <div class="task-item done" id="t-1300">
-        <div class="chk checked" onclick="toggleTask('t-1300')">✓</div>
-        <div style="flex:1;">
-          <div style="display:flex; align-items:center; gap:6px; margin-bottom:2px;">
-            <span style="font-size:11px; font-weight:800; font-family:monospace;">13:00</span>
-            <span class="tag tag-story">Story</span>
-            <span style="font-size:10px; color:#64748b;">👤 Matías</span>
-          </div>
-          <div class="task-title">Story Encuesta Discriminante</div>
-          <div class="task-desc">Interacción con sticker: ¿Corta en 1 o 2 puntos?</div>
-        </div>
-      </div>
-
-      <!-- 17:30 -->
-      <div class="task-item" id="t-1730" style="border-color:#fca5a5; background:#fff5f5;">
-        <div class="chk" onclick="toggleTask('t-1730')"></div>
-        <div style="flex:1;">
-          <div style="display:flex; align-items:center; gap:6px; margin-bottom:2px;">
-            <span style="font-size:11px; font-weight:800; font-family:monospace; color:#dc2626;">17:30</span>
-            <span class="tag tag-video">Video</span>
-            <span style="font-size:10px; font-weight:bold; color:#dc2626;">🔴 En Alerta</span>
-          </div>
-          <div class="task-title">Video Geometría 3D: Arista y Volumen</div>
-          <div class="task-desc">Subir a TikTok e Instagram Reels. Video listo en Mac.</div>
-          <button class="btn-copy-white" style="margin-top:6px;" onclick="copyText('ig1730')">Copiar Copy Reels</button>
-        </div>
-      </div>
-
-      <!-- 18:00 -->
-      <div class="task-item" id="t-1800">
-        <div class="chk" onclick="toggleTask('t-1800')"></div>
-        <div style="flex:1;">
-          <div style="display:flex; align-items:center; gap:6px; margin-bottom:2px;">
-            <span style="font-size:11px; font-weight:800; font-family:monospace;">18:00</span>
-            <span class="tag tag-story">Story</span>
-            <span style="font-size:10px; color:#64748b;">👤 Matías</span>
-          </div>
-          <div class="task-title">Story Reto Encuesta Arista vs Volumen</div>
-          <div class="task-desc">Encuesta interactiva en Instagram Stories.</div>
-          <button class="btn-copy-white" style="margin-top:6px;" onclick="copyText('story1800')">Copiar Story</button>
-        </div>
-      </div>
-
-      <!-- 18:30 -->
-      <div class="task-item" id="t-1830">
-        <div class="chk" onclick="toggleTask('t-1830')"></div>
-        <div style="flex:1;">
-          <div style="display:flex; align-items:center; gap:6px; margin-bottom:2px;">
-            <span style="font-size:11px; font-weight:800; font-family:monospace;">18:30</span>
-            <span class="tag tag-fb">Grupo FB</span>
-            <span style="font-size:10px; color:#64748b;">👤 Matías</span>
-          </div>
-          <div class="task-title">Compartir Cápsula en Grupos de Apoderados</div>
-          <div class="task-desc">Publicar en grupos de Las Condes, Vitacura, Maipú.</div>
-          <button class="btn-copy-white" style="margin-top:6px;" onclick="copyText('gruposFbWa')">Copiar Mensaje FB</button>
-        </div>
-      </div>
-
-      <!-- 19:00 -->
-      <div class="task-item" id="t-1900">
-        <div class="chk" onclick="toggleTask('t-1900')"></div>
-        <div style="flex:1;">
-          <div style="display:flex; align-items:center; gap:6px; margin-bottom:2px;">
-            <span style="font-size:11px; font-weight:800; font-family:monospace;">19:00</span>
-            <span class="tag tag-wa">WhatsApp</span>
-            <span style="font-size:10px; color:#64748b;">👤 Matías</span>
-          </div>
-          <div class="task-title">Difusión en Comunidades de WhatsApp</div>
-          <div class="task-desc">Mandar mensaje de valor + oferta de tutorías PAES.</div>
-          <button class="btn-copy-white" style="margin-top:6px;" onclick="copyText('gruposFbWa')">Copiar Mensaje WA</button>
-        </div>
-      </div>
-
-      <!-- 21:15 -->
-      <div class="task-item" id="t-2115">
-        <div class="chk" onclick="toggleTask('t-2115')"></div>
-        <div style="flex:1;">
-          <div style="display:flex; align-items:center; gap:6px; margin-bottom:2px;">
-            <span style="font-size:11px; font-weight:800; font-family:monospace;">21:15</span>
-            <span class="tag tag-video">Video</span>
-            <span style="font-size:10px; color:#d97706; font-weight:bold;">🟡 Nocturno</span>
-          </div>
-          <div class="task-title">Dato 05: ¿Por qué 1 / 0 rompe las matemáticas?</div>
-          <div class="task-desc">Asíntota 1/x y el infinito. Video 53.3s listo en Mac.</div>
-          <button class="btn-copy-white" style="margin-top:6px;" onclick="copyText('noche2115')">Copiar Copy Noche</button>
-        </div>
-      </div>
-
-      <!-- 21:30 -->
-      <div class="task-item" id="t-2130">
-        <div class="chk" onclick="toggleTask('t-2130')"></div>
-        <div style="flex:1;">
-          <div style="display:flex; align-items:center; gap:6px; margin-bottom:2px;">
-            <span style="font-size:11px; font-weight:800; font-family:monospace;">21:30</span>
-            <span class="tag tag-story">Story</span>
-            <span style="font-size:10px; color:#64748b;">👤 Matías</span>
-          </div>
-          <div class="task-title">Story Cierre Pack PAES ($100k)</div>
-          <div class="task-desc">Llamado a DM para cerrar alumnos en recta final.</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Tarifas Oficiales -->
-    <div class="card" style="margin-top:14px;">
-      <div style="font-size:12px; font-weight:800; text-transform:uppercase; color:#334155; margin-bottom:8px;">
-        💬 Tarifas Oficiales para Cotizaciones
-      </div>
-      <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid #f1f5f9;">
-        <div>
-          <div style="font-size:12px; font-weight:800;">Tutoría individual (1 hora)</div>
-          <div style="font-size:11px; color:#16a34a; font-weight:bold;">$20.000 CLP</div>
-        </div>
-        <button class="btn-copy-white" onclick="copyPlan('wa1')">Copiar</button>
-      </div>
-      <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid #f1f5f9;">
-        <div>
-          <div style="font-size:12px; font-weight:800;">Pack PAES (6 horas)</div>
-          <div style="font-size:11px; color:#16a34a; font-weight:bold;">$100.000 CLP</div>
-        </div>
-        <button class="btn-copy-white" onclick="copyPlan('wa2')">Copiar</button>
-      </div>
-      <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0;">
-        <div>
-          <div style="font-size:12px; font-weight:800;">Intensivo Ingeniería (36h)</div>
-          <div style="font-size:11px; color:#7e22ce; font-weight:bold;">$600.000 CLP / mes</div>
-        </div>
-        <button class="btn-copy-white" onclick="copyPlan('wa3')">Copiar</button>
-      </div>
-    </div>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+    <a href="https://tuprofeindustrial-web.vercel.app/" class="btn" style="justify-content:center; margin-top:0;">🌐 Landing Web</a>
+    <a href="https://www.superprof.cl/ingeniero-industrial-docente-scuola-italiana-preparacion-intensiva-paes-matematica-calculo-domicilio-santiago.html" target="_blank" rel="noreferrer" class="btn" style="justify-content:center; margin-top:0; background:#fffbeb; border-color:#fcd34d; color:#92400e;">⭐ Superprof 5.0</a>
   </div>
-
-  <!-- ========================================== -->
-  <!-- VISTA 2: SEMANA (MATRIZ SEMANAL)          -->
-  <!-- ========================================== -->
-  <div id="view-semana" style="display:none;">
-    <div class="card">
-      <div style="font-size:12px; font-weight:800; text-transform:uppercase; color:#334155; margin-bottom:10px;">
-        Programación Semanal Completa (23 – 29 Nov)
-      </div>
-
-      <div style="margin-bottom:8px; padding:10px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px;">
-        <div style="font-size:12px; font-weight:800; color:#334155;">Lunes 23 Nov (100% Completado)</div>
-        <div style="font-size:11px; color:#64748b; margin-top:2px;">• (x+2)/2 · 1 m² a cm² · i² = -1 · Carrusel 6 slides</div>
-      </div>
-
-      <div style="margin-bottom:8px; padding:10px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px;">
-        <div style="font-size:12px; font-weight:800; color:#334155;">Martes 24 Nov (100% Completado)</div>
-        <div style="font-size:11px; color:#64748b; margin-top:2px;">• x² = 25 · Vértice f(x) · ¿Por qué π?</div>
-      </div>
-
-      <div style="margin-bottom:8px; padding:10px; background:#fef2f2; border:2px solid #ef4444; border-radius:8px;">
-        <div style="font-size:12px; font-weight:900; color:#991b1b;">Miércoles 25 Nov (HOY EN EJECUCIÓN)</div>
-        <div style="font-size:11px; color:#7f1d1d; margin-top:2px;">• 12:30: Discriminante · 17:30: Arista 3D · 21:15: Dividir por 0</div>
-      </div>
-
-      <div style="margin-bottom:8px; padding:10px; background:#fff; border:1px solid #e2e8f0; border-radius:8px;">
-        <div style="font-size:12px; font-weight:800; color:#0f172a;">Jueves 26 Nov (Mañana)</div>
-        <div style="font-size:11px; color:#64748b; margin-top:2px;">• Parábola-Recta · Truco Viète · Identidad de Euler</div>
-      </div>
-
-      <div style="margin-bottom:8px; padding:10px; background:#fff; border:1px solid #e2e8f0; border-radius:8px;">
-        <div style="font-size:12px; font-weight:800; color:#0f172a;">Viernes 27 Nov</div>
-        <div style="font-size:11px; color:#64748b; margin-top:2px;">• Inecuaciones · Máxima Ganancia · Fractales</div>
-      </div>
-
-      <div style="margin-bottom:8px; padding:10px; background:#fff; border:1px solid #e2e8f0; border-radius:8px;">
-        <div style="font-size:12px; font-weight:800; color:#0f172a;">Sábado 28 Nov</div>
-        <div style="font-size:11px; color:#64748b; margin-top:2px;">• Intersección Ejes · Función Inversa · Infinito de Hilbert</div>
-      </div>
-
-      <div style="padding:10px; background:#fff; border:1px solid #e2e8f0; border-radius:8px;">
-        <div style="font-size:12px; font-weight:800; color:#0f172a;">Domingo 29 Nov (Víspera PAES)</div>
-        <div style="font-size:11px; color:#64748b; margin-top:2px;">• Puntos Clave · Ritual Calma · Mente Despejada</div>
-      </div>
-    </div>
+  <div style="text-align:center; font-size:10px; color:#94a3b8; font-family:monospace;">
+    TuProfeIndustrial · Uso Interno (noindex) · Santiago de Chile
   </div>
-
-  <!-- ========================================== -->
-  <!-- VISTA 3: PROYECTOS Y FONDOS               -->
-  <!-- ========================================== -->
-  <div id="view-proyectos" style="display:none;">
-    <div class="card">
-      <div style="font-size:12px; font-weight:800; text-transform:uppercase; color:#334155; margin-bottom:4px;">
-        Días para Postulación a Proyectos & Fondos
-      </div>
-      <div style="font-size:11px; color:#64748b; margin-bottom:12px;">
-        Convocatorias CORFO, Start-Up Chile y Sercotec
-      </div>
-
-      <!-- PAES -->
-      <div style="padding:10px; background:#fef2f2; border:1px solid #fecaca; border-radius:8px; margin-bottom:8px;">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <div style="font-size:12.5px; font-weight:800; color:#0f172a;">Rendición PAES Regular 2026</div>
-          <span style="font-size:12px; font-weight:900; color:#dc2626; font-family:monospace;">5 DÍAS</span>
-        </div>
-        <div style="font-size:11px; color:#7f1d1d; margin-top:2px;">30 Noviembre 2026 · Captación intensiva de alumnos.</div>
-      </div>
-
-      <!-- CORFO Semilla Inicia -->
-      <div style="padding:10px; background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; margin-bottom:8px;">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <div style="font-size:12.5px; font-weight:800; color:#0f172a;">CORFO: Semilla Inicia</div>
-          <span style="font-size:12px; font-weight:900; color:#16a34a; font-family:monospace;">115 DÍAS</span>
-        </div>
-        <div style="font-size:11px; color:#15803d; margin-top:2px;">$15.000.000 CLP · 20 Marzo 2027. Validar tracción de videos.</div>
-      </div>
-
-      <!-- Start-Up Chile -->
-      <div style="padding:10px; background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; margin-bottom:8px;">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <div style="font-size:12.5px; font-weight:800; color:#0f172a;">Start-Up Chile: Build</div>
-          <span style="font-size:12px; font-weight:900; color:#2563eb; font-family:monospace;">141 DÍAS</span>
-        </div>
-        <div style="font-size:11px; color:#1e40af; margin-top:2px;">$15.000.000 CLP · 15 Abril 2027. Video pitch 90s.</div>
-      </div>
-
-      <!-- Sercotec -->
-      <div style="padding:10px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px;">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <div style="font-size:12.5px; font-weight:800; color:#0f172a;">Sercotec: Capital Semilla</div>
-          <span style="font-size:12px; font-weight:900; color:#475569; font-family:monospace;">151 DÍAS</span>
-        </div>
-        <div style="font-size:11px; color:#64748b; margin-top:2px;">$3.500.000 CLP · 25 Abril 2027. Cotizaciones equipamiento.</div>
-      </div>
-    </div>
-  </div>
-
-  <div style="text-align:center; font-size:10.5px; color:#94a3b8; font-family:monospace; margin-top:10px;">
-    TuProfeIndustrial · Santiago de Chile
-  </div>
-
 </div>
 
-<!-- Toast flotante -->
 <div id="toast">¡Texto copiado al portapapeles!</div>
 
 <script>
-  function switchTab(tab) {
-    document.getElementById('view-dia').style.display = tab === 'dia' ? 'block' : 'none';
-    document.getElementById('view-semana').style.display = tab === 'semana' ? 'block' : 'none';
-    document.getElementById('view-proyectos').style.display = tab === 'proyectos' ? 'block' : 'none';
-    
-    const btns = document.querySelectorAll('.tab-btn');
-    btns[0].classList.toggle('active', tab === 'dia');
-    btns[1].classList.toggle('active', tab === 'semana');
-    btns[2].classList.toggle('active', tab === 'proyectos');
-  }
+const WEB_URL = "https://tuprofeindustrial-web.vercel.app/";
+const WA_URL = "https://wa.me/56957936649";
 
-  function toggleTask(id) {
-    const el = document.getElementById(id);
-    const chk = el.querySelector('.chk');
-    const isDone = el.classList.toggle('done');
-    chk.classList.toggle('checked', isDone);
-    chk.textContent = isDone ? '✓' : '';
-    updateProgress();
-  }
+const SLIDES = [
+  { num: "01", name: "Portada", file: "slide_01_portada.png" },
+  { num: "02", name: "Enunciado", file: "slide_02_enunciado.png" },
+  { num: "03", name: "Desarrollo", file: "slide_03_desarrollo.png" },
+  { num: "04", name: "Descarte", file: "slide_04_descarte.png" },
+  { num: "05", name: "Formulario", file: "slide_05_formulario.png" },
+  { num: "06", name: "Cierre DM", file: "slide_06_cta_dm.png" },
+];
 
-  function updateProgress() {
-    const total = document.querySelectorAll('.task-item').length;
-    const done = document.querySelectorAll('.task-item.done').length;
-    const pct = Math.round((done / total) * 100);
-    document.getElementById('prog-bar').style.width = pct + '%';
-    document.getElementById('prog-text').textContent = done + ' / ' + total + ' Tareas';
-  }
+const DAYS = {
+  mie25: {
+    label: "Miércoles 25 Nov",
+    iso: "2026-11-25",
+    tasks: [
+      { id: "mie-1230-video", time: "12:30", mins: 750, cat: "video", title: "Video Álgebra: Discriminante Δ = b² - 4ac", desc: "52.9s · Test de 5s · Reels y TikTok", mp4: "/motor-assets/videos/MIERCOLES-1230-video-discriminante.mp4", img: "/motor-assets/portadas/MIERCOLES-1230-portada-discriminante.jpg", copyKey: "mie1230" },
+      { id: "mie-1300-story", time: "13:00", mins: 780, cat: "story", title: "Story Encuesta Discriminante", desc: "Encuesta x² - 6x + 9 = 0", img: "/motor-assets/historias/miercoles-1230-historia-01-encuesta.png" },
+      { id: "mie-1730-video", time: "17:30", mins: 1050, cat: "video", title: "Video 3D: Duplica la Arista (2³ = 8)", desc: "62.8s · Trampa volumen PAES", mp4: "/motor-assets/videos/MIERCOLES-1730-video-duplica-arista.mp4", img: "/motor-assets/portadas/MIERCOLES-1730-portada-duplica-arista.jpg", copyKey: "mie1730" },
+      { id: "mie-1800-story", time: "18:00", mins: 1080, cat: "story", title: "Story Reto Arista vs Volumen", desc: "Sticker encuesta ¿x2 o x8?", img: "/motor-assets/historias/miercoles-1730-historia-01-encuesta.png", copyKey: "mie1800" },
+      { id: "mie-1830-fb", time: "18:30", mins: 1110, cat: "facebook", title: "Postear en Grupos FB Apoderados", desc: "Las Condes, Providencia, Maipú (con links)", copyKey: "mieFbWa" },
+      { id: "mie-1900-wa", time: "19:00", mins: 1140, cat: "whatsapp", title: "Compartir en Grupos WhatsApp", desc: "Mensaje de valor + Web y wa.me", copyKey: "mieFbWa" },
+      { id: "mie-2115-video", time: "21:15", mins: 1275, cat: "video", title: "Dato Nocturno 05: Dividir por 0 (1/x)", desc: "53.3s · Asíntota vertical", mp4: "/motor-assets/videos/MIERCOLES-2115-noche05-dividir-por-cero.mp4", img: "/motor-assets/portadas/MIERCOLES-2115-portada-dividir-por-cero.jpg", copyKey: "mie2115" },
+      { id: "mie-2130-story", time: "21:30", mins: 1290, cat: "story", title: "Story Nocturna Cierre Pack PAES $100k", desc: "Lámina 21:15 de captación", img: "/motor-assets/historias/miercoles-2115-historia-02-clases.png" },
+    ],
+    videos: [
+      { time: "12:30", title: "Discriminante Δ = b² - 4ac", mp4: "/motor-assets/videos/MIERCOLES-1230-video-discriminante.mp4", cover: "/motor-assets/portadas/MIERCOLES-1230-portada-discriminante.jpg" },
+      { time: "17:30", title: "Duplica la Arista (2³ = 8)", mp4: "/motor-assets/videos/MIERCOLES-1730-video-duplica-arista.mp4", cover: "/motor-assets/portadas/MIERCOLES-1730-portada-duplica-arista.jpg" },
+      { time: "21:15", title: "Dato 05: Dividir por Cero", mp4: "/motor-assets/videos/MIERCOLES-2115-noche05-dividir-por-cero.mp4", cover: "/motor-assets/portadas/MIERCOLES-2115-portada-dividir-por-cero.jpg" },
+    ],
+    carousels: [
+      { title: "Carrusel 17:30 · Duplica la Arista", path: "/motor-assets/carrusel-1730" },
+      { title: "Carrusel 12:30 · Discriminante", path: "/motor-assets/carrusel-1230" },
+    ],
+    stories: [
+      { title: "17:30 Encuesta", url: "/motor-assets/historias/miercoles-1730-historia-01-encuesta.png" },
+      { title: "17:30 Flyer Tutorías", url: "/motor-assets/historias/miercoles-1730-historia-02-clases.png" },
+      { title: "21:15 Encuesta", url: "/motor-assets/historias/miercoles-2115-historia-01-encuesta.png" },
+      { title: "21:15 Flyer Noche", url: "/motor-assets/historias/miercoles-2115-historia-02-clases.png" },
+    ],
+  },
+  jue26: {
+    label: "Jueves 26 Nov",
+    iso: "2026-11-26",
+    tasks: [
+      { id: "jue-1230-video", time: "12:30", mins: 750, cat: "video", title: "Video Funciones: Parábola y Recta", desc: "Tangencia con discriminante Δ=0", mp4: "/motor-assets/videos/JUEVES-1230-video-parabola-recta.mp4", img: "/motor-assets/portadas/JUEVES-1230-portada-parabola-recta.jpg", copyKey: "jue1230" },
+      { id: "jue-1300-story", time: "13:00", mins: 780, cat: "story", title: "Story Encuesta Parábola vs Recta", desc: "Lámina encuesta", img: "/motor-assets/historias/jueves-1230-historia-01-encuesta.png" },
+      { id: "jue-1730-video", time: "17:30", mins: 1050, cat: "video", title: "Video Álgebra: Truco de Viète", desc: "Parámetro k en 20s sin fórmula larga", mp4: "/motor-assets/videos/JUEVES-1730-video-viete-propiedades.mp4", img: "/motor-assets/portadas/JUEVES-1730-portada-viete-propiedades.jpg", copyKey: "jue1730" },
+      { id: "jue-1800-story", time: "18:00", mins: 1080, cat: "story", title: "Story Reto Viète", desc: "Sticker encuesta", img: "/motor-assets/historias/jueves-1730-historia-01-encuesta.png" },
+      { id: "jue-1830-fb", time: "18:30", mins: 1110, cat: "facebook", title: "Postear Viète en Grupos FB", desc: "Con links directos a Web y WhatsApp", copyKey: "jueFbWa" },
+      { id: "jue-1900-wa", time: "19:00", mins: 1140, cat: "whatsapp", title: "Compartir Viète en Grupos WhatsApp", desc: "Mensaje de valor + oferta tutorías", copyKey: "jueFbWa" },
+      { id: "jue-2115-video", time: "21:15", mins: 1275, cat: "video", title: "Dato Nocturno 06: Identidad de Euler", desc: "e^(iπ) + 1 = 0 en plano complejo", mp4: "/motor-assets/videos/JUEVES-2115-noche06-identidad-euler.mp4", img: "/motor-assets/portadas/JUEVES-2115-portada-identidad-euler.jpg", copyKey: "jue2115" },
+      { id: "jue-2130-story", time: "21:30", mins: 1290, cat: "story", title: "Story Nocturna Cierre Ingeniería", desc: "Lámina 21:15 de captación", img: "/motor-assets/historias/jueves-2115-historia-02-clases.png" },
+    ],
+    videos: [
+      { time: "12:30", title: "Parábola y Recta (Tangencia)", mp4: "/motor-assets/videos/JUEVES-1230-video-parabola-recta.mp4", cover: "/motor-assets/portadas/JUEVES-1230-portada-parabola-recta.jpg" },
+      { time: "17:30", title: "Relaciones de Viète (k en 20s)", mp4: "/motor-assets/videos/JUEVES-1730-video-viete-propiedades.mp4", cover: "/motor-assets/portadas/JUEVES-1730-portada-viete-propiedades.jpg" },
+      { time: "21:15", title: "Dato 06: Identidad de Euler", mp4: "/motor-assets/videos/JUEVES-2115-noche06-identidad-euler.mp4", cover: "/motor-assets/portadas/JUEVES-2115-portada-identidad-euler.jpg" },
+    ],
+    carousels: [
+      { title: "Carrusel 12:30 · Parábola y Recta", path: "/motor-assets/carrusel-jueves-1230" },
+      { title: "Carrusel 17:30 · Truco de Viète", path: "/motor-assets/carrusel-jueves-1730" },
+    ],
+    stories: [
+      { title: "12:30 Encuesta", url: "/motor-assets/historias/jueves-1230-historia-01-encuesta.png" },
+      { title: "12:30 Flyer", url: "/motor-assets/historias/jueves-1230-historia-02-clases.png" },
+      { title: "17:30 Encuesta", url: "/motor-assets/historias/jueves-1730-historia-01-encuesta.png" },
+      { title: "17:30 Flyer", url: "/motor-assets/historias/jueves-1730-historia-02-clases.png" },
+      { title: "21:15 Encuesta", url: "/motor-assets/historias/jueves-2115-historia-01-encuesta.png" },
+      { title: "21:15 Flyer", url: "/motor-assets/historias/jueves-2115-historia-02-clases.png" },
+    ],
+  },
+};
 
-  const copies = {
-    ig1730: `Si duplicas la arista de un cubo, ¿su volumen se duplica? ⚠️ ¡La trampa clásica de geometría 3D en la PAES!\n\nEl volumen se mide en las tres direcciones del espacio: largo, ancho y alto:\nV = a · a · a = a³.\n\nAl duplicar la arista (2a), el factor 2 también se eleva al cubo:\nV₂ = (2a)³ = 2³ · a³ = 8a³.\n\nEl volumen NO crece al doble: ¡crece 8 VECES!\nComprobación con números reales:\n• Arista 4 cm ➔ V = 4³ = 64 cm³\n• Arista 8 cm ➔ V = 8³ = 512 cm³ (512 / 64 = exactamente 8 veces).\n\n✍️ RETO RÁPIDO: Si triplicas la arista de un cubo, ¿cuántas veces crece su volumen?\n📩 Mándaselo a quien dé la PAES para que no caiga en el cazabobos.\n\nCreado con IA. #tuprofeindustrial #paesm1 #geometria #cuerposgeometricos #demre`,
-    tk1730: `¿Duplicas la arista de un cubo? ⚠️ ¡No es el doble! El volumen crece 8 veces (2³ = 8). Si triplicas la arista, ¿cuántas veces crece? Déjamelo en comentarios 👇 Creado con IA. #tuprofeindustrial #paesm1 #geometria #cuerposgeometricos #demre`,
-    pin1730: `📌 Tutorías personalizadas 1 a 1 de Geometría y PAES M1 ($20k / h · Pack PAES $100k). Envíame un mensaje interno (DM) para revisar cupos disponibles 📲`,
-    story1800: `🚨 RETO RÁPIDO PAES:\nSi duplicas la medida de la arista de un cubo, su volumen:\nA) Se duplica (x2)\nB) Se cuadruplica (x4)\nC) Crece 8 veces (x8)\n👇 Vota en la encuesta (¡El 85% se equivoca por apurado!)`,
-    gruposFbWa: `¡Hola a todos! 👋 Para los que están en la recta final de la PAES M1 (o apoderados con hijos rindiéndola este lunes), les comparto esta cápsula explicativa de 1 minuto sobre la trampa clásica de Geometría 3D: ¿qué pasa con el volumen al duplicar la arista? (No es el doble, ¡crece 8 veces!).\n\n👉 Pueden ver la explicación paso a paso en: https://www.instagram.com/tuprofeindustrial/ o en TikTok @tuprofeindustrial\n\nAdemás, como docente e Ingeniero Civil Industrial, abrí los últimos 3 cupos para tutorías personalizadas intensivas de última semana ($20.000/h o Pack PAES de 6h a $100.000). Si alguien necesita reforzar, me puede escribir por interno. ¡Mucho éxito a todos! 🎯`,
-    noche2115: `¿Por qué 1 / 0 rompe las matemáticas? 🌙 La gráfica de 1/x explota a +infinito y -infinito al mismo tiempo. ¿Cuánto da 0 / 0? Comenta tu teoría 👇 Creado con IA. #tuprofeindustrial #datosnocturnos #calculo #algebra #cienciachile`
+const COPIES = {
+  mie1230: `¿Cuántas soluciones tiene x² - 4x + 3 = 0? ⚡ ¡Ahorra 3 minutos en la PAES con el discriminante Δ = b² - 4ac! En x² - 6x + 9 = 0, ¿cuántas soluciones hay? Coméntalo 👇 Creado con IA. #tuprofeindustrial #paesm1 #algebra #ecuaciones #demre`,
+  mie1730: `Si duplicas la arista de un cubo, ¿su volumen se duplica? ⚠️ ¡La trampa clásica de geometría 3D en la PAES!\nV₂ = (2a)³ = 8a³ (¡crece 8 VECES!).\n✍️ RETO: Si triplicas la arista, ¿cuántas veces crece?\nCreado con IA. #tuprofeindustrial #paesm1 #geometria #cuerposgeometricos #demre`,
+  mie1800: `🚨 RETO PAES: Si duplicas la arista de un cubo, su volumen: A) x2 · B) x4 · C) x8 👇`,
+  mieFbWa: `¡Hola! Ojo con esta trampa clásica de la PAES M1 en Geometría 3D: si duplicas la arista de un cubo, su volumen NO se duplica, ¡crece 8 veces (2³ = 8)! 📦\n\n🎯 Practica gratis con mi Calculadora PAES y descarga el Simulacro M1 (20 ítems con solucionario) en: ${WEB_URL}\n📲 Por tutorías personalizadas de última semana ($20.000/h o Pack PAES 6h $100.000): ${WA_URL}`,
+  mie2115: `¿Por qué 1 / 0 rompe las matemáticas? 🌙 La gráfica de 1/x explota a +∞ y -∞ al mismo tiempo. ¿Cuánto da 0 / 0? 👇 Creado con IA. #tuprofeindustrial #datosnocturnos #calculo #algebra #cienciachile`,
+  jue1230: `¿Parábola y recta se cortan en la PAES? 📐 En y=x² y y=2x-1, al igualar queda x²-2x+1=0 (Δ=0, tangentes en (1,1)). ¿Y si la recta fuera y = 2x - 5? 👇 Creado con IA. #tuprofeindustrial #paesm1 #matematicas #funciones #demre`,
+  jue1730: `El truco de Viète para hallar k en 20s en la PAES ⚡ En x²-5x+k=0 con x₁=2: suma=5 ➔ x₂=3, producto k=2×3=6. ¿Cuánto vale k si x²-7x+k=0 y x₁=3? 👇 Creado con IA. #tuprofeindustrial #paesm1 #algebra #ecuaciones #demre`,
+  jueFbWa: `Tip PAES M1 ⚡ Relaciones de Viète: en x²-5x+k=0 con raíz 2, la suma es 5 ➔ la otra raíz es 3 ➔ k = 2·3 = 6 en 15 seg!\nSimulacro M1 gratis (20 ítems + solucionario) aquí 👉 ${WEB_URL}\nTutorías personalizadas ($20k/h · Pack PAES $100k): ${WA_URL}`,
+  jue2115: `¿Por qué e^(iπ) + 1 = 0 da exactamente cero? 🌙 Un giro de 180° en el círculo trigonométrico. Si giras 90° (π/2), ¿qué obtienes? 👇 Creado con IA. #tuprofeindustrial #matematicas #euler #ciencia #ingenieria`,
+  wa1: `¡Hola! Con gusto te apoyo. La tutoría personalizada de 1 hora tiene un valor de $20.000 CLP (online o a domicilio en Santiago). ¿Qué día y horario te acomoda?`,
+  wa2: `¡Hola! Para la recta final te recomiendo el Pack PAES: 6 horas de tutorías personalizadas intensivas por $100.000 CLP (ahorras $20.000). Trabajamos ensayos y trampas DEMRE. ¿Agendamos la primera sesión?`,
+  wa3: `¡Hola! El Intensivo de Ingeniería incluye 36 horas mensuales de Cálculo, Álgebra y Nivelación por $600.000 CLP/mes con soporte continuo por WhatsApp. Cuéntame qué ramos cursas.`,
+};
+
+let currentTab = "dia";
+let currentDay = "mie25";
+
+function getSantiagoNow() {
+  const now = new Date();
+  const iso = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Santiago", year: "numeric", month: "2-digit", day: "2-digit" }).format(now);
+  const parts = new Intl.DateTimeFormat("en-GB", { timeZone: "America/Santiago", hour: "2-digit", minute: "2-digit", hour12: false }).formatToParts(now);
+  const hh = Number(parts.find(p => p.type === "hour")?.value || 12);
+  const mm = Number(parts.find(p => p.type === "minute")?.value || 0);
+  return { iso, mins: hh * 60 + mm, timeStr: `${String(hh).padStart(2, "0")}:${String(mm).padStart(2, "0")}` };
+}
+
+function diffDays(fromIso, toIso) {
+  return Math.max(0, Math.round((Date.parse(toIso + "T00:00:00Z") - Date.parse(fromIso + "T00:00:00Z")) / 86400000));
+}
+
+function loadState(day) {
+  try {
+    const raw = localStorage.getItem("tpi_tracking_" + day);
+    if (raw) return JSON.parse(raw);
+  } catch {}
+  return day === "mie25" ? { "mie-1230-video": true, "mie-1300-story": true } : {};
+}
+
+function saveState(day, state) {
+  try { localStorage.setItem("tpi_tracking_" + day, JSON.stringify(state)); } catch {}
+}
+
+function toggleTask(taskId) {
+  const state = loadState(currentDay);
+  state[taskId] = !state[taskId];
+  saveState(currentDay, state);
+  renderAll();
+}
+
+function copyVal(key) {
+  if (!COPIES[key]) return;
+  navigator.clipboard.writeText(COPIES[key]).then(() => {
+    const t = document.getElementById("toast");
+    t.classList.add("show");
+    setTimeout(() => t.classList.remove("show"), 2000);
+  });
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  ["dia", "productos", "semana", "proyectos"].forEach((t, i) => {
+    document.getElementById("view-" + t).style.display = t === tab ? "block" : "none";
+    document.querySelectorAll(".tab-btn")[i].classList.toggle("active", t === tab);
+  });
+  document.getElementById("day-switcher").style.display = (tab === "dia" || tab === "productos") ? "grid" : "none";
+}
+
+function switchDay(day) {
+  currentDay = day;
+  document.querySelectorAll(".day-btn")[0].classList.toggle("active", day === "mie25");
+  document.querySelectorAll(".day-btn")[1].classList.toggle("active", day === "jue26");
+  renderAll();
+}
+
+function renderAll() {
+  const now = getSantiagoNow();
+  document.getElementById("clock-clt").textContent = now.timeStr + " CLT";
+  document.getElementById("paes-pill").textContent = "PAES: " + diffDays(now.iso, "2026-11-30") + " DÍAS";
+
+  const dayObj = DAYS[currentDay];
+  const state = loadState(currentDay);
+  const tasks = dayObj.tasks;
+
+  const isUrgent = (t) => {
+    if (state[t.id]) return false;
+    if (dayObj.iso < now.iso) return true;
+    if (dayObj.iso > now.iso) return false;
+    return t.mins <= now.mins + 45;
   };
 
-  const plans = {
-    wa1: `¡Hola! Con mucho gusto te puedo apoyar. La tutoría personalizada de 1 hora tiene un valor de $20.000 CLP (online o a domicilio en Santiago). Revisamos dudas puntuales, ejercicios tipo PAES y reforzamos la base paso a paso. ¿Qué día y horario te acomoda más coordinar?`,
-    wa2: `¡Hola! Para esta recta final te recomiendo directamente el Pack PAES: son 6 horas de tutorías personalizadas intensivas por $100.000 CLP (ahorras $20.000 frente a la hora individual). Trabajamos resolución de ensayos, trampas clásicas DEMRE y manejo de tiempo pregunta a pregunta. ¿Te gustaría agendar la primera sesión esta semana?`,
-    wa3: `¡Hola! El programa Intensivo de Ingeniería incluye 36 horas mensuales de acompañamiento integral (Cálculo diferencial/integral, Álgebra Lineal, Física y Nivelación universitaria) por $600.000 CLP al mes, con soporte continuo por WhatsApp para resolución de dudas. Cuéntame qué ramos estás cursando para diseñar tu plan de estudio.`
-  };
+  const doneCount = tasks.filter(t => state[t.id]).length;
+  const alerta = tasks.filter(t => !state[t.id] && isUrgent(t));
+  const proceso = tasks.filter(t => !state[t.id] && !isUrgent(t));
+  const pct = Math.round((doneCount / tasks.length) * 100);
+  const nextTask = alerta[0] || proceso[0] || null;
 
-  function showToast(text) {
-    const toast = document.getElementById('toast');
-    toast.textContent = text || '¡Texto copiado al portapapeles!';
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 2200);
+  // Render DIA
+  let priorityHtml = "";
+  if (doneCount === tasks.length) {
+    priorityHtml = `<div class="card-priority done"><div style="font-weight:900; color:#166534;">🟢 ¡${dayObj.label} 100% COMPLETADO!</div></div>`;
+  } else if (nextTask) {
+    const urg = alerta.length > 0;
+    priorityHtml = `
+      <div class="card-priority ${urg ? "" : "amber"}">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <span style="background:${urg ? "#dc2626" : "#d97706"}; color:#fff; font-size:10px; font-weight:900; padding:3px 8px; border-radius:4px;">${urg ? "🔴 EN ALERTA · AHORA" : "🟡 PRÓXIMO EN AGENDA"}</span>
+          <span style="font-size:11px; font-weight:800; font-family:monospace;">${nextTask.time} HRS</span>
+        </div>
+        <div style="font-size:14px; font-weight:900;">${nextTask.title}</div>
+        <div style="font-size:11.5px; color:#475569; margin-top:4px;">${nextTask.desc}</div>
+        ${nextTask.mp4 ? `<a href="${nextTask.mp4}" download class="btn btn-dark">🎬 Descargar Video MP4 al Celular</a>` : ""}
+        ${nextTask.copyKey ? `<button class="btn ${urg ? "btn-red" : ""}" onclick="copyVal('${nextTask.copyKey}')"><span>📋 Copiar Texto / Copy</span><span>COPIAR</span></button>` : ""}
+        <button class="btn" style="justify-content:center;" onclick="toggleTask('${nextTask.id}')">✓ Marcar como subida</button>
+      </div>`;
   }
 
-  function copyText(key) {
-    if (copies[key]) {
-      navigator.clipboard.writeText(copies[key]).then(() => showToast('¡Texto copiado al portapapeles!'));
-    }
-  }
+  const tasksHtml = tasks.map(t => {
+    const done = !!state[t.id];
+    const urg = isUrgent(t);
+    return `
+      <div class="task-item ${done ? "done" : urg ? "urgent" : ""}">
+        <div class="chk ${done ? "checked" : ""}" onclick="toggleTask('${t.id}')">${done ? "✓" : ""}</div>
+        <div style="flex:1; min-width:0;">
+          <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap; margin-bottom:2px;">
+            <span style="font-size:11px; font-weight:800; font-family:monospace;">${t.time}</span>
+            <span class="tag tag-${t.cat}">${t.cat}</span>
+            <span style="font-size:10px; font-weight:700; color:#64748b;">${done ? "🟢 Listo" : urg ? "🔴 Alerta" : "🟡 Proceso"}</span>
+          </div>
+          <div class="task-title">${t.title}</div>
+          <div class="task-desc">${t.desc}</div>
+          ${!done && t.copyKey ? `<button class="btn" style="margin-top:6px; padding:5px 8px; font-size:10.5px;" onclick="copyVal('${t.copyKey}')"><span>📋 Copiar texto</span><span>Tocar</span></button>` : ""}
+        </div>
+      </div>`;
+  }).join("");
 
-  function copyPlan(key) {
-    if (plans[key]) {
-      navigator.clipboard.writeText(plans[key]).then(() => showToast('¡Mensaje copiado al portapapeles!'));
-    }
-  }
+  document.getElementById("view-dia").innerHTML = `
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+        <span style="font-size:12px; font-weight:800;">${dayObj.label}: ${doneCount}/${tasks.length}</span>
+        <span style="font-size:12px; font-weight:900; color:#16a34a; font-family:monospace;">${pct}%</span>
+      </div>
+      <div style="width:100%; height:8px; background:#f1f5f9; border-radius:4px; overflow:hidden;">
+        <div style="width:${pct}%; height:100%; background:#16a34a;"></div>
+      </div>
+      <div class="sem-grid">
+        <div class="sem-box sem-green">${doneCount} Listo</div>
+        <div class="sem-box sem-amber">${proceso.length} Proceso</div>
+        <div class="sem-box sem-red">${alerta.length} Alerta</div>
+      </div>
+    </div>
+    ${priorityHtml}
+    <div class="card">
+      <div style="font-size:12px; font-weight:800; text-transform:uppercase; color:#334155; margin-bottom:8px;">Cronograma ${dayObj.label}</div>
+      ${tasksHtml}
+    </div>
+    <div class="card">
+      <div style="font-size:12px; font-weight:800; text-transform:uppercase; color:#334155; margin-bottom:8px;">💬 Cotizaciones Rápidas</div>
+      <button class="btn" onclick="copyVal('wa1')"><span>Tutoría 1h ($20.000)</span><span>Copiar</span></button>
+      <button class="btn btn-green" onclick="copyVal('wa2')"><span>Pack PAES 6h ($100.000)</span><span>Copiar</span></button>
+      <button class="btn" onclick="copyVal('wa3')"><span>Intensivo Ingeniería ($600.000)</span><span>Copiar</span></button>
+    </div>`;
+
+  // Render PRODUCTOS
+  const videosHtml = dayObj.videos.map(v => `
+    <div style="padding:8px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; display:flex; gap:10px; align-items:center; margin-bottom:8px;">
+      <img src="${v.cover}" style="width:48px; height:64px; object-fit:cover; border-radius:4px;" />
+      <div style="flex:1; min-width:0;">
+        <div style="font-size:11px; font-weight:800;">${v.time} · ${v.title}</div>
+        <div style="display:flex; gap:6px; margin-top:6px;">
+          <a href="${v.mp4}" download style="font-size:10px; font-weight:800; background:#0f172a; color:#fff; padding:4px 8px; border-radius:4px; text-decoration:none;">🎬 MP4</a>
+          <a href="${v.cover}" download style="font-size:10px; font-weight:700; background:#fff; border:1px solid #cbd5e1; color:#0f172a; padding:4px 8px; border-radius:4px; text-decoration:none;">🖼️ Portada</a>
+        </div>
+      </div>
+    </div>`).join("");
+
+  const carHtml = dayObj.carousels.map(c => `
+    <div class="card">
+      <div style="font-size:12px; font-weight:800;">📸 ${c.title}</div>
+      <div class="slides-grid">
+        ${SLIDES.map(s => `<div class="slide-card"><img src="${c.path}/${s.file}" /><div style="font-size:9px; font-weight:700; margin-top:2px;">${s.num}. ${s.name}</div><a href="${c.path}/${s.file}" download style="display:block; font-size:9px; font-weight:800; color:#2563eb; margin-top:2px; text-decoration:none;">⬇ Bajar</a></div>`).join("")}
+      </div>
+    </div>`).join("");
+
+  const storiesHtml = `
+    <div class="card">
+      <div style="font-size:12px; font-weight:800;">📱 Historias ${dayObj.label} (9:16)</div>
+      <div class="stories-grid">
+        ${dayObj.stories.map(st => `<div class="story-card"><img src="${st.url}" /><div style="font-size:10px; font-weight:800; margin-top:4px;">${st.title}</div><a href="${st.url}" download style="display:block; font-size:10px; font-weight:800; color:#7e22ce; margin-top:3px; text-decoration:none;">⬇ Descargar PNG</a></div>`).join("")}
+      </div>
+    </div>`;
+
+  document.getElementById("view-productos").innerHTML = `
+    <div class="card"><div style="font-size:12px; font-weight:800; margin-bottom:8px;">🎬 Videos MP4 y Portadas (${dayObj.label})</div>${videosHtml}</div>
+    ${carHtml}
+    ${storiesHtml}
+    <div class="card" style="background:#f0fdf4; border-color:#16a34a;">
+      <div style="font-size:12px; font-weight:900; color:#14532d;">📄 Simulacro PAES M1 (PDF)</div>
+      <div style="font-size:11px; color:#166534; margin-top:2px;">20 ítems de alternativas con solucionario paso a paso</div>
+      <a href="/simulacro-paes-m1.pdf" download class="btn btn-green" style="justify-content:center; margin-top:8px;">⬇ Descargar PDF</a>
+    </div>`;
+
+  // Render SEMANA
+  document.getElementById("view-semana").innerHTML = `
+    <div class="card">
+      <div style="font-size:12px; font-weight:800; text-transform:uppercase; margin-bottom:8px;">Semana 2 (23–29 Nov)</div>
+      <div style="font-size:11.5px; display:flex; flex-direction:column; gap:8px;">
+        <div style="padding:8px; background:#f8fafc; border-radius:6px;"><b>Lun 23 (Completado):</b> (x+2)/2 · 1m²=100cm² · i²=-1</div>
+        <div style="padding:8px; background:#f8fafc; border-radius:6px;"><b>Mar 24 (Completado):</b> x²=25 · Vértice · ¿Por qué π?</div>
+        <div style="padding:8px; background:#fef2f2; border:1px solid #ef4444; border-radius:6px;"><b>Mié 25:</b> Discriminante · Arista 3D · Dividir por 0</div>
+        <div style="padding:8px; background:#eff6ff; border:1px solid #93c5fd; border-radius:6px;"><b>Jue 26 (Producido):</b> Parábola-Recta · Viète · Euler</div>
+        <div style="padding:8px; background:#fff; border:1px solid #e2e8f0; border-radius:6px;"><b>Vie 27 – Dom 29:</b> Inecuaciones · Inversa · Ritual Calma PAES</div>
+      </div>
+    </div>`;
+
+  // Render PROYECTOS
+  const fondos = [
+    { name: "PAES Regular 2026", iso: "2026-11-30", monto: "Ingreso U 2027", urgent: true },
+    { name: "CORFO: Semilla Inicia", iso: "2027-03-20", monto: "$15.000.000 CLP" },
+    { name: "Start-Up Chile: Build", iso: "2027-04-15", monto: "$15.000.000 CLP" },
+    { name: "Sercotec: Capital Semilla", iso: "2027-04-25", monto: "$3.500.000 CLP" },
+    { name: "Santander X Award", iso: "2027-05-01", monto: "Capital + Aceleración" },
+  ];
+  document.getElementById("view-proyectos").innerHTML = `
+    <div class="card">
+      <div style="font-size:12px; font-weight:800; text-transform:uppercase; margin-bottom:8px;">Radar de Proyectos y Fondos</div>
+      ${fondos.map(f => `<div style="padding:10px; border:1px solid ${f.urgent ? "#fca5a5" : "#e2e8f0"}; background:${f.urgent ? "#fef2f2" : "#f8fafc"}; border-radius:8px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;"><div><div style="font-size:12px; font-weight:800;">${f.name}</div><div style="font-size:10.5px; color:#64748b;">${f.monto} · ${f.iso}</div></div><span style="font-family:monospace; font-weight:900; color:${f.urgent ? "#dc2626" : "#16a34a"};">${diffDays(now.iso, f.iso)} DÍAS</span></div>`).join("")}
+    </div>`;
+}
+
+if (getSantiagoNow().iso >= "2026-11-26") {
+  currentDay = "jue26";
+  document.querySelectorAll(".day-btn")[0].classList.remove("active");
+  document.querySelectorAll(".day-btn")[1].classList.add("active");
+}
+renderAll();
 </script>
-
 </body>
 </html>
