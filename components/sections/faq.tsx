@@ -14,12 +14,12 @@ import { Reveal } from "@/components/sections/reveal";
  */
 const FAQS = [
   {
-    q: "¿Las clases son a domicilio o online?",
-    a: "Ambas cosas. Doy clases a domicilio en Santiago y alrededores, y online desde cualquier parte de Chile con buena conexión. En las online usamos videollamada y pizarra digital para que todo quede claro y, si quieres, con material de apoyo que puedes repasar después.",
+    q: "¿Las tutorías son a domicilio o online?",
+    a: "Ambas cosas. Doy tutorías a domicilio en Santiago y alrededores, y online desde cualquier parte de Chile con buena conexión. En las online usamos videollamada y pizarra digital para que todo quede claro y, si quieres, con material de apoyo que puedes repasar después.",
   },
   {
-    q: "¿Puedo tomar clases si vivo fuera de Santiago?",
-    a: "Sí, de forma online. Las clases a domicilio son en Santiago y alrededores; si vives en otra región, nos conectamos por videollamada y pizarra digital como si estuviera ahí. Igual escríbeme por WhatsApp con tu comuna y lo revisamos.",
+    q: "¿Puedo tomar tutorías si vivo fuera de Santiago?",
+    a: "Sí, de forma online. Las tutorías presenciales a domicilio son en Santiago y alrededores; si vives en otra región, nos conectamos por videollamada y pizarra digital como si estuviera ahí. Igual escríbeme por WhatsApp con tu comuna y lo revisamos.",
   },
   {
     q: "¿Cuánto cuestan las tutorías?",
@@ -30,7 +30,7 @@ const FAQS = [
     a: "Trabajo con horarios flexibles, incluyendo tardes y fines de semana según disponibilidad. Coordinamos el día y la hora por WhatsApp para que calcen con tu rutina de estudio.",
   },
   {
-    q: "¿Cómo agendo mi primera clase?",
+    q: "¿Cómo agendo mi primera tutoría?",
     a: "Es simple: me escribes por WhatsApp, me cuentas qué materia y nivel necesitas, y definimos un plan. La primera coordinación es sin costo para asegurarnos de que te puedo ayudar de verdad.",
   },
   {

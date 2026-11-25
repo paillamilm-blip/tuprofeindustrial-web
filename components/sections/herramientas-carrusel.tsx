@@ -27,7 +27,7 @@ const HERRAMIENTAS: readonly Herramienta[] = [
     eyebrow: "Diagnóstico en 1 minuto",
     name: "¿Qué plan necesitas?",
     description:
-      "Cinco preguntas y sales con el plan claro: clases personalizadas, Intensivo PAES o Nivelación, a domicilio en Santiago u online.",
+      "Cinco preguntas y sales con el plan claro: tutorías personalizadas, Pack PAES o Nivelación, a domicilio en Santiago u online.",
     chip: "gratis",
     ctaLabel: "Hacer el diagnóstico",
   },

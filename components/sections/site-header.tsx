@@ -31,7 +31,7 @@ const NAV_LINKS = [
 ] as const;
 
 const HEADER_MESSAGE =
-  "Hola! Vengo de la web de TuProfeIndustrial y quiero agendar una clase. ¿Me ayudas?";
+  "Hola! Vengo de la web de TuProfeIndustrial y quiero agendar una tutoría. ¿Me ayudas?";
 
 /**
  * SiteHeader — cabecera sticky accesible con wordmark, navegacion ancla y un

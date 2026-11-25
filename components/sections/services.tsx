@@ -13,7 +13,7 @@ import { WhatsAppCta } from "@/components/whatsapp-cta";
 import { cn } from "@/lib/utils";
 
 const SERVICES_MESSAGE =
-  "Hola! Quiero información sobre tus clases (personalizadas, intensivo PAES o nivelación de ingeniería). ¿Me cuentas?";
+  "Hola! Quiero información sobre tus tutorías (individuales, Pack PAES o Intensivo de Ingeniería). ¿Me cuentas?";
 
 /**
  * Services — tres servicios DIFERENCIADOS (anti-slop: no tres tarjetas
@@ -145,7 +145,7 @@ export function Services() {
           </p>
           <WhatsAppCta
             message={SERVICES_MESSAGE}
-            label="Consultar por mis clases"
+            label="Consultar por mis tutorías"
             className="px-7 py-3.5 text-base"
           />
         </Reveal>
