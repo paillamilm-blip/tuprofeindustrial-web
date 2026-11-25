@@ -3,248 +3,221 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Semáforo de Decisión · @tuprofeindustrial</title>
+<title>Grilla Móvil de Decisión · @tuprofeindustrial</title>
 <style>
   :root {
-    --bg: #070b12;
-    --card: #0b1322;
-    --card-inner: #101b2f;
-    --border: #1e293b;
-    --text: #f8fafc;
-    --muted: #94a3b8;
-    --green: #10b981;
-    --amber: #f59e0b;
-    --red: #ef4444;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --border: #e2e8f0;
+    --text: #0f172a;
+    --text-muted: #64748b;
+    --green: #16a34a;
+    --amber: #d97706;
+    --red: #dc2626;
+    --blue: #2563eb;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   body {
     background: var(--bg);
     color: var(--text);
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
-    padding-bottom: 32px;
+    padding-bottom: 40px;
     line-height: 1.4;
   }
   
-  /* Topbar */
+  /* Topbar Clara */
   .topbar {
     position: sticky;
     top: 0;
     z-index: 100;
-    background: rgba(11, 19, 34, 0.95);
+    background: rgba(255, 255, 255, 0.96);
     backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--border);
-    padding: 10px 14px;
+    padding: 10px 16px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
   }
   .brand { display: flex; align-items: center; gap: 6px; }
-  .brand-title { font-size: 13px; font-weight: 800; font-family: monospace; letter-spacing: -0.2px; color: #fff; }
+  .dot-live { width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
+  .brand-title { font-size: 14px; font-weight: 800; color: #0f172a; }
   .pill-paes {
-    background: rgba(239, 68, 68, 0.2);
-    color: #fca5a5;
-    border: 1px solid rgba(239, 68, 68, 0.5);
-    font-size: 10.5px;
+    background: #fef2f2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+    font-size: 11px;
     font-weight: 800;
-    padding: 2px 7px;
-    border-radius: 6px;
+    padding: 2px 8px;
+    border-radius: 20px;
     font-family: monospace;
   }
 
-  /* Cinta Semáforo */
-  .semaforo-bar {
-    background: #0b1322;
+  /* Pestañas */
+  .tabs-bar {
+    background: #ffffff;
     border-bottom: 1px solid var(--border);
     padding: 8px 14px;
+    position: sticky;
+    top: 48px;
+    z-index: 90;
   }
-  .semaforo-grid {
+  .tabs-grid {
     max-width: 480px;
     margin: 0 auto;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    text-align: center;
-    font-size: 11px;
-    font-weight: 800;
+    gap: 6px;
+    background: #f1f5f9;
+    padding: 3px;
+    border-radius: 8px;
   }
-  .sem-pill {
-    padding: 5px;
+  .tab-btn {
+    border: none;
+    background: transparent;
+    padding: 8px 6px;
     border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
   }
-  .sem-green { background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.5); color: #34d399; }
-  .sem-amber { background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.5); color: #fbbf24; }
-  .sem-red { background: rgba(239, 68, 68, 0.25); border: 2px solid #ef4444; color: #fca5a5; animation: pulse 2s infinite; }
-  .dot { width: 8px; height: 8px; border-radius: 50%; }
-  .dot-green { background: #34d399; box-shadow: 0 0 6px #34d399; }
-  .dot-amber { background: #fbbf24; box-shadow: 0 0 6px #fbbf24; }
-  .dot-red { background: #ef4444; box-shadow: 0 0 8px #ef4444; }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.8; }
+  .tab-btn.active {
+    background: #ffffff;
+    color: #0f172a;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
   }
 
-  .container { max-width: 480px; margin: 0 auto; padding: 12px 14px; display: flex; flex-direction: column; gap: 14px; }
+  .container { max-width: 480px; margin: 0 auto; padding: 14px 16px; display: flex; flex-direction: column; gap: 14px; }
 
-  /* 🔴 ROJO: EN ALERTA */
-  .card-red {
-    background: linear-gradient(180deg, rgba(239, 68, 68, 0.2) 0%, rgba(20, 10, 12, 0.98) 100%);
+  /* Tarjetas Claras */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+  }
+
+  /* 🔴 Alerta Roja */
+  .card-alert {
+    background: #fef2f2;
     border: 2px solid #ef4444;
     border-radius: 12px;
     padding: 14px;
-    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.2);
-    position: relative;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.08);
   }
   .badge-red {
-    background: #ef4444;
+    background: #dc2626;
     color: #fff;
     font-size: 10.5px;
     font-weight: 900;
     text-transform: uppercase;
-    padding: 4px 8px;
-    border-radius: 6px;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    margin-bottom: 8px;
-  }
-  .card-title { font-size: 15px; font-weight: 800; color: #fff; line-height: 1.25; margin-bottom: 6px; }
-  .card-desc { font-size: 12px; color: #fecaca; margin-bottom: 12px; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 6px; }
-
-  /* 🟡 AMARILLO: EN PROCESO */
-  .card-amber {
-    background: rgba(245, 158, 11, 0.05);
-    border: 2px solid rgba(245, 158, 11, 0.7);
-    border-radius: 12px;
-    padding: 14px;
-  }
-  .badge-amber {
-    background: rgba(245, 158, 11, 0.2);
-    color: #fbbf24;
-    border: 1px solid rgba(245, 158, 11, 0.5);
-    font-size: 10.5px;
-    font-weight: 800;
     padding: 3px 8px;
     border-radius: 6px;
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    margin-bottom: 6px;
+    letter-spacing: 0.5px;
   }
 
-  /* 🟢 VERDE: LISTO */
-  .card-green {
-    background: rgba(16, 185, 129, 0.05);
-    border: 2px solid rgba(16, 185, 129, 0.6);
-    border-radius: 12px;
-    padding: 14px;
-  }
-  .badge-green {
-    background: rgba(16, 185, 129, 0.2);
-    color: #34d399;
-    border: 1px solid rgba(16, 185, 129, 0.5);
-    font-size: 10.5px;
-    font-weight: 800;
-    padding: 3px 8px;
-    border-radius: 6px;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    margin-bottom: 6px;
-  }
-
-  /* Botones 1-Tap */
+  /* Botones de Acción */
   .btn-action-red {
     width: 100%;
-    background: #ef4444;
+    background: #dc2626;
     border: none;
     color: #fff;
-    font-size: 12px;
+    font-size: 12.5px;
     font-weight: 800;
-    padding: 11px 12px;
+    padding: 11px 14px;
     border-radius: 8px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     cursor: pointer;
-    margin-bottom: 8px;
-    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35);
+    margin-top: 10px;
+    box-shadow: 0 2px 6px rgba(220, 38, 38, 0.25);
   }
-  .btn-action-red:active { transform: scale(0.98); background: #dc2626; }
+  .btn-action-red:active { transform: scale(0.98); background: #b91c1c; }
 
-  .btn-sub {
-    width: 100%;
-    background: var(--card-inner);
-    border: 1px solid var(--border);
-    color: #e2e8f0;
-    font-size: 11.5px;
-    font-weight: 700;
-    padding: 9px 12px;
-    border-radius: 8px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    cursor: pointer;
-    margin-bottom: 8px;
-  }
-  .btn-sub:active { transform: scale(0.98); background: #1e293b; }
-
-  /* Sección Cierre Rápido */
-  .section-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 12px 14px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .plan-item {
-    background: var(--card-inner);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 10px 12px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 8px;
-  }
-  .plan-item.highlight { border: 2px solid rgba(16, 185, 129, 0.5); background: rgba(16, 185, 129, 0.05); }
-  .plan-name { font-size: 12.5px; font-weight: 800; color: #fff; }
-  .plan-price { font-size: 12px; font-weight: 800; color: #34d399; font-family: monospace; }
-  .plan-sub { font-size: 10px; color: var(--muted); margin-top: 1px; }
-
-  .btn-tap-copy {
-    background: #1e293b;
-    border: 1px solid #334155;
-    color: #38bdf8;
+  .btn-copy-white {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #1e293b;
     font-size: 11px;
     font-weight: 700;
-    padding: 6px 10px;
+    padding: 7px 10px;
     border-radius: 6px;
     cursor: pointer;
-    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
   }
-  .btn-tap-copy:active { transform: scale(0.95); }
+  .btn-copy-white:active { background: #f8fafc; transform: scale(0.96); }
+
+  /* Checklist Interactivo */
+  .task-item {
+    padding: 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    background: #ffffff;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    transition: opacity 0.2s;
+  }
+  .task-item.done {
+    background: #f8fafc;
+    opacity: 0.6;
+  }
+  .task-item.done .task-title {
+    text-decoration: line-through;
+    color: var(--text-muted);
+  }
+  .chk {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    border: 2px solid #cbd5e1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background: #fff;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .chk.checked {
+    background: var(--green);
+    border-color: var(--green);
+    color: #fff;
+    font-weight: 900;
+  }
+  .task-title { font-size: 12.5px; font-weight: 800; color: #0f172a; }
+  .task-desc { font-size: 11px; color: #475569; margin-top: 2px; }
+
+  /* Tags */
+  .tag { font-size: 9.5px; font-weight: 800; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; }
+  .tag-video { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+  .tag-story { background: #faf5ff; color: #7e22ce; border: 1px solid #e9d5ff; }
+  .tag-fb { background: #eef2ff; color: #4338ca; border: 1px solid #c7d2fe; }
+  .tag-wa { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
 
   /* Toast */
   #toast {
     position: fixed;
-    bottom: 18px;
+    bottom: 20px;
     left: 50%;
     transform: translateX(-50%) translateY(100px);
-    background: #10b981;
-    color: #000;
+    background: #0f172a;
+    color: #fff;
     font-size: 12px;
-    font-weight: 800;
-    padding: 8px 16px;
+    font-weight: 700;
+    padding: 9px 18px;
     border-radius: 20px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.15);
     transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     z-index: 999;
     pointer-events: none;
@@ -257,128 +230,311 @@
 <!-- Topbar -->
 <div class="topbar">
   <div class="brand">
+    <div class="dot-live"></div>
     <span class="brand-title">@tuprofeindustrial</span>
   </div>
   <div class="pill-paes">PAES: 5 DÍAS</div>
 </div>
 
-<!-- Cinta Semáforo -->
-<div class="semaforo-bar">
-  <div class="semaforo-grid">
-    <div class="sem-pill sem-green">
-      <span class="dot dot-green"></span>
-      <span>1 LISTO</span>
-    </div>
-    <div class="sem-pill sem-amber">
-      <span class="dot dot-amber"></span>
-      <span>1 EN PROCESO</span>
-    </div>
-    <div class="sem-pill sem-red">
-      <span class="dot dot-red"></span>
-      <span>1 EN ALERTA</span>
-    </div>
+<!-- Tabs -->
+<div class="tabs-bar">
+  <div class="tabs-grid">
+    <button class="tab-btn active" onclick="switchTab('dia')">Hoy Mié 25</button>
+    <button class="tab-btn" onclick="switchTab('semana')">Semana 2</button>
+    <button class="tab-btn" onclick="switchTab('proyectos')">Proyectos</button>
   </div>
 </div>
 
 <div class="container">
 
-  <!-- 🔴 ROJO: EN ALERTA -->
-  <div class="card-red">
-    <div class="badge-red">🔴 EN ALERTA · ACCIÓN INMEDIATA</div>
-    <div style="font-size:11px; font-weight:800; color:#fca5a5; font-family:monospace; margin-bottom:4px;">
-      HOY 17:30 HRS · TURNO DIURNO 2
-    </div>
-    <h1 class="card-title">Duplica la arista: ¿crece el doble o 8 veces?</h1>
-    <div class="card-desc">
-      ⚠️ <strong>PUBLICAR YA:</strong> Geometría 3D PAES · Cubo 3D y 8 subcubos (2³=8). Video listo en Mac. Toca abajo para copiar:
-    </div>
-
-    <!-- Botón 1: Instagram Reel (Rojo destacado) -->
-    <button class="btn-action-red" onclick="copyText('ig1730')">
-      <span>📸 Copiar Copy Instagram (Reels)</span>
-      <span>COPIAR</span>
-    </button>
-
-    <!-- Botón 2: TikTok -->
-    <button class="btn-sub" onclick="copyText('tk1730')">
-      <span>📱 Copiar Copy Corto TikTok (5 tags)</span>
-      <span>Tocar</span>
-    </button>
-
-    <!-- Botón 3: Primer Comentario Tutorías -->
-    <button class="btn-sub" style="border-color:#10b981; color:#34d399;" onclick="copyText('pin1730')">
-      <span>📌 Copiar 1er Comentario Fijado ($20k/$100k)</span>
-      <span>Tocar</span>
-    </button>
-  </div>
-
-  <!-- 🟡 AMARILLO: EN PROCESO -->
-  <div class="card-amber">
-    <div class="badge-amber">🟡 EN PROCESO · 21:15 HRS</div>
-    <div style="font-size:13px; font-weight:800; color:#fff; margin-bottom:4px;">
-      Dato 05: ¿Por qué 1 / 0 rompe las matemáticas?
-    </div>
-    <div style="font-size:11.5px; color:#cbd5e1; margin-bottom:8px;">
-      Asíntota hiperbólica 1/x y el infinito. Video 53.3s y portada listos en Mac.
-    </div>
-    <button class="btn-sub" style="border-color:#f59e0b; color:#fbbf24;" onclick="copyText('noche2115')">
-      <span>🌙 Copiar Copy Nocturno 21:15</span>
-      <span>Tocar</span>
-    </button>
-  </div>
-
-  <!-- 🟢 VERDE: LISTO -->
-  <div class="card-green">
-    <div class="badge-green">🟢 LISTO · COMPLETADO</div>
-    <div style="font-size:12.5px; font-weight:800; color:#fff; display:flex; justify-content:space-between;">
-      <span>Discriminante Cuadrática (Δ = b² - 4ac)</span>
-      <span style="color:#34d399;">12:30 OK</span>
-    </div>
-    <div style="font-size:11px; color:#94a3b8; margin-top:2px;">
-      52.9s · Parábola viva tocando ejes · Publicado exitosamente
-    </div>
-  </div>
-
-  <!-- CIERRE RÁPIDO DE VENTAS (TUTORÍAS) -->
-  <div class="section-card">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-      <span style="font-size:11.5px; font-weight:800; text-transform:uppercase; color:#cbd5e1;">💬 Cierre Rápido WhatsApp / DMs</span>
-      <span style="font-size:10px; color:#34d399; font-weight:bold;">1-Tap</span>
-    </div>
-
-    <!-- Tutoría $20k -->
-    <div class="plan-item">
-      <div>
-        <div class="plan-name">Tutoría individual (1 hora)</div>
-        <div class="plan-price">$20.000 CLP</div>
-        <div class="plan-sub">Online o domicilio Santiago</div>
+  <!-- ========================================== -->
+  <!-- VISTA 1: DÍA (HOY MIÉRCOLES 25)           -->
+  <!-- ========================================== -->
+  <div id="view-dia">
+    <!-- Barra Semáforo y Progreso -->
+    <div class="card" style="margin-bottom:12px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+        <span style="font-size:12px; font-weight:800; color:#334155;">Progreso de Hoy</span>
+        <span id="prog-text" style="font-size:12px; font-weight:900; color:#16a34a; font-family:monospace;">2 / 8 Tareas</span>
       </div>
-      <button class="btn-tap-copy" onclick="copyPlan('wa1')">Copiar</button>
+      <div style="width:100%; height:8px; background:#f1f5f9; border-radius:4px; overflow:hidden;">
+        <div id="prog-bar" style="width:25%; height:100%; background:#16a34a; transition:width 0.3s;"></div>
+      </div>
     </div>
 
-    <!-- Pack PAES $100k -->
-    <div class="plan-item highlight">
-      <div>
-        <div class="plan-name">Pack PAES (6 horas)</div>
-        <div class="plan-price" style="font-size:13px; color:#10b981;">$100.000 CLP</div>
-        <div class="plan-sub" style="color:#fbbf24; font-weight:bold;">Ahorro $20k · Ensayos y cazabobos</div>
+    <!-- Alerta Roja 17:30 -->
+    <div class="card-alert" style="margin-bottom:14px;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span class="badge-red">🔴 EN ALERTA · ACCIÓN AHORA</span>
+        <span style="font-size:12px; font-weight:800; font-family:monospace; color:#991b1b;">17:30 HRS</span>
       </div>
-      <button class="btn-tap-copy" style="background:#10b981; color:#000; font-weight:800;" onclick="copyPlan('wa2')">Copiar</button>
+      <div style="font-size:14px; font-weight:900; color:#0f172a; margin-top:8px;">
+        Duplica la arista: ¿crece el doble o 8 veces?
+      </div>
+      <div style="font-size:11.5px; color:#475569; margin-top:4px;">
+        Trampa de Geometría 3D. Video de 62.8s listo en tu Mac (<code>MIERCOLES-1730-video-duplica-arista.mp4</code>).
+      </div>
+      <button class="btn-action-red" onclick="copyText('ig1730')">
+        <span>📸 Copiar Copy Instagram Reels</span>
+        <span>COPIAR</span>
+      </button>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:8px;">
+        <button class="btn-copy-white" onclick="copyText('tk1730')">📱 Copy TikTok</button>
+        <button class="btn-copy-white" onclick="copyText('pin1730')">📌 Comentario Fijado</button>
+      </div>
     </div>
 
-    <!-- Intensivo $600k -->
-    <div class="plan-item">
-      <div>
-        <div class="plan-name">Intensivo Ingeniería (36h)</div>
-        <div class="plan-price">$600.000 CLP / mes</div>
-        <div class="plan-sub">Cálculo, Álgebra y Nivelación</div>
+    <!-- Cronograma Completo Interactivo -->
+    <div class="card">
+      <div style="font-size:12px; font-weight:800; text-transform:uppercase; color:#334155; margin-bottom:10px;">
+        Cronograma Completo (Toca para marcar lo subido)
       </div>
-      <button class="btn-tap-copy" onclick="copyPlan('wa3')">Copiar</button>
+
+      <!-- 12:30 -->
+      <div class="task-item done" id="t-1230">
+        <div class="chk checked" onclick="toggleTask('t-1230')">✓</div>
+        <div style="flex:1;">
+          <div style="display:flex; align-items:center; gap:6px; margin-bottom:2px;">
+            <span style="font-size:11px; font-weight:800; font-family:monospace;">12:30</span>
+            <span class="tag tag-video">Video</span>
+            <span style="font-size:10px; color:#64748b;">👤 Matías</span>
+          </div>
+          <div class="task-title">Video Álgebra: Discriminante Δ = b² - 4ac</div>
+          <div class="task-desc">Test de 5s para saber si tiene 2, 1 o 0 soluciones.</div>
+        </div>
+      </div>
+
+      <!-- 13:00 -->
+      <div class="task-item done" id="t-1300">
+        <div class="chk checked" onclick="toggleTask('t-1300')">✓</div>
+        <div style="flex:1;">
+          <div style="display:flex; align-items:center; gap:6px; margin-bottom:2px;">
+            <span style="font-size:11px; font-weight:800; font-family:monospace;">13:00</span>
+            <span class="tag tag-story">Story</span>
+            <span style="font-size:10px; color:#64748b;">👤 Matías</span>
+          </div>
+          <div class="task-title">Story Encuesta Discriminante</div>
+          <div class="task-desc">Interacción con sticker: ¿Corta en 1 o 2 puntos?</div>
+        </div>
+      </div>
+
+      <!-- 17:30 -->
+      <div class="task-item" id="t-1730" style="border-color:#fca5a5; background:#fff5f5;">
+        <div class="chk" onclick="toggleTask('t-1730')"></div>
+        <div style="flex:1;">
+          <div style="display:flex; align-items:center; gap:6px; margin-bottom:2px;">
+            <span style="font-size:11px; font-weight:800; font-family:monospace; color:#dc2626;">17:30</span>
+            <span class="tag tag-video">Video</span>
+            <span style="font-size:10px; font-weight:bold; color:#dc2626;">🔴 En Alerta</span>
+          </div>
+          <div class="task-title">Video Geometría 3D: Arista y Volumen</div>
+          <div class="task-desc">Subir a TikTok e Instagram Reels. Video listo en Mac.</div>
+          <button class="btn-copy-white" style="margin-top:6px;" onclick="copyText('ig1730')">Copiar Copy Reels</button>
+        </div>
+      </div>
+
+      <!-- 18:00 -->
+      <div class="task-item" id="t-1800">
+        <div class="chk" onclick="toggleTask('t-1800')"></div>
+        <div style="flex:1;">
+          <div style="display:flex; align-items:center; gap:6px; margin-bottom:2px;">
+            <span style="font-size:11px; font-weight:800; font-family:monospace;">18:00</span>
+            <span class="tag tag-story">Story</span>
+            <span style="font-size:10px; color:#64748b;">👤 Matías</span>
+          </div>
+          <div class="task-title">Story Reto Encuesta Arista vs Volumen</div>
+          <div class="task-desc">Encuesta interactiva en Instagram Stories.</div>
+          <button class="btn-copy-white" style="margin-top:6px;" onclick="copyText('story1800')">Copiar Story</button>
+        </div>
+      </div>
+
+      <!-- 18:30 -->
+      <div class="task-item" id="t-1830">
+        <div class="chk" onclick="toggleTask('t-1830')"></div>
+        <div style="flex:1;">
+          <div style="display:flex; align-items:center; gap:6px; margin-bottom:2px;">
+            <span style="font-size:11px; font-weight:800; font-family:monospace;">18:30</span>
+            <span class="tag tag-fb">Grupo FB</span>
+            <span style="font-size:10px; color:#64748b;">👤 Matías</span>
+          </div>
+          <div class="task-title">Compartir Cápsula en Grupos de Apoderados</div>
+          <div class="task-desc">Publicar en grupos de Las Condes, Vitacura, Maipú.</div>
+          <button class="btn-copy-white" style="margin-top:6px;" onclick="copyText('gruposFbWa')">Copiar Mensaje FB</button>
+        </div>
+      </div>
+
+      <!-- 19:00 -->
+      <div class="task-item" id="t-1900">
+        <div class="chk" onclick="toggleTask('t-1900')"></div>
+        <div style="flex:1;">
+          <div style="display:flex; align-items:center; gap:6px; margin-bottom:2px;">
+            <span style="font-size:11px; font-weight:800; font-family:monospace;">19:00</span>
+            <span class="tag tag-wa">WhatsApp</span>
+            <span style="font-size:10px; color:#64748b;">👤 Matías</span>
+          </div>
+          <div class="task-title">Difusión en Comunidades de WhatsApp</div>
+          <div class="task-desc">Mandar mensaje de valor + oferta de tutorías PAES.</div>
+          <button class="btn-copy-white" style="margin-top:6px;" onclick="copyText('gruposFbWa')">Copiar Mensaje WA</button>
+        </div>
+      </div>
+
+      <!-- 21:15 -->
+      <div class="task-item" id="t-2115">
+        <div class="chk" onclick="toggleTask('t-2115')"></div>
+        <div style="flex:1;">
+          <div style="display:flex; align-items:center; gap:6px; margin-bottom:2px;">
+            <span style="font-size:11px; font-weight:800; font-family:monospace;">21:15</span>
+            <span class="tag tag-video">Video</span>
+            <span style="font-size:10px; color:#d97706; font-weight:bold;">🟡 Nocturno</span>
+          </div>
+          <div class="task-title">Dato 05: ¿Por qué 1 / 0 rompe las matemáticas?</div>
+          <div class="task-desc">Asíntota 1/x y el infinito. Video 53.3s listo en Mac.</div>
+          <button class="btn-copy-white" style="margin-top:6px;" onclick="copyText('noche2115')">Copiar Copy Noche</button>
+        </div>
+      </div>
+
+      <!-- 21:30 -->
+      <div class="task-item" id="t-2130">
+        <div class="chk" onclick="toggleTask('t-2130')"></div>
+        <div style="flex:1;">
+          <div style="display:flex; align-items:center; gap:6px; margin-bottom:2px;">
+            <span style="font-size:11px; font-weight:800; font-family:monospace;">21:30</span>
+            <span class="tag tag-story">Story</span>
+            <span style="font-size:10px; color:#64748b;">👤 Matías</span>
+          </div>
+          <div class="task-title">Story Cierre Pack PAES ($100k)</div>
+          <div class="task-desc">Llamado a DM para cerrar alumnos en recta final.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tarifas Oficiales -->
+    <div class="card" style="margin-top:14px;">
+      <div style="font-size:12px; font-weight:800; text-transform:uppercase; color:#334155; margin-bottom:8px;">
+        💬 Tarifas Oficiales para Cotizaciones
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid #f1f5f9;">
+        <div>
+          <div style="font-size:12px; font-weight:800;">Tutoría individual (1 hora)</div>
+          <div style="font-size:11px; color:#16a34a; font-weight:bold;">$20.000 CLP</div>
+        </div>
+        <button class="btn-copy-white" onclick="copyPlan('wa1')">Copiar</button>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid #f1f5f9;">
+        <div>
+          <div style="font-size:12px; font-weight:800;">Pack PAES (6 horas)</div>
+          <div style="font-size:11px; color:#16a34a; font-weight:bold;">$100.000 CLP</div>
+        </div>
+        <button class="btn-copy-white" onclick="copyPlan('wa2')">Copiar</button>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0;">
+        <div>
+          <div style="font-size:12px; font-weight:800;">Intensivo Ingeniería (36h)</div>
+          <div style="font-size:11px; color:#7e22ce; font-weight:bold;">$600.000 CLP / mes</div>
+        </div>
+        <button class="btn-copy-white" onclick="copyPlan('wa3')">Copiar</button>
+      </div>
     </div>
   </div>
 
-  <div style="text-align:center; font-size:10px; font-family:monospace; color:#475569;">
-    Semáforo Operativo TPI · 🟢 Listo · 🟡 En Proceso · 🔴 En Alerta
+  <!-- ========================================== -->
+  <!-- VISTA 2: SEMANA (MATRIZ SEMANAL)          -->
+  <!-- ========================================== -->
+  <div id="view-semana" style="display:none;">
+    <div class="card">
+      <div style="font-size:12px; font-weight:800; text-transform:uppercase; color:#334155; margin-bottom:10px;">
+        Programación Semanal Completa (23 – 29 Nov)
+      </div>
+
+      <div style="margin-bottom:8px; padding:10px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px;">
+        <div style="font-size:12px; font-weight:800; color:#334155;">Lunes 23 Nov (100% Completado)</div>
+        <div style="font-size:11px; color:#64748b; margin-top:2px;">• (x+2)/2 · 1 m² a cm² · i² = -1 · Carrusel 6 slides</div>
+      </div>
+
+      <div style="margin-bottom:8px; padding:10px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px;">
+        <div style="font-size:12px; font-weight:800; color:#334155;">Martes 24 Nov (100% Completado)</div>
+        <div style="font-size:11px; color:#64748b; margin-top:2px;">• x² = 25 · Vértice f(x) · ¿Por qué π?</div>
+      </div>
+
+      <div style="margin-bottom:8px; padding:10px; background:#fef2f2; border:2px solid #ef4444; border-radius:8px;">
+        <div style="font-size:12px; font-weight:900; color:#991b1b;">Miércoles 25 Nov (HOY EN EJECUCIÓN)</div>
+        <div style="font-size:11px; color:#7f1d1d; margin-top:2px;">• 12:30: Discriminante · 17:30: Arista 3D · 21:15: Dividir por 0</div>
+      </div>
+
+      <div style="margin-bottom:8px; padding:10px; background:#fff; border:1px solid #e2e8f0; border-radius:8px;">
+        <div style="font-size:12px; font-weight:800; color:#0f172a;">Jueves 26 Nov (Mañana)</div>
+        <div style="font-size:11px; color:#64748b; margin-top:2px;">• Parábola-Recta · Truco Viète · Identidad de Euler</div>
+      </div>
+
+      <div style="margin-bottom:8px; padding:10px; background:#fff; border:1px solid #e2e8f0; border-radius:8px;">
+        <div style="font-size:12px; font-weight:800; color:#0f172a;">Viernes 27 Nov</div>
+        <div style="font-size:11px; color:#64748b; margin-top:2px;">• Inecuaciones · Máxima Ganancia · Fractales</div>
+      </div>
+
+      <div style="margin-bottom:8px; padding:10px; background:#fff; border:1px solid #e2e8f0; border-radius:8px;">
+        <div style="font-size:12px; font-weight:800; color:#0f172a;">Sábado 28 Nov</div>
+        <div style="font-size:11px; color:#64748b; margin-top:2px;">• Intersección Ejes · Función Inversa · Infinito de Hilbert</div>
+      </div>
+
+      <div style="padding:10px; background:#fff; border:1px solid #e2e8f0; border-radius:8px;">
+        <div style="font-size:12px; font-weight:800; color:#0f172a;">Domingo 29 Nov (Víspera PAES)</div>
+        <div style="font-size:11px; color:#64748b; margin-top:2px;">• Puntos Clave · Ritual Calma · Mente Despejada</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- VISTA 3: PROYECTOS Y FONDOS               -->
+  <!-- ========================================== -->
+  <div id="view-proyectos" style="display:none;">
+    <div class="card">
+      <div style="font-size:12px; font-weight:800; text-transform:uppercase; color:#334155; margin-bottom:4px;">
+        Días para Postulación a Proyectos & Fondos
+      </div>
+      <div style="font-size:11px; color:#64748b; margin-bottom:12px;">
+        Convocatorias CORFO, Start-Up Chile y Sercotec
+      </div>
+
+      <!-- PAES -->
+      <div style="padding:10px; background:#fef2f2; border:1px solid #fecaca; border-radius:8px; margin-bottom:8px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div style="font-size:12.5px; font-weight:800; color:#0f172a;">Rendición PAES Regular 2026</div>
+          <span style="font-size:12px; font-weight:900; color:#dc2626; font-family:monospace;">5 DÍAS</span>
+        </div>
+        <div style="font-size:11px; color:#7f1d1d; margin-top:2px;">30 Noviembre 2026 · Captación intensiva de alumnos.</div>
+      </div>
+
+      <!-- CORFO Semilla Inicia -->
+      <div style="padding:10px; background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; margin-bottom:8px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div style="font-size:12.5px; font-weight:800; color:#0f172a;">CORFO: Semilla Inicia</div>
+          <span style="font-size:12px; font-weight:900; color:#16a34a; font-family:monospace;">115 DÍAS</span>
+        </div>
+        <div style="font-size:11px; color:#15803d; margin-top:2px;">$15.000.000 CLP · 20 Marzo 2027. Validar tracción de videos.</div>
+      </div>
+
+      <!-- Start-Up Chile -->
+      <div style="padding:10px; background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; margin-bottom:8px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div style="font-size:12.5px; font-weight:800; color:#0f172a;">Start-Up Chile: Build</div>
+          <span style="font-size:12px; font-weight:900; color:#2563eb; font-family:monospace;">141 DÍAS</span>
+        </div>
+        <div style="font-size:11px; color:#1e40af; margin-top:2px;">$15.000.000 CLP · 15 Abril 2027. Video pitch 90s.</div>
+      </div>
+
+      <!-- Sercotec -->
+      <div style="padding:10px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div style="font-size:12.5px; font-weight:800; color:#0f172a;">Sercotec: Capital Semilla</div>
+          <span style="font-size:12px; font-weight:900; color:#475569; font-family:monospace;">151 DÍAS</span>
+        </div>
+        <div style="font-size:11px; color:#64748b; margin-top:2px;">$3.500.000 CLP · 25 Abril 2027. Cotizaciones equipamiento.</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align:center; font-size:10.5px; color:#94a3b8; font-family:monospace; margin-top:10px;">
+    TuProfeIndustrial · Santiago de Chile
   </div>
 
 </div>
@@ -387,10 +543,40 @@
 <div id="toast">¡Texto copiado al portapapeles!</div>
 
 <script>
+  function switchTab(tab) {
+    document.getElementById('view-dia').style.display = tab === 'dia' ? 'block' : 'none';
+    document.getElementById('view-semana').style.display = tab === 'semana' ? 'block' : 'none';
+    document.getElementById('view-proyectos').style.display = tab === 'proyectos' ? 'block' : 'none';
+    
+    const btns = document.querySelectorAll('.tab-btn');
+    btns[0].classList.toggle('active', tab === 'dia');
+    btns[1].classList.toggle('active', tab === 'semana');
+    btns[2].classList.toggle('active', tab === 'proyectos');
+  }
+
+  function toggleTask(id) {
+    const el = document.getElementById(id);
+    const chk = el.querySelector('.chk');
+    const isDone = el.classList.toggle('done');
+    chk.classList.toggle('checked', isDone);
+    chk.textContent = isDone ? '✓' : '';
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const total = document.querySelectorAll('.task-item').length;
+    const done = document.querySelectorAll('.task-item.done').length;
+    const pct = Math.round((done / total) * 100);
+    document.getElementById('prog-bar').style.width = pct + '%';
+    document.getElementById('prog-text').textContent = done + ' / ' + total + ' Tareas';
+  }
+
   const copies = {
     ig1730: `Si duplicas la arista de un cubo, ¿su volumen se duplica? ⚠️ ¡La trampa clásica de geometría 3D en la PAES!\n\nEl volumen se mide en las tres direcciones del espacio: largo, ancho y alto:\nV = a · a · a = a³.\n\nAl duplicar la arista (2a), el factor 2 también se eleva al cubo:\nV₂ = (2a)³ = 2³ · a³ = 8a³.\n\nEl volumen NO crece al doble: ¡crece 8 VECES!\nComprobación con números reales:\n• Arista 4 cm ➔ V = 4³ = 64 cm³\n• Arista 8 cm ➔ V = 8³ = 512 cm³ (512 / 64 = exactamente 8 veces).\n\n✍️ RETO RÁPIDO: Si triplicas la arista de un cubo, ¿cuántas veces crece su volumen?\n📩 Mándaselo a quien dé la PAES para que no caiga en el cazabobos.\n\nCreado con IA. #tuprofeindustrial #paesm1 #geometria #cuerposgeometricos #demre`,
     tk1730: `¿Duplicas la arista de un cubo? ⚠️ ¡No es el doble! El volumen crece 8 veces (2³ = 8). Si triplicas la arista, ¿cuántas veces crece? Déjamelo en comentarios 👇 Creado con IA. #tuprofeindustrial #paesm1 #geometria #cuerposgeometricos #demre`,
     pin1730: `📌 Tutorías personalizadas 1 a 1 de Geometría y PAES M1 ($20k / h · Pack PAES $100k). Envíame un mensaje interno (DM) para revisar cupos disponibles 📲`,
+    story1800: `🚨 RETO RÁPIDO PAES:\nSi duplicas la medida de la arista de un cubo, su volumen:\nA) Se duplica (x2)\nB) Se cuadruplica (x4)\nC) Crece 8 veces (x8)\n👇 Vota en la encuesta (¡El 85% se equivoca por apurado!)`,
+    gruposFbWa: `¡Hola a todos! 👋 Para los que están en la recta final de la PAES M1 (o apoderados con hijos rindiéndola este lunes), les comparto esta cápsula explicativa de 1 minuto sobre la trampa clásica de Geometría 3D: ¿qué pasa con el volumen al duplicar la arista? (No es el doble, ¡crece 8 veces!).\n\n👉 Pueden ver la explicación paso a paso en: https://www.instagram.com/tuprofeindustrial/ o en TikTok @tuprofeindustrial\n\nAdemás, como docente e Ingeniero Civil Industrial, abrí los últimos 3 cupos para tutorías personalizadas intensivas de última semana ($20.000/h o Pack PAES de 6h a $100.000). Si alguien necesita reforzar, me puede escribir por interno. ¡Mucho éxito a todos! 🎯`,
     noche2115: `¿Por qué 1 / 0 rompe las matemáticas? 🌙 La gráfica de 1/x explota a +infinito y -infinito al mismo tiempo. ¿Cuánto da 0 / 0? Comenta tu teoría 👇 Creado con IA. #tuprofeindustrial #datosnocturnos #calculo #algebra #cienciachile`
   };
 
@@ -409,17 +595,13 @@
 
   function copyText(key) {
     if (copies[key]) {
-      navigator.clipboard.writeText(copies[key]).then(() => {
-        showToast('¡Copy copiado al portapapeles!');
-      });
+      navigator.clipboard.writeText(copies[key]).then(() => showToast('¡Texto copiado al portapapeles!'));
     }
   }
 
   function copyPlan(key) {
     if (plans[key]) {
-      navigator.clipboard.writeText(plans[key]).then(() => {
-        showToast('¡Mensaje de WhatsApp copiado!');
-      });
+      navigator.clipboard.writeText(plans[key]).then(() => showToast('¡Mensaje copiado al portapapeles!'));
     }
   }
 </script>
