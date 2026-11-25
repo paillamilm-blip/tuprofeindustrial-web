@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Cockpit Móvil · @tuprofeindustrial</title>
+<title>Semáforo de Decisión · @tuprofeindustrial</title>
 <style>
   :root {
     --bg: #070b12;
@@ -12,10 +12,9 @@
     --border: #1e293b;
     --text: #f8fafc;
     --muted: #94a3b8;
-    --accent: #38bdf8;
     --green: #10b981;
     --amber: #f59e0b;
-    --purple: #a855f7;
+    --red: #ef4444;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   body {
@@ -41,12 +40,11 @@
     align-items: center;
   }
   .brand { display: flex; align-items: center; gap: 6px; }
-  .dot-live { width: 8px; height: 8px; border-radius: 50%; background: #34d399; box-shadow: 0 0 8px #34d399; }
   .brand-title { font-size: 13px; font-weight: 800; font-family: monospace; letter-spacing: -0.2px; color: #fff; }
   .pill-paes {
-    background: rgba(245, 158, 11, 0.15);
-    color: #fbbf24;
-    border: 1px solid rgba(245, 158, 11, 0.4);
+    background: rgba(239, 68, 68, 0.2);
+    color: #fca5a5;
+    border: 1px solid rgba(239, 68, 68, 0.5);
     font-size: 10.5px;
     font-weight: 800;
     padding: 2px 7px;
@@ -54,64 +52,149 @@
     font-family: monospace;
   }
 
+  /* Cinta Semáforo */
+  .semaforo-bar {
+    background: #0b1322;
+    border-bottom: 1px solid var(--border);
+    padding: 8px 14px;
+  }
+  .semaforo-grid {
+    max-width: 480px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 800;
+  }
+  .sem-pill {
+    padding: 5px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+  }
+  .sem-green { background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.5); color: #34d399; }
+  .sem-amber { background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.5); color: #fbbf24; }
+  .sem-red { background: rgba(239, 68, 68, 0.25); border: 2px solid #ef4444; color: #fca5a5; animation: pulse 2s infinite; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .dot-green { background: #34d399; box-shadow: 0 0 6px #34d399; }
+  .dot-amber { background: #fbbf24; box-shadow: 0 0 6px #fbbf24; }
+  .dot-red { background: #ef4444; box-shadow: 0 0 8px #ef4444; }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; }
+  }
+
   .container { max-width: 480px; margin: 0 auto; padding: 12px 14px; display: flex; flex-direction: column; gap: 14px; }
 
-  /* Tarjeta Alerta 17:30 */
-  .card-alert {
-    background: linear-gradient(180deg, rgba(245, 158, 11, 0.15) 0%, rgba(14, 23, 38, 0.95) 100%);
-    border: 2px solid #f59e0b;
+  /* 🔴 ROJO: EN ALERTA */
+  .card-red {
+    background: linear-gradient(180deg, rgba(239, 68, 68, 0.2) 0%, rgba(20, 10, 12, 0.98) 100%);
+    border: 2px solid #ef4444;
     border-radius: 12px;
     padding: 14px;
-    box-shadow: 0 6px 18px rgba(245, 158, 11, 0.12);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.2);
     position: relative;
   }
-  .badge-urgent {
-    position: absolute;
-    top: 0;
-    right: 0;
-    background: #f59e0b;
-    color: #000;
-    font-size: 9.5px;
+  .badge-red {
+    background: #ef4444;
+    color: #fff;
+    font-size: 10.5px;
     font-weight: 900;
     text-transform: uppercase;
-    padding: 3px 8px;
-    border-bottom-left-radius: 8px;
-    letter-spacing: 0.5px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 8px;
   }
-  .time-badge { font-size: 11px; font-weight: 800; color: #fbbf24; font-family: monospace; margin-bottom: 4px; }
   .card-title { font-size: 15px; font-weight: 800; color: #fff; line-height: 1.25; margin-bottom: 6px; }
-  .card-desc { font-size: 12px; color: #cbd5e1; margin-bottom: 12px; }
+  .card-desc { font-size: 12px; color: #fecaca; margin-bottom: 12px; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 6px; }
+
+  /* 🟡 AMARILLO: EN PROCESO */
+  .card-amber {
+    background: rgba(245, 158, 11, 0.05);
+    border: 2px solid rgba(245, 158, 11, 0.7);
+    border-radius: 12px;
+    padding: 14px;
+  }
+  .badge-amber {
+    background: rgba(245, 158, 11, 0.2);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.5);
+    font-size: 10.5px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 6px;
+  }
+
+  /* 🟢 VERDE: LISTO */
+  .card-green {
+    background: rgba(16, 185, 129, 0.05);
+    border: 2px solid rgba(16, 185, 129, 0.6);
+    border-radius: 12px;
+    padding: 14px;
+  }
+  .badge-green {
+    background: rgba(16, 185, 129, 0.2);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.5);
+    font-size: 10.5px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 6px;
+  }
 
   /* Botones 1-Tap */
-  .btn-copy {
+  .btn-action-red {
     width: 100%;
-    background: rgba(245, 158, 11, 0.12);
-    border: 1px solid rgba(245, 158, 11, 0.5);
-    color: #fde68a;
+    background: #ef4444;
+    border: none;
+    color: #fff;
     font-size: 12px;
-    font-weight: 700;
-    padding: 10px 12px;
+    font-weight: 800;
+    padding: 11px 12px;
     border-radius: 8px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     cursor: pointer;
     margin-bottom: 8px;
-    transition: background 0.15s, transform 0.1s;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35);
   }
-  .btn-copy:active { transform: scale(0.98); background: rgba(245, 158, 11, 0.25); }
-  .btn-copy.secondary {
-    background: var(--card-inner);
-    border-color: var(--border);
-    color: var(--text);
-  }
-  .btn-copy.green {
-    background: rgba(16, 185, 129, 0.15);
-    border-color: rgba(16, 185, 129, 0.5);
-    color: #6ee7b7;
-  }
+  .btn-action-red:active { transform: scale(0.98); background: #dc2626; }
 
-  /* Sección General */
+  .btn-sub {
+    width: 100%;
+    background: var(--card-inner);
+    border: 1px solid var(--border);
+    color: #e2e8f0;
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 9px 12px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    margin-bottom: 8px;
+  }
+  .btn-sub:active { transform: scale(0.98); background: #1e293b; }
+
+  /* Sección Cierre Rápido */
   .section-card {
     background: var(--card);
     border: 1px solid var(--border);
@@ -121,14 +204,6 @@
     flex-direction: column;
     gap: 10px;
   }
-  .section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .section-title { font-size: 11.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #cbd5e1; }
-
-  /* Filas de Planes */
   .plan-item {
     background: var(--card-inner);
     border: 1px solid var(--border);
@@ -154,41 +229,8 @@
     border-radius: 6px;
     cursor: pointer;
     white-space: nowrap;
-    transition: transform 0.1s;
   }
   .btn-tap-copy:active { transform: scale(0.95); }
-  .btn-tap-copy.copied { background: #064e3b; color: #34d399; border-color: #10b981; }
-
-  /* Turnos Hoy */
-  .shift-row {
-    padding: 8px 10px;
-    border-radius: 6px;
-    background: var(--card-inner);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 11.5px;
-  }
-  .shift-time { font-family: monospace; font-weight: 700; }
-  .shift-status { font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 4px; }
-
-  /* Enlaces finales */
-  .links-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .link-btn {
-    background: #152033;
-    border: 1px solid var(--border);
-    color: #e2e8f0;
-    font-size: 11.5px;
-    font-weight: 700;
-    padding: 10px;
-    border-radius: 8px;
-    text-align: center;
-    text-decoration: none;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 4px;
-  }
 
   /* Toast */
   #toast {
@@ -212,47 +254,95 @@
 </head>
 <body>
 
-<!-- Topbar Minimalista -->
+<!-- Topbar -->
 <div class="topbar">
   <div class="brand">
-    <div class="dot-live"></div>
     <span class="brand-title">@tuprofeindustrial</span>
   </div>
   <div class="pill-paes">PAES: 5 DÍAS</div>
 </div>
 
+<!-- Cinta Semáforo -->
+<div class="semaforo-bar">
+  <div class="semaforo-grid">
+    <div class="sem-pill sem-green">
+      <span class="dot dot-green"></span>
+      <span>1 LISTO</span>
+    </div>
+    <div class="sem-pill sem-amber">
+      <span class="dot dot-amber"></span>
+      <span>1 EN PROCESO</span>
+    </div>
+    <div class="sem-pill sem-red">
+      <span class="dot dot-red"></span>
+      <span>1 EN ALERTA</span>
+    </div>
+  </div>
+</div>
+
 <div class="container">
 
-  <!-- 1. TARJETA ACCIÓN INMEDIATA 17:30 -->
-  <div class="card-alert">
-    <div class="badge-urgent">Acción Inmediata</div>
-    <div class="time-badge">HOY 17:30 HRS · DIURNO 2</div>
+  <!-- 🔴 ROJO: EN ALERTA -->
+  <div class="card-red">
+    <div class="badge-red">🔴 EN ALERTA · ACCIÓN INMEDIATA</div>
+    <div style="font-size:11px; font-weight:800; color:#fca5a5; font-family:monospace; margin-bottom:4px;">
+      HOY 17:30 HRS · TURNO DIURNO 2
+    </div>
     <h1 class="card-title">Duplica la arista: ¿crece el doble o 8 veces?</h1>
-    <p class="card-desc">Geometría 3D PAES · Cubo y 8 subcubos (2³=8). Video listo en tu Mac.</p>
+    <div class="card-desc">
+      ⚠️ <strong>PUBLICAR YA:</strong> Geometría 3D PAES · Cubo 3D y 8 subcubos (2³=8). Video listo en Mac. Toca abajo para copiar:
+    </div>
 
-    <!-- Botón 1: Instagram Reel -->
-    <button class="btn-copy" onclick="copyText('ig1730')">
+    <!-- Botón 1: Instagram Reel (Rojo destacado) -->
+    <button class="btn-action-red" onclick="copyText('ig1730')">
       <span>📸 Copiar Copy Instagram (Reels)</span>
-      <span id="label-ig1730">Copiar</span>
+      <span>COPIAR</span>
     </button>
 
-    <!-- Botón 2: TikTok Corto -->
-    <button class="btn-copy secondary" onclick="copyText('tk1730')">
-      <span>📱 Copiar Copy Corto TikTok</span>
-      <span id="label-tk1730">5 tags</span>
+    <!-- Botón 2: TikTok -->
+    <button class="btn-sub" onclick="copyText('tk1730')">
+      <span>📱 Copiar Copy Corto TikTok (5 tags)</span>
+      <span>Tocar</span>
     </button>
 
     <!-- Botón 3: Primer Comentario Tutorías -->
-    <button class="btn-copy green" onclick="copyText('pin1730')">
-      <span>📌 Copiar 1er Comentario Fijado</span>
-      <span id="label-pin1730">$20k/$100k</span>
+    <button class="btn-sub" style="border-color:#10b981; color:#34d399;" onclick="copyText('pin1730')">
+      <span>📌 Copiar 1er Comentario Fijado ($20k/$100k)</span>
+      <span>Tocar</span>
     </button>
   </div>
 
-  <!-- 2. TARJETA RESPUESTAS RÁPIDAS PARA VENTAS EN WHATSAPP / DMs -->
+  <!-- 🟡 AMARILLO: EN PROCESO -->
+  <div class="card-amber">
+    <div class="badge-amber">🟡 EN PROCESO · 21:15 HRS</div>
+    <div style="font-size:13px; font-weight:800; color:#fff; margin-bottom:4px;">
+      Dato 05: ¿Por qué 1 / 0 rompe las matemáticas?
+    </div>
+    <div style="font-size:11.5px; color:#cbd5e1; margin-bottom:8px;">
+      Asíntota hiperbólica 1/x y el infinito. Video 53.3s y portada listos en Mac.
+    </div>
+    <button class="btn-sub" style="border-color:#f59e0b; color:#fbbf24;" onclick="copyText('noche2115')">
+      <span>🌙 Copiar Copy Nocturno 21:15</span>
+      <span>Tocar</span>
+    </button>
+  </div>
+
+  <!-- 🟢 VERDE: LISTO -->
+  <div class="card-green">
+    <div class="badge-green">🟢 LISTO · COMPLETADO</div>
+    <div style="font-size:12.5px; font-weight:800; color:#fff; display:flex; justify-content:space-between;">
+      <span>Discriminante Cuadrática (Δ = b² - 4ac)</span>
+      <span style="color:#34d399;">12:30 OK</span>
+    </div>
+    <div style="font-size:11px; color:#94a3b8; margin-top:2px;">
+      52.9s · Parábola viva tocando ejes · Publicado exitosamente
+    </div>
+  </div>
+
+  <!-- CIERRE RÁPIDO DE VENTAS (TUTORÍAS) -->
   <div class="section-card">
-    <div class="section-header">
-      <span class="section-title">💬 Cierre Rápido WhatsApp / DMs</span>
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <span style="font-size:11.5px; font-weight:800; text-transform:uppercase; color:#cbd5e1;">💬 Cierre Rápido WhatsApp / DMs</span>
       <span style="font-size:10px; color:#34d399; font-weight:bold;">1-Tap</span>
     </div>
 
@@ -271,7 +361,7 @@
       <div>
         <div class="plan-name">Pack PAES (6 horas)</div>
         <div class="plan-price" style="font-size:13px; color:#10b981;">$100.000 CLP</div>
-        <div class="plan-sub" style="color:#fbbf24; font-weight:bold;">Ahorro $20k · Ensayos y trampas</div>
+        <div class="plan-sub" style="color:#fbbf24; font-weight:bold;">Ahorro $20k · Ensayos y cazabobos</div>
       </div>
       <button class="btn-tap-copy" style="background:#10b981; color:#000; font-weight:800;" onclick="copyPlan('wa2')">Copiar</button>
     </div>
@@ -287,46 +377,8 @@
     </div>
   </div>
 
-  <!-- 3. TURNOS HOY (MIÉRCOLES 25) -->
-  <div class="section-card">
-    <div class="section-header">
-      <span class="section-title">📅 Turnos Miércoles 25 Nov</span>
-      <span style="font-size:10px; color:var(--muted); font-family:monospace;">1 / 3 Listo</span>
-    </div>
-
-    <div class="shift-row">
-      <div>
-        <span class="shift-time" style="color:#94a3b8;">12:30</span>
-        <span style="color:#e2e8f0; margin-left:6px;">Discriminante Δ = b² - 4ac</span>
-      </div>
-      <span class="shift-status" style="background:rgba(16,185,129,0.2); color:#34d399;">Listo</span>
-    </div>
-
-    <div class="shift-row" style="background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.3);">
-      <div>
-        <span class="shift-time" style="color:#fbbf24;">17:30</span>
-        <span style="color:#fff; font-weight:700; margin-left:6px;">Arista 3D y Volumen</span>
-      </div>
-      <span class="shift-status" style="background:rgba(245,158,11,0.25); color:#fbbf24;">En ~30 min</span>
-    </div>
-
-    <div class="shift-row">
-      <div>
-        <span class="shift-time" style="color:#c084fc;">21:15</span>
-        <span style="color:#e2e8f0; margin-left:6px;">Dato 05: Dividir por 0</span>
-      </div>
-      <button class="btn-tap-copy" style="padding:2px 8px; font-size:10px;" onclick="copyText('noche2115')">Copy</button>
-    </div>
-  </div>
-
-  <!-- Enlaces Directos -->
-  <div class="links-grid">
-    <a href="https://tuprofeindustrial-web.vercel.app/" class="link-btn">🌐 Ver Web Vercel</a>
-    <a href="https://www.superprof.cl/profesor-particular-matematicas-calculo-algebra-fisica-estadistica-preparacion-paes-ingeniero-civil-industrial.html" target="_blank" class="link-btn" style="color:#fbbf24; border-color:rgba(245,158,11,0.3);">⭐ Superprof 5.0</a>
-  </div>
-
-  <div style="text-align:center; font-size:10px; font-family:monospace; color:#475569; padding-top:4px;">
-    TuProfeIndustrial · Santiago de Chile
+  <div style="text-align:center; font-size:10px; font-family:monospace; color:#475569;">
+    Semáforo Operativo TPI · 🟢 Listo · 🟡 En Proceso · 🔴 En Alerta
   </div>
 
 </div>
