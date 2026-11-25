@@ -23,7 +23,9 @@ import {
   Image as ImageIcon,
   Flame,
   Award,
-  RefreshCw,
+  Download,
+  Package,
+  Eye,
 } from "lucide-react";
 
 interface ActionItem {
@@ -35,16 +37,22 @@ interface ActionItem {
   detail: string;
   copyKey?: string;
   status: "alerta" | "proceso" | "listo";
+  assetPreview?: {
+    type: "portada" | "story" | "carrusel";
+    url: string;
+    downloadUrl: string;
+    name: string;
+  };
 }
 
 export default function GrillaDecisionPage() {
-  const [activeTab, setActiveTab] = useState<"dia" | "semana" | "proyectos">("dia");
+  const [activeTab, setActiveTab] = useState<"dia" | "semana" | "proyectos" | "productos">("dia");
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
   // Checklist persistente en localStorage para seguimiento en tiempo real
   const [completedTasks, setCompletedTasks] = useState<Record<string, boolean>>({
-    "task-1230-video": true, // 12:30 ya publicado
-    "task-1300-story": true, // Historia 13:00 ya publicada
+    "task-1230-video": true,
+    "task-1300-story": true,
   });
 
   useEffect(() => {
@@ -53,9 +61,7 @@ export default function GrillaDecisionPage() {
       if (saved) {
         setCompletedTasks(JSON.parse(saved));
       }
-    } catch (e) {
-      // Ignorar errores de localStorage en entornos restringidos
-    }
+    } catch (e) {}
   }, []);
 
   const toggleTask = (taskId: string) => {
@@ -128,6 +134,12 @@ Además, como docente e Ingeniero Civil Industrial, abrí los últimos 3 cupos p
       title: "Video Álgebra: Discriminante Δ = b² - 4ac",
       detail: "Test de 5s para saber si tiene 2, 1 o 0 soluciones. Subir a Reels y TikTok.",
       status: "listo",
+      assetPreview: {
+        type: "portada",
+        url: "/motor-assets/portadas/MIERCOLES-1230-portada-discriminante.jpg",
+        downloadUrl: "/motor-assets/portadas/MIERCOLES-1230-portada-discriminante.jpg",
+        name: "Portada 12:30 Discriminante",
+      },
     },
     {
       id: "task-1300-story",
@@ -137,6 +149,12 @@ Además, como docente e Ingeniero Civil Industrial, abrí los últimos 3 cupos p
       title: "Story Encuesta Interacción",
       detail: "Pregunta en Instagram Stories sobre si Δ > 0 corta en 1 o 2 puntos.",
       status: "listo",
+      assetPreview: {
+        type: "story",
+        url: "/motor-assets/historias/miercoles-1230-historia-01-encuesta.png",
+        downloadUrl: "/motor-assets/historias/miercoles-1230-historia-01-encuesta.png",
+        name: "Historia 13:00 Encuesta",
+      },
     },
     {
       id: "task-1730-video",
@@ -147,6 +165,12 @@ Además, como docente e Ingeniero Civil Industrial, abrí los últimos 3 cupos p
       detail: "Trampa mortal PAES. Video 62.8s con cubo y 8 subcubos (2³=8). Listo en Mac.",
       copyKey: "ig1730",
       status: "alerta",
+      assetPreview: {
+        type: "portada",
+        url: "/motor-assets/portadas/MIERCOLES-1730-portada-duplica-arista.jpg",
+        downloadUrl: "/motor-assets/portadas/MIERCOLES-1730-portada-duplica-arista.jpg",
+        name: "Portada 17:30 Duplica Arista",
+      },
     },
     {
       id: "task-1800-story",
@@ -157,6 +181,12 @@ Además, como docente e Ingeniero Civil Industrial, abrí los últimos 3 cupos p
       detail: "Subir sticker interactivo: ¿El volumen crece el doble o 8 veces?",
       copyKey: "story1800",
       status: "alerta",
+      assetPreview: {
+        type: "story",
+        url: "/motor-assets/historias/miercoles-1730-historia-01-encuesta.png",
+        downloadUrl: "/motor-assets/historias/miercoles-1730-historia-01-encuesta.png",
+        name: "Historia 18:00 Encuesta Arista",
+      },
     },
     {
       id: "task-1830-fb",
@@ -187,6 +217,12 @@ Además, como docente e Ingeniero Civil Industrial, abrí los últimos 3 cupos p
       detail: "Asíntota hiperbólica 1/x y el infinito. Video 53.3s listo en Mac.",
       copyKey: "noche2115",
       status: "proceso",
+      assetPreview: {
+        type: "portada",
+        url: "/motor-assets/portadas/MIERCOLES-2115-portada-dividir-por-cero.jpg",
+        downloadUrl: "/motor-assets/portadas/MIERCOLES-2115-portada-dividir-por-cero.jpg",
+        name: "Portada 21:15 Dividir por 0",
+      },
     },
     {
       id: "task-2130-story",
@@ -196,6 +232,12 @@ Además, como docente e Ingeniero Civil Industrial, abrí los últimos 3 cupos p
       title: "Story Cierre de Conversión (Pack PAES $100k)",
       detail: "Llamado directo a DM para agendar los últimos cupos del Pack PAES.",
       status: "proceso",
+      assetPreview: {
+        type: "story",
+        url: "/motor-assets/historias/miercoles-1730-historia-02-clases.png",
+        downloadUrl: "/motor-assets/historias/miercoles-1730-historia-02-clases.png",
+        name: "Historia 21:30 Flyer Clases",
+      },
     },
   ];
 
@@ -204,7 +246,7 @@ Además, como docente e Ingeniero Civil Industrial, abrí los últimos 3 cupos p
   const completedCount = dailyActions.filter((a) => completedTasks[a.id]).length;
   const progressPercent = Math.round((completedCount / totalTasks) * 100);
 
-  // Radar de fondos y proyectos (días restantes calculados para Noviembre 2026)
+  // Radar de fondos y proyectos
   const convocatorias = [
     {
       nombre: "Rendición PAES Regular 2026",
@@ -254,7 +296,7 @@ Además, como docente e Ingeniero Civil Industrial, abrí los últimos 3 cupos p
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans pb-20 antialiased selection:bg-amber-100 selection:text-amber-900">
+    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans pb-24 antialiased selection:bg-amber-100 selection:text-amber-900">
       {/* ======================================================== */}
       {/* TOPBAR CLARA DE ALTA VISIBILIDAD                         */}
       {/* ======================================================== */}
@@ -266,7 +308,7 @@ Además, como docente e Ingeniero Civil Industrial, abrí los últimos 3 cupos p
               @tuprofeindustrial
             </span>
             <span className="text-[10px] font-bold bg-slate-100 text-slate-600 border border-slate-200 px-1.5 py-0.5 rounded">
-              Grilla Operativa
+              Motor TPI V2
             </span>
           </div>
 
@@ -278,44 +320,56 @@ Además, como docente e Ingeniero Civil Industrial, abrí los últimos 3 cupos p
       </header>
 
       {/* ======================================================== */}
-      {/* PESTAÑAS PRINCIPALES: DÍA | SEMANA | PROYECTOS           */}
+      {/* 4 PESTAÑAS: DÍA | SEMANA | PRODUCTOS MOTOR | PROYECTOS   */}
       {/* ======================================================== */}
-      <div className="bg-white border-b border-slate-200 px-4 py-2 sticky top-[49px] z-40">
-        <div className="max-w-md mx-auto grid grid-cols-3 gap-1 p-1 bg-slate-100 rounded-lg">
+      <div className="bg-white border-b border-slate-200 px-3 py-2 sticky top-[49px] z-40">
+        <div className="max-w-md mx-auto grid grid-cols-4 gap-1 p-1 bg-slate-100 rounded-lg">
           <button
             onClick={() => setActiveTab("dia")}
-            className={`py-2 text-xs font-extrabold rounded-md transition flex items-center justify-center gap-1.5 ${
+            className={`py-2 text-[11px] font-extrabold rounded-md transition flex flex-col items-center justify-center ${
               activeTab === "dia"
                 ? "bg-white text-slate-900 shadow-xs"
                 : "text-slate-600 hover:text-slate-900"
             }`}
           >
-            <Calendar className="w-3.5 h-3.5 text-amber-600" />
-            <span>Hoy Mié 25</span>
+            <span>Hoy</span>
+            <span className="text-[9px] font-mono text-amber-700">Mié 25</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab("productos")}
+            className={`py-2 text-[11px] font-extrabold rounded-md transition flex flex-col items-center justify-center ${
+              activeTab === "productos"
+                ? "bg-white text-slate-900 shadow-xs"
+                : "text-slate-600 hover:text-slate-900"
+            }`}
+          >
+            <span>Productos</span>
+            <span className="text-[9px] font-mono text-purple-700">Descargas</span>
           </button>
 
           <button
             onClick={() => setActiveTab("semana")}
-            className={`py-2 text-xs font-extrabold rounded-md transition flex items-center justify-center gap-1.5 ${
+            className={`py-2 text-[11px] font-extrabold rounded-md transition flex flex-col items-center justify-center ${
               activeTab === "semana"
                 ? "bg-white text-slate-900 shadow-xs"
                 : "text-slate-600 hover:text-slate-900"
             }`}
           >
-            <Layers className="w-3.5 h-3.5 text-blue-600" />
-            <span>Semana 2</span>
+            <span>Semana</span>
+            <span className="text-[9px] font-mono text-blue-700">Semana 2</span>
           </button>
 
           <button
             onClick={() => setActiveTab("proyectos")}
-            className={`py-2 text-xs font-extrabold rounded-md transition flex items-center justify-center gap-1.5 ${
+            className={`py-2 text-[11px] font-extrabold rounded-md transition flex flex-col items-center justify-center ${
               activeTab === "proyectos"
                 ? "bg-white text-slate-900 shadow-xs"
                 : "text-slate-600 hover:text-slate-900"
             }`}
           >
-            <Award className="w-3.5 h-3.5 text-emerald-600" />
             <span>Proyectos</span>
+            <span className="text-[9px] font-mono text-emerald-700">Fondos</span>
           </button>
         </div>
       </div>
@@ -342,7 +396,7 @@ Además, como docente e Ingeniero Civil Industrial, abrí los últimos 3 cupos p
                 </span>
               </div>
 
-              {/* Barra de progreso visual */}
+              {/* Barra de progreso */}
               <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden border border-slate-200">
                 <div
                   className="bg-emerald-500 h-2 rounded-full transition-all duration-300"
@@ -350,7 +404,7 @@ Además, como docente e Ingeniero Civil Industrial, abrí los últimos 3 cupos p
                 />
               </div>
 
-              {/* Leyenda Semáforo */}
+              {/* Semáforo badges */}
               <div className="grid grid-cols-3 gap-1.5 pt-1 text-[11px] font-bold text-center">
                 <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 py-1 px-1 rounded flex items-center justify-center gap-1">
                   <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" />
@@ -382,13 +436,37 @@ Además, como docente e Ingeniero Civil Industrial, abrí los últimos 3 cupos p
               <h2 className="text-base font-extrabold text-slate-900 leading-snug mb-1">
                 Video 17:30: Duplica la arista (Geometría 3D)
               </h2>
-              <p className="text-xs text-slate-700 mb-3 leading-relaxed">
+              <p className="text-xs text-slate-700 mb-2 leading-relaxed">
                 ¿Crece el doble o 8 veces? Trampa mortal PAES. Video listo en tu Mac (
                 <code className="text-red-700 bg-red-100 px-1 py-0.5 rounded text-[11px] font-mono">
                   MIERCOLES-1730-video-duplica-arista.mp4
                 </code>
                 ).
               </p>
+
+              {/* Miniatura de Portada Conectada */}
+              <div className="my-3 p-2 bg-white rounded-lg border border-red-200 flex items-center gap-3">
+                <img
+                  src="/motor-assets/portadas/MIERCOLES-1730-portada-duplica-arista.jpg"
+                  alt="Portada 17:30"
+                  className="w-14 h-20 object-cover rounded border border-slate-200 shrink-0"
+                />
+                <div className="flex-1 min-w-0">
+                  <div className="text-xs font-extrabold text-slate-900 truncate">
+                    Portada Horneada Frame 0
+                  </div>
+                  <div className="text-[10px] text-slate-500 mb-2">
+                    Lista para usar en Reels / TikTok
+                  </div>
+                  <a
+                    href="/motor-assets/portadas/MIERCOLES-1730-portada-duplica-arista.jpg"
+                    download="MIERCOLES-1730-portada-duplica-arista.jpg"
+                    className="inline-flex items-center gap-1 text-[11px] font-extrabold text-red-700 bg-red-100 hover:bg-red-200 px-2.5 py-1 rounded transition"
+                  >
+                    <Download className="w-3 h-3" /> Descargar al Celular
+                  </a>
+                </div>
+              </div>
 
               {/* Botones de Copiado Rápido */}
               <div className="space-y-2">
@@ -437,7 +515,7 @@ Además, como docente e Ingeniero Civil Industrial, abrí los últimos 3 cupos p
               </div>
             </section>
 
-            {/* CHECKLIST COMPLETO DEL DÍA (SEGUIMIENTO INTERACTIVO) */}
+            {/* CHECKLIST COMPLETO DEL DÍA (CON ACTIVOS VISUALES) */}
             <section className="bg-white border border-slate-200 rounded-xl p-4 shadow-xs space-y-3">
               <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                 <div>
@@ -457,7 +535,6 @@ Además, como docente e Ingeniero Civil Industrial, abrí los últimos 3 cupos p
                 {dailyActions.map((action) => {
                   const isChecked = !!completedTasks[action.id];
 
-                  // Icono por categoría
                   const getCategoryBadge = () => {
                     switch (action.category) {
                       case "video":
@@ -501,7 +578,6 @@ Además, como docente e Ingeniero Civil Industrial, abrí los últimos 3 cupos p
                       }`}
                     >
                       <div className="flex items-start gap-2.5">
-                        {/* Checkbox táctil grande */}
                         <button
                           onClick={() => toggleTask(action.id)}
                           className={`mt-0.5 w-5 h-5 rounded-md flex items-center justify-center border transition shrink-0 ${
@@ -535,6 +611,29 @@ Además, como docente e Ingeniero Civil Industrial, abrí los últimos 3 cupos p
                           <div className="text-[11px] text-slate-600 mt-1 leading-normal">
                             {action.detail}
                           </div>
+
+                          {/* Previsualización de Imagen Conectada */}
+                          {action.assetPreview && !isChecked && (
+                            <div className="mt-2.5 p-2 bg-slate-50 rounded-lg border border-slate-200 flex items-center justify-between gap-2">
+                              <div className="flex items-center gap-2 min-w-0">
+                                <img
+                                  src={action.assetPreview.url}
+                                  alt={action.assetPreview.name}
+                                  className="w-10 h-14 object-cover rounded border border-slate-300 shrink-0"
+                                />
+                                <div className="truncate text-[11px] font-bold text-slate-700">
+                                  {action.assetPreview.name}
+                                </div>
+                              </div>
+                              <a
+                                href={action.assetPreview.downloadUrl}
+                                download
+                                className="shrink-0 text-[11px] font-bold text-blue-700 bg-blue-50 border border-blue-200 hover:bg-blue-100 px-2 py-1 rounded flex items-center gap-1 transition"
+                              >
+                                <Download className="w-3 h-3" /> Descargar
+                              </a>
+                            </div>
+                          )}
 
                           {/* Botón rápido si tiene copy asociado */}
                           {action.copyKey && !isChecked && (
@@ -579,7 +678,6 @@ Además, como docente e Ingeniero Civil Industrial, abrí los últimos 3 cupos p
               </div>
 
               <div className="space-y-2">
-                {/* 1h: $20k */}
                 <div className="p-2.5 rounded-lg border border-slate-200 bg-slate-50/50 flex items-center justify-between gap-2">
                   <div>
                     <div className="text-xs font-bold text-slate-900">
@@ -596,7 +694,6 @@ Además, como docente e Ingeniero Civil Industrial, abrí los últimos 3 cupos p
                   </button>
                 </div>
 
-                {/* Pack PAES: $100k */}
                 <div className="p-2.5 rounded-lg border-2 border-emerald-500 bg-emerald-50/40 flex items-center justify-between gap-2">
                   <div>
                     <div className="text-xs font-bold text-slate-900">
@@ -615,7 +712,6 @@ Además, como docente e Ingeniero Civil Industrial, abrí los últimos 3 cupos p
                   </button>
                 </div>
 
-                {/* Intensivo Ingeniería: $600k */}
                 <div className="p-2.5 rounded-lg border border-purple-200 bg-purple-50/30 flex items-center justify-between gap-2">
                   <div>
                     <div className="text-xs font-bold text-slate-900">
@@ -637,7 +733,154 @@ Además, como docente e Ingeniero Civil Industrial, abrí los últimos 3 cupos p
         )}
 
         {/* ======================================================== */}
-        {/* VISTA 2: PROGRAMACIÓN SEMANAL COMPLETA (SEMANA 2)        */}
+        {/* VISTA 2: 📦 CATÁLOGO COMPLETO DE PRODUCTOS DEL MOTOR     */}
+        {/* ======================================================== */}
+        {activeTab === "productos" && (
+          <section className="space-y-4">
+            <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-xs">
+              <div className="flex items-center justify-between mb-1">
+                <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-900 flex items-center gap-1.5">
+                  <Package className="w-4 h-4 text-purple-600" />
+                  Productos Generados por tu Motor
+                </h3>
+                <span className="text-[10px] font-bold bg-purple-50 text-purple-700 border border-purple-200 px-2 py-0.5 rounded-full">
+                  Descarga Móvil
+                </span>
+              </div>
+              <p className="text-xs text-slate-600">
+                Láminas, portadas, carruseles y PDFs listos para guardar en tu celular y subir a
+                redes.
+              </p>
+            </div>
+
+            {/* CARRUSEL 17:30 (6 SLIDES COMPLETAS) */}
+            <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-xs space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-xs font-extrabold text-slate-900">
+                    📸 Carrusel 17:30 · Duplica la Arista
+                  </div>
+                  <div className="text-[10px] text-slate-500">
+                    6 Láminas HD (1080×1350 px · Formato 4:5)
+                  </div>
+                </div>
+                <span className="text-[10px] font-bold bg-blue-50 text-blue-700 px-2 py-0.5 rounded">
+                  6 Slides
+                </span>
+              </div>
+
+              {/* Grid de 6 Láminas con botón de descarga individual */}
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { id: "01", name: "Portada", file: "slide_01_portada.png" },
+                  { id: "02", name: "Enunciado", file: "slide_02_enunciado.png" },
+                  { id: "03", name: "Desarrollo", file: "slide_03_desarrollo.png" },
+                  { id: "04", name: "Descarte", file: "slide_04_descarte.png" },
+                  { id: "05", name: "Formulario", file: "slide_05_formulario.png" },
+                  { id: "06", name: "Cierre DM", file: "slide_06_cta_dm.png" },
+                ].map((s) => (
+                  <div
+                    key={s.id}
+                    className="p-1.5 bg-slate-50 border border-slate-200 rounded-lg flex flex-col items-center gap-1 text-center"
+                  >
+                    <img
+                      src={`/motor-assets/carrusel-1730/${s.file}`}
+                      alt={s.name}
+                      className="w-full h-24 object-cover rounded border border-slate-200"
+                    />
+                    <div className="text-[9.5px] font-bold text-slate-700 truncate w-full">
+                      {s.id}. {s.name}
+                    </div>
+                    <a
+                      href={`/motor-assets/carrusel-1730/${s.file}`}
+                      download={`carrusel-1730-${s.file}`}
+                      className="w-full text-[9px] font-bold text-blue-700 bg-white border border-blue-200 hover:bg-blue-50 py-0.5 rounded flex items-center justify-center gap-0.5"
+                    >
+                      <Download className="w-2.5 h-2.5" /> Bajar
+                    </a>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* PACK DE HISTORIAS PARA INSTAGRAM & WHATSAPP */}
+            <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-xs space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-xs font-extrabold text-slate-900">
+                    📱 Historias del Día (Pack Dual 9:16)
+                  </div>
+                  <div className="text-[10px] text-slate-500">
+                    Stickers de encuesta y banners de captación de alumnos
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                {/* Historia 17:30 Encuesta */}
+                <div className="p-2 bg-slate-50 border border-slate-200 rounded-lg flex flex-col items-center gap-2 text-center">
+                  <img
+                    src="/motor-assets/historias/miercoles-1730-historia-01-encuesta.png"
+                    alt="Historia 17:30 Encuesta"
+                    className="w-full h-36 object-cover rounded border border-slate-300"
+                  />
+                  <div className="text-[11px] font-extrabold text-slate-800">
+                    17:30 Encuesta Arista
+                  </div>
+                  <a
+                    href="/motor-assets/historias/miercoles-1730-historia-01-encuesta.png"
+                    download="miercoles-1730-historia-01-encuesta.png"
+                    className="w-full py-1 text-[10px] font-extrabold text-purple-700 bg-purple-50 border border-purple-200 hover:bg-purple-100 rounded flex items-center justify-center gap-1"
+                  >
+                    <Download className="w-3 h-3" /> Descargar PNG
+                  </a>
+                </div>
+
+                {/* Historia 17:30 Clases */}
+                <div className="p-2 bg-slate-50 border border-slate-200 rounded-lg flex flex-col items-center gap-2 text-center">
+                  <img
+                    src="/motor-assets/historias/miercoles-1730-historia-02-clases.png"
+                    alt="Historia 17:30 Clases"
+                    className="w-full h-36 object-cover rounded border border-slate-300"
+                  />
+                  <div className="text-[11px] font-extrabold text-slate-800">
+                    Flyer Tutorías $20k/$100k
+                  </div>
+                  <a
+                    href="/motor-assets/historias/miercoles-1730-historia-02-clases.png"
+                    download="miercoles-1730-historia-02-clases.png"
+                    className="w-full py-1 text-[10px] font-extrabold text-purple-700 bg-purple-50 border border-purple-200 hover:bg-purple-100 rounded flex items-center justify-center gap-1"
+                  >
+                    <Download className="w-3 h-3" /> Descargar PNG
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* LEAD MAGNET / SIMULACRO PAES M1 PDF */}
+            <div className="bg-emerald-50 border-2 border-emerald-500 rounded-xl p-4 shadow-xs flex items-center justify-between gap-3">
+              <div>
+                <div className="text-xs font-black text-emerald-900">
+                  📄 Simulacro Oficial PAES M1 (PDF)
+                </div>
+                <div className="text-[11px] text-emerald-700 mt-0.5">
+                  65 preguntas resueltas · Imán para captar apoderados y alumnos
+                </div>
+              </div>
+              <a
+                href="/simulacro-paes-m1.pdf"
+                target="_blank"
+                download="simulacro-paes-m1.pdf"
+                className="shrink-0 text-xs font-black text-white bg-emerald-600 hover:bg-emerald-700 px-3 py-2 rounded-lg flex items-center gap-1.5 shadow-xs"
+              >
+                <Download className="w-3.5 h-3.5" /> Bajar PDF
+              </a>
+            </div>
+          </section>
+        )}
+
+        {/* ======================================================== */}
+        {/* VISTA 3: PROGRAMACIÓN SEMANAL COMPLETA (SEMANA 2)        */}
         {/* ======================================================== */}
         {activeTab === "semana" && (
           <section className="bg-white border border-slate-200 rounded-xl p-4 shadow-xs space-y-3">
@@ -656,7 +899,6 @@ Además, como docente e Ingeniero Civil Industrial, abrí los últimos 3 cupos p
             </div>
 
             <div className="space-y-2">
-              {/* LUNES 23 */}
               <div className="p-2.5 rounded-lg border border-slate-200 bg-slate-50">
                 <div className="flex items-center justify-between text-xs font-bold text-slate-700 mb-1">
                   <span>Lunes 23 Noviembre</span>
@@ -669,7 +911,6 @@ Además, como docente e Ingeniero Civil Industrial, abrí los últimos 3 cupos p
                 </div>
               </div>
 
-              {/* MARTES 24 */}
               <div className="p-2.5 rounded-lg border border-slate-200 bg-slate-50">
                 <div className="flex items-center justify-between text-xs font-bold text-slate-700 mb-1">
                   <span>Martes 24 Noviembre</span>
@@ -678,11 +919,10 @@ Además, como docente e Ingeniero Civil Industrial, abrí los últimos 3 cupos p
                   </span>
                 </div>
                 <div className="text-[11px] text-slate-600">
-                  • 12:30: x² = 25 (±5) · 17:30: Vértice parábola · 21:15: ¿Por qué π no tiene esquinas?
+                  • 12:30: x² = 25 · 17:30: Vértice parábola · 21:15: ¿Por qué π no tiene esquinas?
                 </div>
               </div>
 
-              {/* MIÉRCOLES 25 (HOY) */}
               <div className="p-3 rounded-lg border-2 border-red-500 bg-red-50/30">
                 <div className="flex items-center justify-between text-xs font-extrabold text-slate-900 mb-1">
                   <span className="flex items-center gap-1.5">
@@ -700,7 +940,6 @@ Además, como docente e Ingeniero Civil Industrial, abrí los últimos 3 cupos p
                 </div>
               </div>
 
-              {/* JUEVES 26 */}
               <div className="p-2.5 rounded-lg border border-slate-200 bg-white">
                 <div className="flex items-center justify-between text-xs font-bold text-slate-800 mb-1">
                   <span>Jueves 26 Noviembre (Mañana)</span>
@@ -713,7 +952,6 @@ Además, como docente e Ingeniero Civil Industrial, abrí los últimos 3 cupos p
                 </div>
               </div>
 
-              {/* VIERNES 27 */}
               <div className="p-2.5 rounded-lg border border-slate-200 bg-white">
                 <div className="flex items-center justify-between text-xs font-bold text-slate-800 mb-1">
                   <span>Viernes 27 Noviembre</span>
@@ -726,7 +964,6 @@ Además, como docente e Ingeniero Civil Industrial, abrí los últimos 3 cupos p
                 </div>
               </div>
 
-              {/* SÁBADO 28 */}
               <div className="p-2.5 rounded-lg border border-slate-200 bg-white">
                 <div className="flex items-center justify-between text-xs font-bold text-slate-800 mb-1">
                   <span>Sábado 28 Noviembre</span>
@@ -739,7 +976,6 @@ Además, como docente e Ingeniero Civil Industrial, abrí los últimos 3 cupos p
                 </div>
               </div>
 
-              {/* DOMINGO 29 */}
               <div className="p-2.5 rounded-lg border border-slate-200 bg-white">
                 <div className="flex items-center justify-between text-xs font-bold text-slate-800 mb-1">
                   <span>Domingo 29 Noviembre</span>
@@ -756,7 +992,7 @@ Además, como docente e Ingeniero Civil Industrial, abrí los últimos 3 cupos p
         )}
 
         {/* ======================================================== */}
-        {/* VISTA 3: DÍAS QUE FALTAN PARA POSTULAR A PROYECTOS       */}
+        {/* VISTA 4: DÍAS QUE FALTAN PARA POSTULAR A PROYECTOS       */}
         {/* ======================================================== */}
         {activeTab === "proyectos" && (
           <section className="bg-white border border-slate-200 rounded-xl p-4 shadow-xs space-y-3">
