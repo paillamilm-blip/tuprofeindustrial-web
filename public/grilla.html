@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Cockpit Móvil · @tuprofeindustrial</title>
+<style>
+  :root {
+    --bg: #070b12;
+    --card: #0b1322;
+    --card-inner: #101b2f;
+    --border: #1e293b;
+    --text: #f8fafc;
+    --muted: #94a3b8;
+    --accent: #38bdf8;
+    --green: #10b981;
+    --amber: #f59e0b;
+    --purple: #a855f7;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+    padding-bottom: 32px;
+    line-height: 1.4;
+  }
+  
+  /* Topbar */
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(11, 19, 34, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .brand { display: flex; align-items: center; gap: 6px; }
+  .dot-live { width: 8px; height: 8px; border-radius: 50%; background: #34d399; box-shadow: 0 0 8px #34d399; }
+  .brand-title { font-size: 13px; font-weight: 800; font-family: monospace; letter-spacing: -0.2px; color: #fff; }
+  .pill-paes {
+    background: rgba(245, 158, 11, 0.15);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.4);
+    font-size: 10.5px;
+    font-weight: 800;
+    padding: 2px 7px;
+    border-radius: 6px;
+    font-family: monospace;
+  }
+
+  .container { max-width: 480px; margin: 0 auto; padding: 12px 14px; display: flex; flex-direction: column; gap: 14px; }
+
+  /* Tarjeta Alerta 17:30 */
+  .card-alert {
+    background: linear-gradient(180deg, rgba(245, 158, 11, 0.15) 0%, rgba(14, 23, 38, 0.95) 100%);
+    border: 2px solid #f59e0b;
+    border-radius: 12px;
+    padding: 14px;
+    box-shadow: 0 6px 18px rgba(245, 158, 11, 0.12);
+    position: relative;
+  }
+  .badge-urgent {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: #f59e0b;
+    color: #000;
+    font-size: 9.5px;
+    font-weight: 900;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-bottom-left-radius: 8px;
+    letter-spacing: 0.5px;
+  }
+  .time-badge { font-size: 11px; font-weight: 800; color: #fbbf24; font-family: monospace; margin-bottom: 4px; }
+  .card-title { font-size: 15px; font-weight: 800; color: #fff; line-height: 1.25; margin-bottom: 6px; }
+  .card-desc { font-size: 12px; color: #cbd5e1; margin-bottom: 12px; }
+
+  /* Botones 1-Tap */
+  .btn-copy {
+    width: 100%;
+    background: rgba(245, 158, 11, 0.12);
+    border: 1px solid rgba(245, 158, 11, 0.5);
+    color: #fde68a;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 10px 12px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    margin-bottom: 8px;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .btn-copy:active { transform: scale(0.98); background: rgba(245, 158, 11, 0.25); }
+  .btn-copy.secondary {
+    background: var(--card-inner);
+    border-color: var(--border);
+    color: var(--text);
+  }
+  .btn-copy.green {
+    background: rgba(16, 185, 129, 0.15);
+    border-color: rgba(16, 185, 129, 0.5);
+    color: #6ee7b7;
+  }
+
+  /* Sección General */
+  .section-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .section-title { font-size: 11.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #cbd5e1; }
+
+  /* Filas de Planes */
+  .plan-item {
+    background: var(--card-inner);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+  .plan-item.highlight { border: 2px solid rgba(16, 185, 129, 0.5); background: rgba(16, 185, 129, 0.05); }
+  .plan-name { font-size: 12.5px; font-weight: 800; color: #fff; }
+  .plan-price { font-size: 12px; font-weight: 800; color: #34d399; font-family: monospace; }
+  .plan-sub { font-size: 10px; color: var(--muted); margin-top: 1px; }
+
+  .btn-tap-copy {
+    background: #1e293b;
+    border: 1px solid #334155;
+    color: #38bdf8;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: transform 0.1s;
+  }
+  .btn-tap-copy:active { transform: scale(0.95); }
+  .btn-tap-copy.copied { background: #064e3b; color: #34d399; border-color: #10b981; }
+
+  /* Turnos Hoy */
+  .shift-row {
+    padding: 8px 10px;
+    border-radius: 6px;
+    background: var(--card-inner);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11.5px;
+  }
+  .shift-time { font-family: monospace; font-weight: 700; }
+  .shift-status { font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 4px; }
+
+  /* Enlaces finales */
+  .links-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .link-btn {
+    background: #152033;
+    border: 1px solid var(--border);
+    color: #e2e8f0;
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    text-decoration: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* Toast */
+  #toast {
+    position: fixed;
+    bottom: 18px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: #10b981;
+    color: #000;
+    font-size: 12px;
+    font-weight: 800;
+    padding: 8px 16px;
+    border-radius: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 999;
+    pointer-events: none;
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- Topbar Minimalista -->
+<div class="topbar">
+  <div class="brand">
+    <div class="dot-live"></div>
+    <span class="brand-title">@tuprofeindustrial</span>
+  </div>
+  <div class="pill-paes">PAES: 5 DÍAS</div>
+</div>
+
+<div class="container">
+
+  <!-- 1. TARJETA ACCIÓN INMEDIATA 17:30 -->
+  <div class="card-alert">
+    <div class="badge-urgent">Acción Inmediata</div>
+    <div class="time-badge">HOY 17:30 HRS · DIURNO 2</div>
+    <h1 class="card-title">Duplica la arista: ¿crece el doble o 8 veces?</h1>
+    <p class="card-desc">Geometría 3D PAES · Cubo y 8 subcubos (2³=8). Video listo en tu Mac.</p>
+
+    <!-- Botón 1: Instagram Reel -->
+    <button class="btn-copy" onclick="copyText('ig1730')">
+      <span>📸 Copiar Copy Instagram (Reels)</span>
+      <span id="label-ig1730">Copiar</span>
+    </button>
+
+    <!-- Botón 2: TikTok Corto -->
+    <button class="btn-copy secondary" onclick="copyText('tk1730')">
+      <span>📱 Copiar Copy Corto TikTok</span>
+      <span id="label-tk1730">5 tags</span>
+    </button>
+
+    <!-- Botón 3: Primer Comentario Tutorías -->
+    <button class="btn-copy green" onclick="copyText('pin1730')">
+      <span>📌 Copiar 1er Comentario Fijado</span>
+      <span id="label-pin1730">$20k/$100k</span>
+    </button>
+  </div>
+
+  <!-- 2. TARJETA RESPUESTAS RÁPIDAS PARA VENTAS EN WHATSAPP / DMs -->
+  <div class="section-card">
+    <div class="section-header">
+      <span class="section-title">💬 Cierre Rápido WhatsApp / DMs</span>
+      <span style="font-size:10px; color:#34d399; font-weight:bold;">1-Tap</span>
+    </div>
+
+    <!-- Tutoría $20k -->
+    <div class="plan-item">
+      <div>
+        <div class="plan-name">Tutoría individual (1 hora)</div>
+        <div class="plan-price">$20.000 CLP</div>
+        <div class="plan-sub">Online o domicilio Santiago</div>
+      </div>
+      <button class="btn-tap-copy" onclick="copyPlan('wa1')">Copiar</button>
+    </div>
+
+    <!-- Pack PAES $100k -->
+    <div class="plan-item highlight">
+      <div>
+        <div class="plan-name">Pack PAES (6 horas)</div>
+        <div class="plan-price" style="font-size:13px; color:#10b981;">$100.000 CLP</div>
+        <div class="plan-sub" style="color:#fbbf24; font-weight:bold;">Ahorro $20k · Ensayos y trampas</div>
+      </div>
+      <button class="btn-tap-copy" style="background:#10b981; color:#000; font-weight:800;" onclick="copyPlan('wa2')">Copiar</button>
+    </div>
+
+    <!-- Intensivo $600k -->
+    <div class="plan-item">
+      <div>
+        <div class="plan-name">Intensivo Ingeniería (36h)</div>
+        <div class="plan-price">$600.000 CLP / mes</div>
+        <div class="plan-sub">Cálculo, Álgebra y Nivelación</div>
+      </div>
+      <button class="btn-tap-copy" onclick="copyPlan('wa3')">Copiar</button>
+    </div>
+  </div>
+
+  <!-- 3. TURNOS HOY (MIÉRCOLES 25) -->
+  <div class="section-card">
+    <div class="section-header">
+      <span class="section-title">📅 Turnos Miércoles 25 Nov</span>
+      <span style="font-size:10px; color:var(--muted); font-family:monospace;">1 / 3 Listo</span>
+    </div>
+
+    <div class="shift-row">
+      <div>
+        <span class="shift-time" style="color:#94a3b8;">12:30</span>
+        <span style="color:#e2e8f0; margin-left:6px;">Discriminante Δ = b² - 4ac</span>
+      </div>
+      <span class="shift-status" style="background:rgba(16,185,129,0.2); color:#34d399;">Listo</span>
+    </div>
+
+    <div class="shift-row" style="background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.3);">
+      <div>
+        <span class="shift-time" style="color:#fbbf24;">17:30</span>
+        <span style="color:#fff; font-weight:700; margin-left:6px;">Arista 3D y Volumen</span>
+      </div>
+      <span class="shift-status" style="background:rgba(245,158,11,0.25); color:#fbbf24;">En ~30 min</span>
+    </div>
+
+    <div class="shift-row">
+      <div>
+        <span class="shift-time" style="color:#c084fc;">21:15</span>
+        <span style="color:#e2e8f0; margin-left:6px;">Dato 05: Dividir por 0</span>
+      </div>
+      <button class="btn-tap-copy" style="padding:2px 8px; font-size:10px;" onclick="copyText('noche2115')">Copy</button>
+    </div>
+  </div>
+
+  <!-- Enlaces Directos -->
+  <div class="links-grid">
+    <a href="https://tuprofeindustrial-web.vercel.app/" class="link-btn">🌐 Ver Web Vercel</a>
+    <a href="https://www.superprof.cl/profesor-particular-matematicas-calculo-algebra-fisica-estadistica-preparacion-paes-ingeniero-civil-industrial.html" target="_blank" class="link-btn" style="color:#fbbf24; border-color:rgba(245,158,11,0.3);">⭐ Superprof 5.0</a>
+  </div>
+
+  <div style="text-align:center; font-size:10px; font-family:monospace; color:#475569; padding-top:4px;">
+    TuProfeIndustrial · Santiago de Chile
+  </div>
+
+</div>
+
+<!-- Toast flotante -->
+<div id="toast">¡Texto copiado al portapapeles!</div>
+
+<script>
+  const copies = {
+    ig1730: `Si duplicas la arista de un cubo, ¿su volumen se duplica? ⚠️ ¡La trampa clásica de geometría 3D en la PAES!\n\nEl volumen se mide en las tres direcciones del espacio: largo, ancho y alto:\nV = a · a · a = a³.\n\nAl duplicar la arista (2a), el factor 2 también se eleva al cubo:\nV₂ = (2a)³ = 2³ · a³ = 8a³.\n\nEl volumen NO crece al doble: ¡crece 8 VECES!\nComprobación con números reales:\n• Arista 4 cm ➔ V = 4³ = 64 cm³\n• Arista 8 cm ➔ V = 8³ = 512 cm³ (512 / 64 = exactamente 8 veces).\n\n✍️ RETO RÁPIDO: Si triplicas la arista de un cubo, ¿cuántas veces crece su volumen?\n📩 Mándaselo a quien dé la PAES para que no caiga en el cazabobos.\n\nCreado con IA. #tuprofeindustrial #paesm1 #geometria #cuerposgeometricos #demre`,
+    tk1730: `¿Duplicas la arista de un cubo? ⚠️ ¡No es el doble! El volumen crece 8 veces (2³ = 8). Si triplicas la arista, ¿cuántas veces crece? Déjamelo en comentarios 👇 Creado con IA. #tuprofeindustrial #paesm1 #geometria #cuerposgeometricos #demre`,
+    pin1730: `📌 Tutorías personalizadas 1 a 1 de Geometría y PAES M1 ($20k / h · Pack PAES $100k). Envíame un mensaje interno (DM) para revisar cupos disponibles 📲`,
+    noche2115: `¿Por qué 1 / 0 rompe las matemáticas? 🌙 La gráfica de 1/x explota a +infinito y -infinito al mismo tiempo. ¿Cuánto da 0 / 0? Comenta tu teoría 👇 Creado con IA. #tuprofeindustrial #datosnocturnos #calculo #algebra #cienciachile`
+  };
+
+  const plans = {
+    wa1: `¡Hola! Con mucho gusto te puedo apoyar. La tutoría personalizada de 1 hora tiene un valor de $20.000 CLP (online o a domicilio en Santiago). Revisamos dudas puntuales, ejercicios tipo PAES y reforzamos la base paso a paso. ¿Qué día y horario te acomoda más coordinar?`,
+    wa2: `¡Hola! Para esta recta final te recomiendo directamente el Pack PAES: son 6 horas de tutorías personalizadas intensivas por $100.000 CLP (ahorras $20.000 frente a la hora individual). Trabajamos resolución de ensayos, trampas clásicas DEMRE y manejo de tiempo pregunta a pregunta. ¿Te gustaría agendar la primera sesión esta semana?`,
+    wa3: `¡Hola! El programa Intensivo de Ingeniería incluye 36 horas mensuales de acompañamiento integral (Cálculo diferencial/integral, Álgebra Lineal, Física y Nivelación universitaria) por $600.000 CLP al mes, con soporte continuo por WhatsApp para resolución de dudas. Cuéntame qué ramos estás cursando para diseñar tu plan de estudio.`
+  };
+
+  function showToast(text) {
+    const toast = document.getElementById('toast');
+    toast.textContent = text || '¡Texto copiado al portapapeles!';
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2200);
+  }
+
+  function copyText(key) {
+    if (copies[key]) {
+      navigator.clipboard.writeText(copies[key]).then(() => {
+        showToast('¡Copy copiado al portapapeles!');
+      });
+    }
+  }
+
+  function copyPlan(key) {
+    if (plans[key]) {
+      navigator.clipboard.writeText(plans[key]).then(() => {
+        showToast('¡Mensaje de WhatsApp copiado!');
+      });
+    }
+  }
+</script>
+
+</body>
+</html>
