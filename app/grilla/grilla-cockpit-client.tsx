@@ -399,93 +399,117 @@ export function GrillaCockpitClient({
     return urgentBlock?.id ?? pendingBlock?.id ?? videoBlocks[0]?.id ?? null;
   }, [selectedVideoBlockId, videoBlocks, completedMap, isTaskUrgent]);
 
+  // Acción prioritaria inmediata sugerida
+  const nextPriorityAction = alertaTasks[0] ?? procesoTasks[0] ?? null;
   const paesDaysLeft = diffDaysFromIso(santiagoNow.isoDate, "2026-11-30");
 
-  // Bloque que viene más tarde hoy (cálculo directo en render)
-  const upcomingBlock = videoBlocks.find((b) => {
-    const done = b.allActions.every((a) => completedMap[a.id]);
-    return !done && b.mainAction.minutesFromMidnight > santiagoNow.minutes;
-  });
+  const nowIsoDate = santiagoNow.isoDate;
 
   // Estado semanal consolidado (para saber qué está listo, qué falta y qué está en alerta)
-  const weekOverview = useMemo(() => {
-    const allStored = readAllCompletedFromStorage(syncedData.completedBaseline);
-
-    return [
-      {
-        day: "Lunes 23 Noviembre",
-        iso: "2026-11-23",
-        summary: "12:30 Simplificar (x+2)/2 · 17:30 1 m² a cm² · 21:15 ¿Por qué i²=-1?",
-        status: "listo" as const,
-        badge: "Listo (3/3 videos)",
-        alert: false,
-        actionsTotal: 8,
-        actionsDone: 8,
-      },
-      {
-        day: "Martes 24 Noviembre",
-        iso: "2026-11-24",
-        summary: "12:30 Olvido del ± · 17:30 Vértice f(x) · 21:15 El secreto de π",
-        status: "listo" as const,
-        badge: "Listo (3/3 videos)",
-        alert: false,
-        actionsTotal: 8,
-        actionsDone: 8,
-      },
-      {
-        day: "Miércoles 25 Noviembre",
-        iso: "2026-11-25",
-        summary: "12:30 Discriminante Δ · 17:30 Duplica Arista 3D · 21:15 Dividir por 0",
-        status: (Object.values(allStored["mie25"] ?? {}).filter(Boolean).length === 8 ? "listo" : "proceso") as "listo" | "proceso",
-        badge: `${Object.values(allStored["mie25"] ?? {}).filter(Boolean).length}/8 acciones`,
-        alert: santiagoNow.isoDate > "2026-11-25" && Object.values(allStored["mie25"] ?? {}).filter(Boolean).length < 8,
-        actionsTotal: 8,
-        actionsDone: Object.values(allStored["mie25"] ?? {}).filter(Boolean).length,
-        switchKey: "mie25" as DayKey,
-      },
-      {
-        day: "Jueves 26 Noviembre",
-        iso: "2026-11-26",
-        summary: "12:30 Parábola-Recta · 17:30 Viète · 21:15 Euler + Formulario PDF",
-        status: (Object.values(allStored["jue26"] ?? {}).filter(Boolean).length === 8 ? "listo" : "alerta") as "listo" | "alerta",
-        badge: `${Object.values(allStored["jue26"] ?? {}).filter(Boolean).length}/8 acciones`,
-        alert: santiagoNow.isoDate === "2026-11-26" && Object.values(allStored["jue26"] ?? {}).filter(Boolean).length < 8,
-        actionsTotal: 8,
-        actionsDone: Object.values(allStored["jue26"] ?? {}).filter(Boolean).length,
-        switchKey: "jue26" as DayKey,
-      },
-      {
-        day: "Viernes 27 Noviembre",
-        iso: "2026-11-27",
-        summary: "12:30 Inecuación trampa · 17:30 Ganancia máx · 21:15 Fractales",
-        status: "falta" as const,
-        badge: "Falta render en motor V2",
-        alert: false,
-        actionsTotal: 8,
-        actionsDone: 0,
-      },
-      {
-        day: "Sábado 28 Noviembre",
-        iso: "2026-11-28",
-        summary: "12:30 Intersección ejes · 17:30 Función Inversa · 21:15 Hilbert",
-        status: "falta" as const,
-        badge: "Falta render en motor V2",
-        alert: false,
-        actionsTotal: 8,
-        actionsDone: 0,
-      },
-      {
-        day: "Domingo 29 Noviembre",
-        iso: "2026-11-29",
-        summary: "12:30 10 Puntos Clave · 17:30 Ritual Calma · 21:15 Confianza PAES",
-        status: "falta" as const,
-        badge: "Víspera · Guiones pendientes",
-        alert: false,
-        actionsTotal: 8,
-        actionsDone: 0,
-      },
-    ];
-  }, [syncedData.completedBaseline, santiagoNow.isoDate]);
+  const weekOverview = [
+    {
+      day: "Lunes 23 Noviembre",
+      iso: "2026-11-23",
+      summary: "12:30 Simplificar (x+2)/2 · 17:30 1 m² a cm² · 21:15 ¿Por qué i²=-1?",
+      status: "listo" as const,
+      badge: "Listo (3/3 videos)",
+      alert: false,
+      actionsTotal: 8,
+      actionsDone: 8,
+    },
+    {
+      day: "Martes 24 Noviembre",
+      iso: "2026-11-24",
+      summary: "12:30 Olvido del ± · 17:30 Vértice f(x) · 21:15 El secreto de π",
+      status: "listo" as const,
+      badge: "Listo (3/3 videos)",
+      alert: false,
+      actionsTotal: 8,
+      actionsDone: 8,
+    },
+    {
+      day: "Miércoles 25 Noviembre",
+      iso: "2026-11-25",
+      summary: "12:30 Discriminante Δ · 17:30 Duplica Arista 3D · 21:15 Dividir por 0",
+      status:
+        Object.values(
+          readAllCompletedFromStorage(syncedData.completedBaseline)["mie25"] ?? {}
+        ).filter(Boolean).length === 8
+          ? ("listo" as const)
+          : ("proceso" as const),
+      badge: `${
+        Object.values(
+          readAllCompletedFromStorage(syncedData.completedBaseline)["mie25"] ?? {}
+        ).filter(Boolean).length
+      }/8 acciones`,
+      alert:
+        nowIsoDate > "2026-11-25" &&
+        Object.values(
+          readAllCompletedFromStorage(syncedData.completedBaseline)["mie25"] ?? {}
+        ).filter(Boolean).length < 8,
+      actionsTotal: 8,
+      actionsDone: Object.values(
+        readAllCompletedFromStorage(syncedData.completedBaseline)["mie25"] ?? {}
+      ).filter(Boolean).length,
+      switchKey: "mie25" as DayKey,
+    },
+    {
+      day: "Jueves 26 Noviembre",
+      iso: "2026-11-26",
+      summary: "12:30 Parábola-Recta · 17:30 Viète · 21:15 Euler + Formulario PDF",
+      status:
+        Object.values(
+          readAllCompletedFromStorage(syncedData.completedBaseline)["jue26"] ?? {}
+        ).filter(Boolean).length === 8
+          ? ("listo" as const)
+          : ("alerta" as const),
+      badge: `${
+        Object.values(
+          readAllCompletedFromStorage(syncedData.completedBaseline)["jue26"] ?? {}
+        ).filter(Boolean).length
+      }/8 acciones`,
+      alert:
+        nowIsoDate === "2026-11-26" &&
+        Object.values(
+          readAllCompletedFromStorage(syncedData.completedBaseline)["jue26"] ?? {}
+        ).filter(Boolean).length < 8,
+      actionsTotal: 8,
+      actionsDone: Object.values(
+        readAllCompletedFromStorage(syncedData.completedBaseline)["jue26"] ?? {}
+      ).filter(Boolean).length,
+      switchKey: "jue26" as DayKey,
+    },
+    {
+      day: "Viernes 27 Noviembre",
+      iso: "2026-11-27",
+      summary: "12:30 Inecuación trampa · 17:30 Ganancia máx · 21:15 Fractales",
+      status: "falta" as const,
+      badge: "Falta render en motor V2",
+      alert: false,
+      actionsTotal: 8,
+      actionsDone: 0,
+    },
+    {
+      day: "Sábado 28 Noviembre",
+      iso: "2026-11-28",
+      summary: "12:30 Intersección ejes · 17:30 Función Inversa · 21:15 Hilbert",
+      status: "falta" as const,
+      badge: "Falta render en motor V2",
+      alert: false,
+      actionsTotal: 8,
+      actionsDone: 0,
+    },
+    {
+      day: "Domingo 29 Noviembre",
+      iso: "2026-11-29",
+      summary: "12:30 10 Puntos Clave · 17:30 Ritual Calma · 21:15 Confianza PAES",
+      status: "falta" as const,
+      badge: "Víspera · Guiones pendientes",
+      alert: false,
+      actionsTotal: 8,
+      actionsDone: 0,
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-slate-100 text-slate-900 font-sans pb-28 antialiased selection:bg-amber-100 selection:text-amber-900">
@@ -663,69 +687,167 @@ export function GrillaCockpitClient({
         {/* ======================================================== */}
         {activeTab === "dia" && (
           <>
-            {/* TIRA DE ESTADO RÁPIDO: SEMÁFORO Y QUÉ VIENE MÁS TARDE */}
-            <section className="bg-white rounded-2xl p-3.5 border border-slate-200/80 shadow-xs space-y-2.5">
+            {/* 1. SEMÁFORO DE IMPACTO INMEDIATO: QUÉ TIENES Y QUÉ TE FALTA */}
+            <section className="bg-white rounded-2xl p-4 border border-slate-200/90 shadow-sm space-y-3">
               <div className="flex items-center justify-between gap-2">
                 <div>
-                  <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-500">
-                    Avance {currentDayData.fullLabel}
-                  </div>
-                  <div className="text-base font-black text-slate-900 flex items-center gap-1.5">
-                    <span>{completedCount} de {dayTasks.length} acciones</span>
-                    <span className="text-xs font-mono font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
-                      {progressPercent}%
-                    </span>
+                  <span className="text-[10px] font-mono font-black uppercase tracking-wider text-slate-500">
+                    Diagnóstico Visual {currentDayData.fullLabel}
+                  </span>
+                  <div className="text-lg font-black text-slate-900 tracking-tight">
+                    {completedCount} de {dayTasks.length} Listas ({progressPercent}%)
                   </div>
                 </div>
 
-                <div className="flex items-center gap-1 text-[11px] font-bold">
-                  <span className="bg-emerald-50 text-emerald-800 border border-emerald-200 px-2 py-0.5 rounded-full flex items-center gap-1">
-                    🟢 {completedCount}
-                  </span>
-                  <span className="bg-amber-50 text-amber-800 border border-amber-200 px-2 py-0.5 rounded-full flex items-center gap-1">
-                    🟡 {procesoTasks.length}
-                  </span>
-                  {alertaTasks.length > 0 && (
-                    <span className="bg-red-50 text-red-800 border border-red-200 px-2 py-0.5 rounded-full flex items-center gap-1 animate-pulse">
-                      🔴 {alertaTasks.length}
-                    </span>
-                  )}
-                </div>
+                <span
+                  className={`text-xs font-black px-2.5 py-1 rounded-xl uppercase tracking-wider font-mono border ${
+                    isAllDone
+                      ? "bg-emerald-500 text-white border-emerald-600"
+                      : alertaTasks.length > 0
+                      ? "bg-red-600 text-white border-red-700 animate-pulse"
+                      : "bg-amber-500 text-white border-amber-600"
+                  }`}
+                >
+                  {isAllDone ? "100% LISTO" : alertaTasks.length > 0 ? "¡ACCIÓN URGENTE!" : "EN CURSO"}
+                </span>
               </div>
 
-              {/* Barra de progreso visual */}
-              <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden border border-slate-200">
+              {/* BARRA DE PROGRESO CON COLOR SEGÚN ESTADO */}
+              <div className="w-full bg-slate-100 rounded-full h-3 overflow-hidden border border-slate-200 p-0.5">
                 <div
-                  className="bg-emerald-500 h-2 rounded-full transition-all duration-300"
+                  className={`h-full rounded-full transition-all duration-300 ${
+                    isAllDone
+                      ? "bg-emerald-500"
+                      : alertaTasks.length > 0
+                      ? "bg-red-500"
+                      : "bg-amber-500"
+                  }`}
                   style={{ width: `${progressPercent}%` }}
                 />
               </div>
 
-              {/* QUÉ VIENE MÁS TARDE */}
-              <div className="bg-slate-50 rounded-xl p-2.5 border border-slate-200 text-xs flex items-center justify-between gap-2">
-                <div className="min-w-0">
-                  <span className="text-[10px] font-mono text-slate-500 uppercase block">
-                    {upcomingBlock ? "⏰ Viene más tarde:" : "🏁 Estado del día:"}
+              {/* 3 CAJAS TIPO SEMÁFORO: VERDE / AMARILLO / ROJO */}
+              <div className="grid grid-cols-3 gap-2 text-center">
+                <div className="rounded-xl p-2.5 bg-emerald-50 border-2 border-emerald-500 text-emerald-950 flex flex-col items-center justify-center">
+                  <span className="text-base font-black leading-none">🟢 {completedCount}</span>
+                  <span className="text-[10px] font-bold uppercase tracking-tight mt-1">Listo</span>
+                  <span className="text-[9px] text-emerald-700 font-medium">Subido / Hecho</span>
+                </div>
+
+                <div className="rounded-xl p-2.5 bg-amber-50 border-2 border-amber-400 text-amber-950 flex flex-col items-center justify-center">
+                  <span className="text-base font-black leading-none">🟡 {procesoTasks.length}</span>
+                  <span className="text-[10px] font-bold uppercase tracking-tight mt-1">En espera</span>
+                  <span className="text-[9px] text-amber-700 font-medium">Por publicar</span>
+                </div>
+
+                <div
+                  className={`rounded-xl p-2.5 border-2 flex flex-col items-center justify-center transition ${
+                    alertaTasks.length > 0
+                      ? "bg-red-50 border-red-600 text-red-950 ring-2 ring-red-300"
+                      : "bg-slate-50 border-slate-200 text-slate-400"
+                  }`}
+                >
+                  <span className="text-base font-black leading-none">
+                    {alertaTasks.length > 0 ? "🔴" : "⚪"} {alertaTasks.length}
                   </span>
-                  <span className="font-extrabold text-slate-800 truncate block">
-                    {upcomingBlock
-                      ? `${upcomingBlock.timeSlot} hrs · ${upcomingBlock.title.replace(/^Video.*?: /, "")}`
-                      : isAllDone
-                      ? "¡Día 100% completado!"
-                      : "Todas las horas de hoy ya transcurrieron"}
+                  <span className="text-[10px] font-bold uppercase tracking-tight mt-1">En alerta</span>
+                  <span className={`text-[9px] font-medium ${alertaTasks.length > 0 ? "text-red-700 font-bold" : "text-slate-400"}`}>
+                    {alertaTasks.length > 0 ? "Toca resolver" : "Al día"}
                   </span>
                 </div>
-                {upcomingBlock && (
-                  <button
-                    type="button"
-                    onClick={() => setSelectedVideoBlockId(upcomingBlock.id)}
-                    className="cursor-pointer touch-manipulation text-[11px] font-bold text-blue-700 hover:text-blue-900 bg-white border border-slate-300 px-2.5 py-1 rounded-lg shrink-0"
-                  >
-                    Ver bloque →
-                  </button>
-                )}
               </div>
             </section>
+
+            {/* 2. TARJETA DE MANDO TÁCTICO: QUÉ TIENES QUE HACER AHORA MISMO */}
+            {isAllDone ? (
+              <section className="bg-emerald-600 text-white rounded-2xl p-4 shadow-sm space-y-1">
+                <div className="text-xs font-mono font-black uppercase tracking-wider text-emerald-100 flex items-center gap-1.5">
+                  <span>🟢 ESTADO PERFECTO</span>
+                </div>
+                <div className="text-base font-black">
+                  ¡Tienes todas las acciones de {currentDayData.fullLabel} listas!
+                </div>
+                <p className="text-xs text-emerald-100 leading-snug">
+                  No hay alertas pendientes hoy. Puedes revisar el estado de la semana en la pestaña superior o adelantar descargas del siguiente día.
+                </p>
+              </section>
+            ) : nextPriorityAction ? (
+              <section
+                className={`rounded-2xl p-4 border-2 shadow-sm space-y-2.5 ${
+                  isTaskUrgent(nextPriorityAction)
+                    ? "bg-red-600 text-white border-red-700 ring-4 ring-red-100"
+                    : "bg-amber-500 text-slate-950 border-amber-600 ring-4 ring-amber-100"
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-[10.5px] font-mono font-black uppercase tracking-wider bg-black/20 px-2 py-0.5 rounded-md">
+                    {isTaskUrgent(nextPriorityAction) ? "🚨 ACCIÓN PRIORITARIA AHORA" : "👉 SIGUIENTE ACCIÓN SUGERIDA"}
+                  </span>
+                  <span className="text-xs font-mono font-black bg-white/20 px-2 py-0.5 rounded-md">
+                    {nextPriorityAction.time} HRS
+                  </span>
+                </div>
+
+                <div>
+                  <h3 className="text-base font-black leading-snug">
+                    {nextPriorityAction.title}
+                  </h3>
+                  <p
+                    className={`text-xs mt-0.5 leading-snug ${
+                      isTaskUrgent(nextPriorityAction) ? "text-red-100" : "text-amber-950 font-medium"
+                    }`}
+                  >
+                    {nextPriorityAction.detail}
+                  </p>
+                </div>
+
+                {/* ACCIONES DIRECTAS DE ESTA ACCIÓN URGENTE */}
+                <div className="flex flex-wrap gap-2 pt-1">
+                  {nextPriorityAction.videoDownloadUrl && (
+                    <a
+                      href={nextPriorityAction.videoDownloadUrl}
+                      download
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="cursor-pointer touch-manipulation min-h-[44px] flex-1 bg-white text-slate-950 hover:bg-slate-100 text-xs font-black px-3 py-2 rounded-xl flex items-center justify-center gap-1.5 shadow-xs"
+                    >
+                      <Download className="w-4 h-4 text-blue-600" /> Bajar MP4
+                    </a>
+                  )}
+
+                  {nextPriorityAction.copies && nextPriorityAction.copies[0] && (
+                    <>
+                      {nextPriorityAction.copies[0].waShare && (
+                        <a
+                          href={`https://wa.me/?text=${encodeURIComponent(nextPriorityAction.copies[0].text)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="cursor-pointer touch-manipulation min-h-[44px] flex-1 bg-[#25D366] text-white hover:bg-[#1ebe5d] text-xs font-black px-3 py-2 rounded-xl flex items-center justify-center gap-1.5 shadow-xs"
+                        >
+                          <MessageCircle className="w-4 h-4" /> WhatsApp
+                        </a>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => handleCopy(nextPriorityAction.copies![0].key, nextPriorityAction.copies![0].text)}
+                        className="cursor-pointer touch-manipulation min-h-[44px] flex-1 bg-slate-900 text-white hover:bg-slate-800 text-xs font-black px-3 py-2 rounded-xl flex items-center justify-center gap-1.5 shadow-xs"
+                      >
+                        <Copy className="w-4 h-4" />
+                        {copiedKey === nextPriorityAction.copies[0].key ? "¡COPIADO!" : "Copiar Texto"}
+                      </button>
+                    </>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={() => toggleTask(nextPriorityAction.id)}
+                    className="cursor-pointer touch-manipulation min-h-[44px] w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-black px-3 py-2 rounded-xl flex items-center justify-center gap-1.5 shadow-xs transition active:scale-[0.98]"
+                  >
+                    <Check className="w-4 h-4 stroke-[3]" /> Marcar esta acción como realizada
+                  </button>
+                </div>
+              </section>
+            ) : null}
 
             {/* LISTA DE VIDEOS DEL DÍA CON GAVETA DE EMERGENCIA AL APRETAR */}
             <section className="space-y-3">
@@ -794,6 +916,53 @@ export function GrillaCockpitClient({
 
                           <div className="text-[11px] text-slate-600 mt-0.5 truncate">
                             {block.topic}
+                          </div>
+
+                          {/* MICRO-SEMÁFORO DE INGREDIENTES DEL VIDEO */}
+                          <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
+                            <span
+                              className={`text-[9.5px] font-mono font-bold px-1.5 py-0.5 rounded border ${
+                                isVideoDone
+                                  ? "bg-emerald-50 text-emerald-800 border-emerald-300 font-black"
+                                  : "bg-slate-100 text-slate-600 border-slate-200"
+                              }`}
+                            >
+                              {isVideoDone ? "🟢 Video MP4" : "⚪ Video MP4"}
+                            </span>
+
+                            {block.stories.length > 0 && (
+                              <span
+                                className={`text-[9.5px] font-mono font-bold px-1.5 py-0.5 rounded border ${
+                                  block.associatedActions.some((a) => a.category === "story" && completedMap[a.id])
+                                    ? "bg-purple-50 text-purple-800 border-purple-300 font-black"
+                                    : "bg-slate-100 text-slate-600 border-slate-200"
+                                }`}
+                              >
+                                {block.associatedActions.some((a) => a.category === "story" && completedMap[a.id])
+                                  ? "🟢 Stories"
+                                  : "⚪ Stories"}
+                              </span>
+                            )}
+
+                            {block.carousel && (
+                              <span className="text-[9.5px] font-mono font-bold px-1.5 py-0.5 rounded bg-blue-50 text-blue-800 border border-blue-200">
+                                📑 Carrusel {block.carousel.slides.length}L
+                              </span>
+                            )}
+
+                            {block.associatedActions.some((a) => a.category === "whatsapp") && (
+                              <span
+                                className={`text-[9.5px] font-mono font-bold px-1.5 py-0.5 rounded border ${
+                                  block.associatedActions.some((a) => a.category === "whatsapp" && completedMap[a.id])
+                                    ? "bg-emerald-50 text-emerald-800 border-emerald-300 font-black"
+                                    : "bg-slate-100 text-slate-600 border-slate-200"
+                                }`}
+                              >
+                                {block.associatedActions.some((a) => a.category === "whatsapp" && completedMap[a.id])
+                                  ? "🟢 Difusión WA"
+                                  : "⚪ Difusión WA"}
+                              </span>
+                            )}
                           </div>
 
                           <div className="text-[10.5px] font-mono text-slate-500 mt-1 flex items-center gap-2">
