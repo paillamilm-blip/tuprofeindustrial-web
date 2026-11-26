@@ -19,27 +19,27 @@
   "weekendReadiness": [
     {
       "iso": "2026-11-27",
-      "label": "Viernes 27 Noviembre",
-      "status": "pendiente_render",
-      "summary": "Inecuaciones trampa · Máxima Ganancia · Fractales",
-      "assetCount": 0,
-      "notes": "Falta generar en motor V2 (guion + MP4 + carrusel 8 láminas)"
+      "label": "Viernes 27 Noviembre (72h PAES)",
+      "status": "listo",
+      "summary": "Inecuaciones (12:30) · Máxima Ganancia (17:30) · Copo de Koch (21:15)",
+      "assetCount": 3,
+      "notes": "Producción en lote ordenada: guiones, copys A/B oficiales y activos listos en Publicar/"
     },
     {
       "iso": "2026-11-28",
-      "label": "Sábado 28 Noviembre",
-      "status": "pendiente_render",
-      "summary": "Intersección Ejes · Función Inversa · Infinito de Hilbert",
-      "assetCount": 0,
-      "notes": "Falta generar en motor V2 (guion + MP4 + carrusel 8 láminas)"
+      "label": "Sábado 28 Noviembre (48h PAES)",
+      "status": "listo",
+      "summary": "Función Inversa (12:30) · Intersección Ejes (17:30) · Identidad de Euler (21:15)",
+      "assetCount": 3,
+      "notes": "Producción en lote ordenada: guiones, copys A/B oficiales y activos listos en Publicar/"
     },
     {
       "iso": "2026-11-29",
-      "label": "Domingo 29 Noviembre",
-      "status": "pendiente_render",
-      "summary": "Puntos Clave PAES · Ritual Calma · Mensaje de Confianza",
-      "assetCount": 0,
-      "notes": "Víspera PAES · Falta generar en motor V2"
+      "label": "Domingo 29 Noviembre (Víspera PAES)",
+      "status": "listo",
+      "summary": "5 Trampas DEMRE (12:30) · Gestión Tiempos 45s (17:30) · Mensaje Confianza (21:15)",
+      "assetCount": 3,
+      "notes": "Víspera PAES: Formulario de bolsillo, hacks de 45s, copys A/B y ritual de calma listos"
     }
   ]
 }

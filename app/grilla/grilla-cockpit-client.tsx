@@ -75,7 +75,7 @@ interface GrillaCockpitClientProps {
   isPinProtected: boolean;
 }
 
-const DAY_KEYS: DayKey[] = ["mie25", "jue26"];
+const DAY_KEYS: DayKey[] = ["mie25", "jue26", "vie27", "sab28", "dom29"];
 const SERVER_TIME_KEY = "2026-11-26|0725|07:25";
 
 function subscribeStorage(callback: () => void) {
@@ -274,7 +274,16 @@ export function GrillaCockpitClient({
   };
 
   const selectedDay: DayKey =
-    dayOverride ?? (santiagoNow.isoDate >= "2026-11-26" ? "jue26" : "mie25");
+    dayOverride ??
+    (santiagoNow.isoDate >= "2026-11-29"
+      ? "dom29"
+      : santiagoNow.isoDate === "2026-11-28"
+      ? "sab28"
+      : santiagoNow.isoDate === "2026-11-27"
+      ? "vie27"
+      : santiagoNow.isoDate === "2026-11-26"
+      ? "jue26"
+      : "mie25");
 
   const baselineJson = useMemo(
     () => JSON.stringify(syncedData.completedBaseline[selectedDay] ?? {}),
@@ -764,120 +773,114 @@ export function GrillaCockpitClient({
     {
       id: "vie27",
       day: "Viernes 27 Nov",
-      status: "🟡 Guiones Listos",
-      badgeColor: "bg-amber-500 text-slate-950 font-black",
-      cardBg: "bg-amber-50 border-amber-300 text-amber-950",
-      topicsSummary: "12:30 Inecuaciones · 17:30 Ganancia máx · 21:15 Fractales Koch",
-      key: null as DayKey | null,
+      status: "🟢 Listo (3/3)",
+      badgeColor: "bg-emerald-600 text-white font-black",
+      cardBg: "bg-emerald-50 border-emerald-300 text-emerald-950",
+      topicsSummary: "12:30 Inecuaciones · 17:30 Máxima Ganancia · 21:15 Copo de Koch",
+      key: "vie27" as DayKey,
       readiness: {
         ready: [
-          "3 Guiones técnicos escritos y cronometrados",
-          "3 Ejercicios modelo PAES M1 seleccionados",
-          "Estructura de hooks y llamados de acción listas",
+          "3 Videos MP4 con copys A/B oficiales",
+          "Carrusel 8 láminas con Formulario de Bolsillo",
+          "Historias interactivas y encuesta listas",
+          "5 hashtags de nicho validados",
         ],
-        pending: [
-          "Grabación / renderizado de MP4 (Motor V2)",
-          "Exportación de láminas de carrusel",
-        ],
+        pending: [],
       },
       slots: [
         {
           time: "12:30",
-          title: "Inecuaciones: el signo que se da vuelta",
+          title: "Inecuaciones: trampa del signo",
           format: "Reel / TikTok + Carrusel 8 láminas",
-          hook: "Por qué al multiplicar o dividir por un negativo la desigualdad se invierte.",
+          hook: "El 85% se equivoca al dividir por negativo: el signo se invierte.",
         },
         {
           time: "17:30",
-          title: "Problema de Ganancia Máxima PAES",
-          format: "Reel / TikTok + Stories",
-          hook: "Cómo hallar el precio óptimo usando el vértice de la cuadrática.",
+          title: "Máxima Ganancia sin derivar (Vértice)",
+          format: "Reel / TikTok + Carrusel 8 láminas + Stories",
+          hook: "Precio óptimo en 15 segundos con el vértice de la parábola.",
         },
         {
           time: "21:15",
           title: "Dato Nocturno 07: Fractales (Copo de Koch)",
-          format: "Curiosidad Nocturna + Stories",
-          hook: "Una figura con perímetro infinito encerrada en un área finita.",
+          format: "Dato Nocturno + Stories",
+          hook: "¿Puede una figura tener área finita y perímetro infinito?",
         },
       ],
     },
     {
       id: "sab28",
       day: "Sábado 28 Nov",
-      status: "🟡 Programado · Guiones Listos",
-      badgeColor: "bg-slate-700 text-white font-black",
-      cardBg: "bg-slate-50 border-slate-300 text-slate-900",
-      topicsSummary: "12:30 Intersección ejes · 17:30 Inversa función · 21:15 Hotel Hilbert",
-      key: null as DayKey | null,
+      status: "🟢 Listo (3/3)",
+      badgeColor: "bg-emerald-600 text-white font-black",
+      cardBg: "bg-emerald-50 border-emerald-300 text-emerald-950",
+      topicsSummary: "12:30 Función Inversa · 17:30 Intersección Ejes · 21:15 Identidad Euler",
+      key: "sab28" as DayKey,
       readiness: {
         ready: [
-          "3 Guiones técnicos redactados con pautas de edición",
-          "Hooks de alta retención seleccionados",
-          "Ejercicios tipo DEMRE seleccionados",
+          "3 Videos MP4 con copys A/B oficiales",
+          "Carrusel 8 láminas con Formulario de Bolsillo",
+          "Historias interactivas listas",
+          "5 hashtags de nicho validados",
         ],
-        pending: [
-          "Renderizado de videos MP4 (Motor V2)",
-          "Exportación de 8 láminas carrusel y portadas",
-          "Programación en redes sociales",
-        ],
+        pending: [],
       },
       slots: [
         {
           time: "12:30",
-          title: "Intersección con los ejes X e Y",
+          title: "3 Errores en Función Inversa f⁻¹(x)",
           format: "Reel / TikTok + Carrusel 8 láminas + Stories",
-          hook: "El 90% duda cuándo vale x=0 y cuándo y=0 en geometría analítica.",
+          hook: "¡No confundas f⁻¹(x) con 1/f(x)! Despeje e intercambio de variables.",
         },
         {
           time: "17:30",
-          title: "Función Inversa Paso a Paso",
-          format: "Reel / TikTok + Cover + Stories",
-          hook: "Intercambio de variables y despeje infalible para asegurar los puntos.",
+          title: "Intersección con los ejes en 10s",
+          format: "Reel / TikTok + Carrusel 8 láminas + Stories",
+          hook: "Corte eje Y es x=0; corte eje X es y=0. Pregunta fija DEMRE.",
         },
         {
           time: "21:15",
-          title: "Dato Nocturno 08: Hotel Infinito de Hilbert",
-          format: "Curiosidad Matemática + Enlace Formulario",
-          hook: "Cómo hospedar a un nuevo huésped en un hotel con infinitas piezas ocupadas.",
+          title: "Dato Nocturno 08: Identidad de Euler",
+          format: "Dato Nocturno + Póster PDF",
+          hook: "Los 5 números clave de las matemáticas en una sola ecuación: e^(iπ) + 1 = 0.",
         },
       ],
     },
     {
       id: "dom29",
       day: "Domingo 29 Nov",
-      status: "🟣 Víspera PAES · Calma y Estrategia",
-      badgeColor: "bg-purple-600 text-white font-black",
-      cardBg: "bg-purple-50 border-purple-300 text-purple-950",
-      topicsSummary: "12:30 10 Mandamientos · 17:30 Control de Tiempo · 21:15 Mensaje de Calma",
-      key: null as DayKey | null,
+      status: "🟢 Listo (3/3)",
+      badgeColor: "bg-emerald-600 text-white font-black",
+      cardBg: "bg-emerald-50 border-purple-300 text-purple-950",
+      topicsSummary: "12:30 5 Trampas DEMRE · 17:30 Tiempos 45s · 21:15 Mensaje Confianza",
+      key: "dom29" as DayKey,
       readiness: {
         ready: [
-          "Pauta de 3 contenidos estratégicos de víspera",
-          "Recomendaciones contra la ansiedad y bloqueo mental",
+          "3 Videos MP4 con copys A/B oficiales",
+          "Carrusel 8 láminas: Formulario Maestro de Bolsillo",
+          "Historias interactivas de víspera listas",
+          "5 hashtags de nicho validados",
         ],
-        pending: [
-          "Grabación de video en cámara cercana",
-          "Cierre de inscripciones formulario",
-        ],
+        pending: [],
       },
       slots: [
         {
           time: "12:30",
-          title: "Los 10 Mandamientos de la PAES M1",
-          format: "Reel / TikTok + Carrusel Resumen",
-          hook: "3 errores fatales de distracción que no debes cometer mañana.",
+          title: "5 Trampas DEMRE que más se repiten",
+          format: "Reel / TikTok + Carrusel 8 láminas + Stories",
+          hook: "Las 5 trampas clásicas antes de guardar los cuadernos.",
         },
         {
           time: "17:30",
-          title: "Control de Tiempo: Regla de los 2 Minutos",
+          title: "Gestión de Tiempos: Regla de los 45s",
           format: "Reel / TikTok + Stories",
-          hook: "65 preguntas en 140 minutos: si te trabas en una, salta de inmediato.",
+          hook: "No gana quien calcula más, sino quien gestiona el tiempo: 45s o marca y sigue.",
         },
         {
           time: "21:15",
-          title: "Dato Nocturno Especial: Mente Fría y Éxito",
-          format: "Video Cercano + Story de Apoyo",
-          hook: "Todo el estudio ya está hecho. Descansa temprano y confía en tu proceso.",
+          title: "Mensaje de Confianza del Profe",
+          format: "Cierre Cercano + Story de Apoyo",
+          hook: "El estudio está hecho: cierra los cuadernos, descansa y confía.",
         },
       ],
     },
