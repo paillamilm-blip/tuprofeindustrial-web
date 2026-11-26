@@ -7,6 +7,7 @@ export interface CopyAction {
   label: string;
   text: string;
   tone?: "primary" | "default" | "green";
+  waShare?: boolean;
 }
 
 export interface ActionItem {
@@ -18,6 +19,7 @@ export interface ActionItem {
   title: string;
   detail: string;
   copies?: CopyAction[];
+  openUrl?: { label: string; url: string };
   videoDownloadUrl?: string;
   videoLabel?: string;
   assetPreview?: {
@@ -32,6 +34,7 @@ export interface CarouselGroup {
   title: string;
   subtitle: string;
   folderPath: string;
+  sheetUrl?: string;
   slides: { num: string; name: string; file: string }[];
 }
 
@@ -63,6 +66,7 @@ export interface DaySchedule {
   videos: VideoAsset[];
   carousels: CarouselGroup[];
   stories: StoryAsset[];
+  storiesSheetUrl?: string;
 }
 
 export const SUPERPROF_URL =
@@ -70,8 +74,17 @@ export const SUPERPROF_URL =
 
 export const WEB_URL = "https://tuprofeindustrial-web.vercel.app/";
 export const WHATSAPP_URL = "https://wa.me/56957936649";
+export const FORMULARIO_MAESTRO_PDF = "/formulario_maestro_ingenieria.pdf";
+export const SIMULACRO_M1_PDF = "/simulacro-paes-m1.pdf";
 
-const SLIDE_NAMES = [
+export const QUICK_APPS = [
+  { label: "📱 TikTok", url: "https://www.tiktok.com/@tuprofeindustrial" },
+  { label: "📸 Instagram", url: "https://www.instagram.com/tuprofeindustrial/" },
+  { label: "👥 Facebook", url: "https://www.facebook.com/people/Tuprofeindustrial/61596403543170/" },
+  { label: "🚀 Metricool", url: "https://app.metricool.com" },
+] as const;
+
+const SLIDE_NAMES_6 = [
   { num: "01", name: "Portada", file: "slide_01_portada.png" },
   { num: "02", name: "Enunciado", file: "slide_02_enunciado.png" },
   { num: "03", name: "Desarrollo", file: "slide_03_desarrollo.png" },
@@ -80,12 +93,24 @@ const SLIDE_NAMES = [
   { num: "06", name: "Cierre DM", file: "slide_06_cta_dm.png" },
 ];
 
+const SLIDE_NAMES_8 = [
+  { num: "01", name: "Portada", file: "slide_01_portada.png" },
+  { num: "02", name: "2do Gancho", file: "slide_02_segundo_gancho.png" },
+  { num: "03", name: "Enunciado", file: "slide_03_enunciado.png" },
+  { num: "04", name: "Paso 1", file: "slide_04_paso_1.png" },
+  { num: "05", name: "Desarrollo", file: "slide_05_desarrollo_final.png" },
+  { num: "06", name: "Descarte", file: "slide_06_descarte.png" },
+  { num: "07", name: "Formulario", file: "slide_07_formulario.png" },
+  { num: "08", name: "Cierre DM", file: "slide_08_cta_dm.png" },
+];
+
 export const DAYS_DATA: Record<DayKey, DaySchedule> = {
   mie25: {
     key: "mie25",
     shortLabel: "Mié 25",
     fullLabel: "Miércoles 25 Nov",
     isoDate: "2026-11-25",
+    storiesSheetUrl: "/motor-assets/MIERCOLES-1230-historias-hoja-completa.jpg",
     actions: [
       {
         id: "mie-1230-video",
@@ -125,14 +150,14 @@ Creado con IA. #tuprofeindustrial #paesm1 #algebra #ecuaciones #demre`,
           },
           {
             key: "mie1230-tk",
-            label: "📱 Copy TikTok",
+            label: "📱 Copy Corto TikTok",
             text: `¿Cuántas soluciones tiene x² - 4x + 3 = 0? ⚡ ¡Ahorra 3 minutos en la PAES con el discriminante Δ = b² - 4ac! En x² - 6x + 9 = 0, ¿cuántas soluciones hay? Coméntalo 👇 Creado con IA. #tuprofeindustrial #paesm1 #algebra #ecuaciones #demre`,
           },
           {
             key: "mie1230-pin",
             label: "📌 1er Comentario Fijado",
             tone: "green",
-            text: `📌 ¿Quieres asegurar sobre 800 puntos en la PAES M1? Últimos cupos para tutorías personalizadas intensivas ($20k/h · Pack PAES 6h $100k, online todo Chile y presencial en RM). Escríbeme por DM para coordinar 📩`,
+            text: `📌 ¿Quieres asegurar sobre 800 puntos en la PAES M1? Últimos cupos para tutorías personalizadas intensivas ($20.000/h · Pack PAES 6h $100.000, online todo Chile y presencial en RM). Escríbeme por DM para coordinar 📩`,
           },
         ],
       },
@@ -237,10 +262,14 @@ Creado con IA. #tuprofeindustrial #paesm1 #geometria #cuerposgeometricos #demre`
         role: "matias",
         title: "Postear en Grupos Facebook de Apoderados",
         detail: "Compartir truco Geometría 3D + enlaces directos clickeables (Web + WhatsApp) en grupos de Las Condes, Providencia, Maipú y PAES Chile.",
+        openUrl: {
+          label: "👥 Abrir Grupos PAES en Facebook",
+          url: "https://www.facebook.com/groups/search/groups/?q=PAES%20Chile",
+        },
         copies: [
           {
             key: "mie1830-fb",
-            label: "👥 Copiar Post Grupos FB (con links)",
+            label: "📋 Copiar Post Grupos FB (con links)",
             tone: "primary",
             text: `¡Hola a todos! 👋 Para quienes están en la recta final de la PAES M1 (o apoderados con hijos rindiéndola el lunes 30), les dejo esta cápsula rápida sobre una de las trampas clásicas de Geometría 3D: ¿si duplicas la arista de un cubo, se duplica su volumen? ❌ No: crece 8 veces (2³ = 8).
 
@@ -266,8 +295,9 @@ Como Ingeniero Civil Industrial y docente diplomado (ex-profesor Scuola Italiana
         copies: [
           {
             key: "mie1900-wa",
-            label: "💬 Copiar Mensaje Grupos WhatsApp",
+            label: "💬 Enviar / Copiar para Grupos WhatsApp",
             tone: "green",
+            waShare: true,
             text: `Buenas gente, ojo con esta pregunta cazabobos típica del DEMRE en Cuerpos 3D ⚠️
 
 *Si duplicas la arista de un cubo, ¿su volumen se duplica?*
@@ -390,14 +420,15 @@ Creado con IA. #tuprofeindustrial #datosnocturnos #calculo #algebra #cienciachil
         title: "📸 Carrusel 17:30 · Duplica la Arista (3D)",
         subtitle: "6 Láminas HD (1080×1350 px · 4:5)",
         folderPath: "/motor-assets/carrusel-1730",
-        slides: SLIDE_NAMES,
+        slides: SLIDE_NAMES_6,
       },
       {
         id: "c-mie-1230",
         title: "📸 Carrusel 12:30 · El Secreto del Discriminante",
         subtitle: "6 Láminas HD (1080×1350 px · 4:5)",
         folderPath: "/motor-assets/carrusel-1230",
-        slides: SLIDE_NAMES,
+        sheetUrl: "/motor-assets/MIERCOLES-1230-carrusel-hoja-completa.jpg",
+        slides: SLIDE_NAMES_6,
       },
     ],
     stories: [
@@ -450,6 +481,7 @@ Creado con IA. #tuprofeindustrial #datosnocturnos #calculo #algebra #cienciachil
     shortLabel: "Jue 26",
     fullLabel: "Jueves 26 Nov",
     isoDate: "2026-11-26",
+    storiesSheetUrl: "/motor-assets/JUEVES-historias-hoja-completa.jpg",
     actions: [
       {
         id: "jue-1230-video",
@@ -458,7 +490,7 @@ Creado con IA. #tuprofeindustrial #datosnocturnos #calculo #algebra #cienciachil
         category: "video",
         role: "matias",
         title: "Video Funciones: ¿Parábola y Recta se cortan?",
-        detail: "Vertical 9:16 + Whisper · Igualar ecuaciones y revisar Δ=0 (tangentes en (1,1)).",
+        detail: "Calibrado 20:43 · Video 9:16 + Carrusel 8 láminas (zona 3:4). Copy Opción A (3 líneas Algoritmo 2026) o B (SEO).",
         videoDownloadUrl: "/motor-assets/videos/JUEVES-1230-video-parabola-recta.mp4",
         videoLabel: "JUEVES-1230-video-parabola-recta.mp4 (4.1 MB)",
         assetPreview: {
@@ -468,10 +500,19 @@ Creado con IA. #tuprofeindustrial #datosnocturnos #calculo #algebra #cienciachil
         },
         copies: [
           {
-            key: "jue1230-ig",
-            label: "📸 Copy Instagram Reels",
+            key: "jue1230-a",
+            label: "⚡ Opción A: Copy 3 Líneas (Algoritmo 2026)",
             tone: "primary",
-            text: `¿Cuántas veces se cortan esta parábola y esta recta en la PAES? 📐 Uno de los ejercicios clásicos de álgebra y funciones en la PAES M1 es determinar si una recta y una parábola se intersectan en dos puntos, si son tangentes o si no se tocan.
+            text: `¿Cuántas veces se cortan esta parábola y esta recta en la PAES? 📐
+No grafiques a mano alzada: iguala las ecuaciones y calcula el discriminante Δ en 15 segundos.
+Comenta «TANGENTE» y te envío al DM el paso a paso formal y el formulario oficial en PDF.
+
+#tuprofeindustrial #paesm1 #matematicas #funciones #demre`,
+          },
+          {
+            key: "jue1230-b",
+            label: "📚 Opción B: Copy Extenso Educativo (SEO)",
+            text: `Uno de los ejercicios clásicos de álgebra y funciones en la PAES M1 es determinar si una recta y una parábola se intersectan en dos puntos, si son tangentes o si no se tocan.
 
 El error típico: intentar graficar a mano alzada en el ensayo y perder 3 minutos valiosos.
 
@@ -482,20 +523,15 @@ La técnica analítica infalible:
 4. Si Δ = 0, son TANGENTES y se tocan en un único punto (1, 1).
 
 💬 RETO: ¿Y si la recta fuera y = 2x - 5? ¿Cuántos puntos de corte tendrían? Déjamelo en los comentarios.
-📩 Comenta «TANGENTE» y te envío al DM la guía práctica para la PAES.
+📩 Comenta «TANGENTE» y te envío al DM la guía práctica con los 3 casos de intersección de cónicas para la PAES.
 
-Creado con IA. #tuprofeindustrial #paesm1 #matematicas #funciones #demre`,
-          },
-          {
-            key: "jue1230-tk",
-            label: "📱 Copy TikTok",
-            text: `¿Parábola y recta se cortan en la PAES? 📐 En y=x² y y=2x-1, al igualar queda x²-2x+1=0. El discriminante da cero, ¡por eso son tangentes en (1,1)! ¿Y si la recta fuera y = 2x - 5, cuántos cortes tendrían? Respóndelo abajo 👇 Creado con IA. #tuprofeindustrial #paesm1 #matematicas #funciones #demre`,
+#tuprofeindustrial #paesm1 #matematicas #funciones #demre`,
           },
           {
             key: "jue1230-pin",
             label: "📌 1er Comentario Fijado (Tutorías)",
             tone: "green",
-            text: `📌 ¿Quieres asegurar tus últimos 100 puntos en PAES M1? Últimos cupos para tutorías personalizadas intensivas ($20.000/h · Pack PAES 6h $100.000, online todo Chile y presencial en RM). Escríbeme por DM para coordinar 📩`,
+            text: `📌 ¿Quieres asegurar tus últimos puntos en PAES M1? Últimos cupos para tutorías personalizadas intensivas ($20.000/h · Pack PAES 6h $100.000, online todo Chile y presencial en RM). Escríbeme por DM para coordinar 📩`,
           },
         ],
       },
@@ -505,12 +541,12 @@ Creado con IA. #tuprofeindustrial #paesm1 #matematicas #funciones #demre`,
         minutesFromMidnight: 13 * 60,
         category: "story",
         role: "matias",
-        title: "Story Encuesta Parábola vs Recta",
-        detail: "Lámina de encuesta para Stories y Estado de WhatsApp.",
+        title: "Story Encuesta Parábola vs Recta (Zona Meta 35%)",
+        detail: "Lámina recalibrada a zona segura Meta 35% (Y=960–1220 px para pulgar).",
         assetPreview: {
           url: "/motor-assets/historias/jueves-1230-historia-01-encuesta.png",
           downloadUrl: "/motor-assets/historias/jueves-1230-historia-01-encuesta.png",
-          name: "Historia 12:30 Encuesta Jueves",
+          name: "Historia 12:30 Encuesta (35% Meta)",
         },
         copies: [
           {
@@ -527,7 +563,7 @@ Creado con IA. #tuprofeindustrial #paesm1 #matematicas #funciones #demre`,
         category: "video",
         role: "matias",
         title: "Video Álgebra: Truco de las Raíces de Viète",
-        detail: "Halla el parámetro k en 20s sin fórmula larga (-b/a y c/a). Incluye carrusel de 6 láminas.",
+        detail: "Calibrado 20:43 · Video 9:16 + Carrusel 8 láminas HD. CTA al Formulario Maestro PDF.",
         videoDownloadUrl: "/motor-assets/videos/JUEVES-1730-video-viete-propiedades.mp4",
         videoLabel: "JUEVES-1730-video-viete-propiedades.mp4 (4.0 MB)",
         assetPreview: {
@@ -537,26 +573,30 @@ Creado con IA. #tuprofeindustrial #paesm1 #matematicas #funciones #demre`,
         },
         copies: [
           {
-            key: "jue1730-ig",
-            label: "📸 Copy Instagram Reels",
+            key: "jue1730-a",
+            label: "⚡ Opción A: Copy 3 Líneas (Algoritmo 2026)",
             tone: "primary",
-            text: `Halla el parámetro k en 5 segundos sin la fórmula cuadrática ⚡ En la ecuación x² - 5x + k = 0, te dicen que una raíz es 2 y te piden hallar k.
+            text: `Halla el parámetro k en 5 segundos sin aplicar la fórmula cuadrática ⚡
+Con las propiedades de Viète (suma = -b/a y producto = c/a) lo resuelves en 3 pasos mentales.
+Comenta «VIETE» y te mando por mensaje privado el formulario maestro imprimible en PDF.
 
-El atajo con las Relaciones de Viète:
-1. Suma de raíces: x₁ + x₂ = -b/a = -(-5)/1 = 5
-   ➔ 2 + x₂ = 5 ➔ x₂ = 3
-2. Producto de raíces: k = x₁ · x₂ = c/a = 2 · 3 = 6
-
-¡Listo! k = 6 en menos de 20 segundos.
-💬 RETO RÁPIDO: En x² - 7x + k = 0, si una raíz es 3, ¿cuánto vale k?
-📩 Comenta «VIETE» y te envío el resumen en PDF por DM.
-
-Creado con IA. #tuprofeindustrial #paesm1 #algebra #ecuaciones #demre`,
+#tuprofeindustrial #paesm1 #algebra #ecuaciones #demre`,
           },
           {
-            key: "jue1730-tk",
-            label: "📱 Copy TikTok",
-            text: `El truco de Viète para hallar k en 20 segundos en la PAES ⚡ En x²-5x+k=0 con raíz x₁=2: la suma es 5, así que x₂=3. El producto es k, así que k=2×3=6. ¿Cuánto vale k si x²-7x+k=0 y x₁=3? 👇 Creado con IA. #tuprofeindustrial #paesm1 #algebra #ecuaciones #demre`,
+            key: "jue1730-b",
+            label: "📚 Opción B: Copy Extenso Educativo (SEO)",
+            text: `En la ecuación x² - 5x + k = 0, te dicen que una raíz es 2 y te piden hallar el valor de k.
+
+El atajo con las Relaciones de Viète:
+1. Suma de raíces: x₁ + x₂ = -b/a = -(-5)/1 = 5 ➔ 2 + x₂ = 5 ➔ x₂ = 3
+2. Producto de raíces: x₁ · x₂ = c/a ➔ k = 2 · 3 = 6
+
+¡Listo! k = 6 en menos de 20 segundos y sin tocar una sola raíz cuadrada.
+
+💬 RETO RÁPIDO: En x² - 7x + k = 0, si una raíz es 3, ¿cuánto vale k?
+📩 Comenta «VIETE» y te envío el formulario maestro imprimible en PDF.
+
+#tuprofeindustrial #paesm1 #algebra #ecuaciones #demre`,
           },
           {
             key: "jue1730-pin",
@@ -572,12 +612,12 @@ Creado con IA. #tuprofeindustrial #paesm1 #algebra #ecuaciones #demre`,
         minutesFromMidnight: 18 * 60,
         category: "story",
         role: "matias",
-        title: "Story Reto Viète (Sticker Encuesta)",
-        detail: "Encuesta interactiva 9:16 con la pregunta de x² - 7x + k = 0.",
+        title: "Story Reto Viète (Zona Meta 35%)",
+        detail: "Lámina recalibrada con espacio exacto para sticker entre Y=960–1220 px.",
         assetPreview: {
           url: "/motor-assets/historias/jueves-1730-historia-01-encuesta.png",
           downloadUrl: "/motor-assets/historias/jueves-1730-historia-01-encuesta.png",
-          name: "Historia 17:30 Encuesta Viète",
+          name: "Historia 17:30 Encuesta (35% Meta)",
         },
         copies: [
           {
@@ -594,11 +634,15 @@ Creado con IA. #tuprofeindustrial #paesm1 #algebra #ecuaciones #demre`,
         category: "facebook",
         role: "matias",
         title: "Postear Truco Viète en Grupos de Facebook",
-        detail: "Post optimizado para grupos de apoderados y PAES Chile con enlaces directos.",
+        detail: "Post optimizado para grupos de apoderados y PAES Chile con enlaces a Web y WhatsApp.",
+        openUrl: {
+          label: "👥 Abrir Grupos PAES en Facebook",
+          url: "https://www.facebook.com/groups/search/groups/?q=PAES%20Chile",
+        },
         copies: [
           {
             key: "jue1830-fb",
-            label: "👥 Copiar Post Grupos FB",
+            label: "📋 Copiar Post Grupos FB",
             tone: "primary",
             text: `Hola a todos quienes preparan la PAES M1/M2 (o apoderados acompañando esta última semana). Les dejo un tip concreto de ahorro de tiempo para ecuaciones cuadráticas con parámetro k:
 
@@ -620,12 +664,13 @@ Como Ingeniero Civil Industrial y docente, tengo últimos horarios para tutoría
         category: "whatsapp",
         role: "matias",
         title: "Compartir Truco Viète en WhatsApp de Grupos",
-        detail: "Mensaje directo con reto rápido + link de Simulacro M1.",
+        detail: "Botón directo abre WhatsApp para elegir grupo o copiar mensaje + Formulario Maestro.",
         copies: [
           {
             key: "jue1900-wa",
-            label: "💬 Copiar Mensaje WhatsApp",
+            label: "💬 Enviar / Copiar para Grupos WhatsApp",
             tone: "green",
+            waShare: true,
             text: `🔥 *¿Cuánto te demoras en sacar este ejercicio PAES?*
 En *x² - 5x + k = 0*, si una raíz es *x₁ = 2*, ¿cuánto vale *k*?
 ⚡ *Atajo de Viète en 15 seg:*
@@ -644,7 +689,7 @@ Por tutorías personalizadas de última semana ($20k/h o Pack 6h $100k): ${WHATS
         category: "video",
         role: "matias",
         title: "Dato Nocturno 06: Identidad de Euler e^(iπ) + 1 = 0",
-        detail: "La fórmula más bella de la ciencia explicada con un giro de 180° en el plano complejo.",
+        detail: "Calibrado 20:43 · Blackprint Nocturno · Opción A (3 líneas) u Opción B (Euler completo).",
         videoDownloadUrl: "/motor-assets/videos/JUEVES-2115-noche06-identidad-euler.mp4",
         videoLabel: "JUEVES-2115-noche06-identidad-euler.mp4 (4.3 MB)",
         assetPreview: {
@@ -654,24 +699,28 @@ Por tutorías personalizadas de última semana ($20k/h o Pack 6h $100k): ${WHATS
         },
         copies: [
           {
-            key: "jue2115-ig",
-            label: "📸 Copy Instagram Reels",
+            key: "jue2115-a",
+            label: "⚡ Opción A: Copy 3 Líneas (Algoritmo 2026)",
             tone: "primary",
-            text: `¿Por qué la Identidad de Euler (e^(iπ) + 1 = 0) es considerada la ecuación más bella del universo? 🌙✨
+            text: `La fórmula más bella de la ciencia: cómo e, i y π se unen para dar cero 🌙
+Elevar e a una potencia imaginaria es un giro en el plano complejo: a 180° llegas a -1.
+Comenta «EULER» si vas a dar la PAES M2 o entraste a primer año de ingeniería para enviarte la demostración.
 
-En 1748, Euler descubrió que elevar "e" a una potencia imaginaria "i" significa ROTAR en el plano complejo: e^(iθ) = cos(θ) + i·sen(θ).
-Al dar media vuelta (θ = π = 180°), cos(π) = -1 y sen(π) = 0 ➔ e^(iπ) = -1.
-Le sumas 1... ¡y cierra exactamente en cero!
-
-💬 RETO NOCTURNO: Si giras un cuarto de vuelta (90° = π/2), ¿qué número obtienes?
-📩 Comenta «EULER» si vas a dar la PAES M2 o estás en Ingeniería.
-
-Creado con IA. #tuprofeindustrial #matematicas #euler #ciencia #ingenieria`,
+#tuprofeindustrial #matematicas #euler #ciencia #ingenieria`,
           },
           {
-            key: "jue2115-tk",
-            label: "📱 Copy TikTok",
-            text: `¿Por qué e^(iπ) + 1 = 0 da exactamente cero? 🌙 La fórmula más bella de la ciencia explicada con un giro de 180 grados. Si giras sólo 90 grados (π/2), ¿qué número da? Déjamelo en comentarios 👇 Creado con IA. #tuprofeindustrial #matematicas #euler #ciencia #ingenieria`,
+            key: "jue2115-b",
+            label: "📚 Opción B: Copy Extenso Educativo",
+            text: `En 1748, Leonhard Euler logró conectar en una sola línea los 5 números más fundamentales: e, i, π, 1 y 0.
+
+Elevar e a una potencia imaginaria representa un GIRO en el plano complejo: e^(iθ) = cos(θ) + i·sen(θ).
+Al girar media vuelta (θ = π = 180°): cos(180°) = -1 y sen(180°) = 0 ➔ e^(iπ) = -1.
+Le sumas 1... ¡y cierra en cero!
+
+💬 RETO NOCTURNO: Si giras un cuarto de vuelta (90° = π/2), ¿qué número obtienes?
+📩 Comenta «EULER» si vas a dar la PAES M2 o entraste a primer año de ingeniería.
+
+#tuprofeindustrial #matematicas #euler #ciencia #ingenieria`,
           },
           {
             key: "jue2115-pin",
@@ -688,11 +737,11 @@ Creado con IA. #tuprofeindustrial #matematicas #euler #ciencia #ingenieria`,
         category: "story",
         role: "matias",
         title: "Story Nocturna Cierre Tutorías Ingeniería & PAES",
-        detail: "Lámina 9:16 de cierre nocturno para alumnos universitarios y PAES.",
+        detail: "Lámina 9:16 recalibrada (zona Meta 35% inferior protegida) para cierre nocturno.",
         assetPreview: {
           url: "/motor-assets/historias/jueves-2115-historia-02-clases.png",
           downloadUrl: "/motor-assets/historias/jueves-2115-historia-02-clases.png",
-          name: "Historia 21:15 Captación Jueves",
+          name: "Historia 21:15 Captación (35% Meta)",
         },
         copies: [
           {
@@ -738,59 +787,61 @@ Creado con IA. #tuprofeindustrial #matematicas #euler #ciencia #ingenieria`,
     carousels: [
       {
         id: "c-jue-1230",
-        title: "📸 Carrusel 12:30 · Parábola y Recta",
-        subtitle: "6 Láminas HD (1080×1350 px · 4:5)",
+        title: "📸 Carrusel 12:30 · Parábola y Recta (Calibrado)",
+        subtitle: "8 Láminas HD (1080×1350 px · Zona Segura 3:4 + Re-serve)",
         folderPath: "/motor-assets/carrusel-jueves-1230",
-        slides: SLIDE_NAMES,
+        sheetUrl: "/motor-assets/JUEVES-1230-carrusel-hoja-completa.jpg",
+        slides: SLIDE_NAMES_8,
       },
       {
         id: "c-jue-1730",
-        title: "📸 Carrusel 17:30 · Truco de Viète",
-        subtitle: "6 Láminas HD (1080×1350 px · 4:5)",
+        title: "📸 Carrusel 17:30 · Truco de Viète (Calibrado)",
+        subtitle: "8 Láminas HD (1080×1350 px · Zona Segura 3:4 + Re-serve)",
         folderPath: "/motor-assets/carrusel-jueves-1730",
-        slides: SLIDE_NAMES,
+        sheetUrl: "/motor-assets/JUEVES-1730-carrusel-hoja-completa.jpg",
+        slides: SLIDE_NAMES_8,
       },
     ],
     stories: [
       {
         id: "st-jue-1230-1",
         title: "12:30 Encuesta Recta",
-        tag: "Quiz 9:16",
+        tag: "Meta 35%",
         url: "/motor-assets/historias/jueves-1230-historia-01-encuesta.png",
         downloadName: "jueves-1230-historia-01-encuesta.png",
       },
       {
         id: "st-jue-1230-2",
         title: "12:30 Flyer Tutorías",
-        tag: "Venta 9:16",
+        tag: "Meta 35%",
         url: "/motor-assets/historias/jueves-1230-historia-02-clases.png",
         downloadName: "jueves-1230-historia-02-clases.png",
       },
       {
         id: "st-jue-1730-1",
         title: "17:30 Encuesta Viète",
-        tag: "Quiz 9:16",
+        tag: "Meta 35%",
         url: "/motor-assets/historias/jueves-1730-historia-01-encuesta.png",
         downloadName: "jueves-1730-historia-01-encuesta.png",
       },
       {
         id: "st-jue-1730-2",
         title: "17:30 Flyer Tutorías",
-        tag: "Venta 9:16",
+        tag: "Meta 35%",
         url: "/motor-assets/historias/jueves-1730-historia-02-clases.png",
         downloadName: "jueves-1730-historia-02-clases.png",
       },
       {
         id: "st-jue-2115-1",
         title: "21:15 Encuesta Euler",
-        tag: "Quiz 9:16",
+        tag: "Meta 35%",
         url: "/motor-assets/historias/jueves-2115-historia-01-encuesta.png",
         downloadName: "jueves-2115-historia-01-encuesta.png",
       },
       {
         id: "st-jue-2115-2",
         title: "21:15 Flyer Noche",
-        tag: "Venta 9:16",
+        tag: "Meta 35%",
         url: "/motor-assets/historias/jueves-2115-historia-02-clases.png",
         downloadName: "jueves-2115-historia-02-clases.png",
       },
@@ -845,7 +896,7 @@ export const CONVOCATORIAS_BASE = [
     fechaLabel: "20-Mar-2027",
     monto: "$15.000.000 CLP",
     estado: "proceso" as const,
-    accion: "Validar tracción de descargas del simulacro y métricas de videos en redes.",
+    accion: "Validar tracción de descargas del Formulario Maestro y métricas de carruseles 8 láminas.",
   },
   {
     nombre: "Start-Up Chile: Build (Cohorte 1)",
@@ -854,7 +905,7 @@ export const CONVOCATORIAS_BASE = [
     fechaLabel: "15-Abr-2027",
     monto: "$15.000.000 CLP",
     estado: "proceso" as const,
-    accion: "Tener video pitch de 90s mostrando el motor automatizado EdTech.",
+    accion: "Video pitch de 90s mostrando el motor automatizado EdTech (6 videos + 1 carrusel 8 slides + historias).",
   },
   {
     nombre: "Sercotec: Capital Semilla Emprende",
