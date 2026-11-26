@@ -841,237 +841,307 @@ export function GrillaCockpitClient({
                     </div>
                   </div>
 
-                  {/* CONTENIDO DESPLEGADO (SUBPRODUCTOS Y DETALLES) */}
-                  {isExpanded && (
-                    <div className="p-3 bg-slate-50 border-t border-slate-200 space-y-3 text-xs animate-in fade-in duration-200">
-                      {/* ESTADO "¿ESTÁ EN EL INTERNET O NO?" CON BOTÓN */}
-                      <div
-                        className={`p-2.5 rounded-xl border flex items-center justify-between gap-2 shadow-xs ${
-                          isVideoDone
-                            ? "bg-emerald-50 border-emerald-300 text-emerald-950"
-                            : "bg-amber-50 border-amber-300 text-amber-950"
-                        }`}
-                      >
-                        <div>
-                          <div className="text-[10.5px] font-mono font-black uppercase flex items-center gap-1">
-                            {isVideoDone ? "🟢 ESTÁ EN INTERNET" : "🟡 NO ESTÁ EN INTERNET"}
-                          </div>
-                          <div className="text-[10px] opacity-80 mt-0.5">
-                            {isVideoDone ? "Video publicado y al aire" : "Pendiente de subir a redes"}
-                          </div>
-                        </div>
+                  {/* CONTENIDO DESPLEGADO: VIDEO ARRIBA + LISTADO CLICKEABLE MINIMALISTA ABAJO */}
+                  {isExpanded && (() => {
+                    const subproductsList = [
+                      {
+                        id: block.mainAction.id,
+                        name: "1. Video Master (Reels / TikTok)",
+                        detail: "Vertical 9:16 con audio calibrado",
+                        isDone: !!completedMap[block.mainAction.id],
+                        action: block.mainAction.videoDownloadUrl ? (
+                          <a
+                            href={block.mainAction.videoDownloadUrl}
+                            download
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-2 py-0.5 rounded bg-slate-900 text-white font-mono text-[9.5px] font-black flex items-center gap-0.5 shadow-xs"
+                          >
+                            <Download className="w-2.5 h-2.5" /> MP4
+                          </a>
+                        ) : null,
+                      },
+                      ...(block.mainAction.assetPreview
+                        ? [
+                            {
+                              id: `${block.id}_cover`,
+                              name: "2. Portada Oficial HD",
+                              detail: "1080×1920 calibrada para Feed",
+                              isDone: !!completedMap[`${block.id}_cover`],
+                              action: (
+                                <a
+                                  href={block.mainAction.assetPreview.downloadUrl}
+                                  download={block.mainAction.assetPreview.name}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 font-mono text-[9.5px] font-bold flex items-center gap-0.5 shadow-xs"
+                                >
+                                  <Download className="w-2.5 h-2.5" /> Bajar
+                                </a>
+                              ),
+                            },
+                          ]
+                        : []),
+                      ...(block.carousel
+                        ? [
+                            {
+                              id: `${block.id}_carousel`,
+                              name: `3. Carrusel Educativo (${block.carousel.slides.length} láminas)`,
+                              detail: "Secuencia didáctica paso a paso",
+                              isDone: !!completedMap[`${block.id}_carousel`],
+                              action: block.carousel.sheetUrl ? (
+                                <a
+                                  href={block.carousel.sheetUrl}
+                                  download
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="px-2 py-0.5 rounded bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 font-mono text-[9.5px] font-bold flex items-center gap-0.5 shadow-xs"
+                                >
+                                  <Download className="w-2.5 h-2.5" /> Hoja
+                                </a>
+                              ) : null,
+                            },
+                          ]
+                        : []),
+                      ...(block.stories.length > 0
+                        ? [
+                            {
+                              id: `${block.id}_stories`,
+                              name: `4. Stories de Apoyo (${block.stories.length} láminas)`,
+                              detail: "Encuesta y reto 9:16",
+                              isDone: !!completedMap[`${block.id}_stories`],
+                              action: (
+                                <a
+                                  href={block.stories[0]?.url}
+                                  download={block.stories[0]?.downloadName}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="px-2 py-0.5 rounded bg-purple-100 hover:bg-purple-200 text-purple-900 border border-purple-300 font-mono text-[9.5px] font-bold flex items-center gap-0.5 shadow-xs"
+                                >
+                                  <Download className="w-2.5 h-2.5" /> Bajar
+                                </a>
+                              ),
+                            },
+                          ]
+                        : []),
+                      ...(block.mainAction.copies && block.mainAction.copies.length > 0
+                        ? [
+                            {
+                              id: `${block.id}_copy`,
+                              name: "5. Copy / Texto Publicación",
+                              detail: block.mainAction.copies[0].text.slice(0, 38) + "...",
+                              isDone: !!completedMap[`${block.id}_copy`],
+                              action: (
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    handleCopy(
+                                      block.mainAction.copies![0].key,
+                                      block.mainAction.copies![0].text
+                                    )
+                                  }
+                                  className="px-2 py-0.5 rounded bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 font-mono text-[9.5px] font-black"
+                                >
+                                  {copiedKey === block.mainAction.copies[0].key
+                                    ? "¡COPIADO!"
+                                    : "COPIAR"}
+                                </button>
+                              ),
+                            },
+                            ...(block.mainAction.copies.length > 2
+                              ? [
+                                  {
+                                    id: `${block.id}_comment`,
+                                    name: "6. Primer Comentario Fijado",
+                                    detail: "Captación WhatsApp tutorías",
+                                    isDone: !!completedMap[`${block.id}_comment`],
+                                    action: (
+                                      <button
+                                        type="button"
+                                        onClick={() =>
+                                          handleCopy(
+                                            block.mainAction.copies![2].key,
+                                            block.mainAction.copies![2].text
+                                          )
+                                        }
+                                        className="px-2 py-0.5 rounded bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 font-mono text-[9.5px] font-black"
+                                      >
+                                        {copiedKey === block.mainAction.copies[2].key
+                                          ? "¡COPIADO!"
+                                          : "COPIAR"}
+                                      </button>
+                                    ),
+                                  },
+                                ]
+                              : []),
+                          ]
+                        : []),
+                      ...(block.associatedActions.length > 0
+                        ? [
+                            {
+                              id: `${block.id}_wa`,
+                              name: "7. Difusión en Grupos WhatsApp",
+                              detail: "Avisar en grupos de alumnos",
+                              isDone: !!completedMap[`${block.id}_wa`],
+                              action: block.associatedActions[0]?.copies?.[0]?.waShare ? (
+                                <a
+                                  href={`https://wa.me/?text=${encodeURIComponent(
+                                    block.associatedActions[0].copies[0].text
+                                  )}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="px-2 py-0.5 rounded bg-[#25D366] text-white font-mono text-[9.5px] font-black shadow-xs"
+                                >
+                                  WA
+                                </a>
+                              ) : null,
+                            },
+                          ]
+                        : []),
+                    ];
 
-                        <button
-                          type="button"
-                          onClick={() => toggleTask(block.mainAction.id)}
-                          className={`cursor-pointer touch-manipulation px-3 py-1.5 rounded-xl font-black text-xs shadow-xs transition active:scale-95 flex items-center gap-1 ${
-                            isVideoDone
-                              ? "bg-emerald-600 text-white hover:bg-emerald-700"
-                              : "bg-slate-900 text-white hover:bg-slate-800"
-                          }`}
-                        >
-                          {isVideoDone ? (
-                            <>
-                              <Check className="w-3.5 h-3.5 stroke-[3]" />
-                              <span>En Internet ✓</span>
-                            </>
-                          ) : (
-                            <span>Marcar que Subió</span>
-                          )}
-                        </button>
-                      </div>
+                    const subDoneCount = subproductsList.filter((s) => s.isDone).length;
+                    const subTotalCount = subproductsList.length;
+                    const isOnlyVideoDone = isVideoDone && subDoneCount === 1;
 
-                      {/* ATAJOS DIRECTOS A REDES SOCIALES */}
-                      <div className="grid grid-cols-2 gap-1.5">
-                        <a
-                          href="https://www.instagram.com"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="cursor-pointer touch-manipulation min-h-[34px] px-2 rounded-xl bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white font-black text-xs flex items-center justify-center gap-1 shadow-xs hover:opacity-90 active:scale-95 transition"
-                        >
-                          <span>Abrir Instagram</span>
-                        </a>
-                        <a
-                          href="https://www.tiktok.com"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="cursor-pointer touch-manipulation min-h-[34px] px-2 rounded-xl bg-black text-white font-black text-xs flex items-center justify-center gap-1 shadow-xs hover:bg-slate-800 active:scale-95 transition"
-                        >
-                          <span>Abrir TikTok</span>
-                        </a>
-                      </div>
-
-                      {/* 1. VIDEO MASTER MP4 */}
-                      <div className="bg-white p-2.5 rounded-xl border border-slate-200 space-y-2 shadow-xs">
-                        <div className="flex items-center justify-between">
-                          <span className="text-[10px] font-mono font-black text-blue-700 uppercase flex items-center gap-1">
-                            <Film className="w-3 h-3 text-blue-600" />
-                            <span>1. Video Master (MP4 9:16)</span>
-                          </span>
-                          {block.mainAction.videoDownloadUrl && (
-                            <a
-                              href={block.mainAction.videoDownloadUrl}
-                              download
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="cursor-pointer touch-manipulation text-[10.5px] font-black bg-slate-900 text-white px-2.5 py-1 rounded-lg flex items-center gap-1 shadow-xs"
-                            >
-                              <Download className="w-3 h-3" /> Bajar MP4
-                            </a>
-                          )}
-                        </div>
-                        {block.mainAction.videoDownloadUrl && (
-                          <video
-                            controls
-                            playsInline
-                            preload="metadata"
-                            src={block.mainAction.videoDownloadUrl}
-                            className="w-full max-h-40 rounded-lg bg-black border border-slate-200"
-                          />
-                        )}
-                      </div>
-
-                      {/* 2. PORTADA OFICIAL HD */}
-                      {block.mainAction.assetPreview && (
-                        <div className="bg-white p-2.5 rounded-xl border border-slate-200 flex items-center gap-3 shadow-xs">
-                          <div className="relative w-14 h-16 bg-slate-100 rounded-lg overflow-hidden shrink-0 border border-slate-300">
-                            <Image
-                              src={block.mainAction.assetPreview.url}
-                              alt={block.mainAction.assetPreview.name}
-                              fill
-                              unoptimized
-                              className="object-cover"
+                    return (
+                      <div className="p-3 bg-slate-50 border-t border-slate-200 space-y-3 text-xs animate-in fade-in duration-200">
+                        {/* 1. REPRODUCTOR DE VIDEO PRINCIPAL */}
+                        <div className="bg-black rounded-xl overflow-hidden shadow-xs relative">
+                          {block.mainAction.videoDownloadUrl ? (
+                            <video
+                              controls
+                              playsInline
+                              preload="metadata"
+                              src={block.mainAction.videoDownloadUrl}
+                              className="w-full max-h-52 object-contain bg-black"
                             />
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <span className="text-[10px] font-mono font-black text-slate-500 uppercase block">
-                              2. Portada HD (1080×1920)
-                            </span>
-                            <div className="text-xs font-black text-slate-900 truncate">
-                              {block.mainAction.assetPreview.name}
+                          ) : (
+                            <div className="p-4 text-center text-slate-400 text-xs">
+                              Video no disponible
                             </div>
-                            <a
-                              href={block.mainAction.assetPreview.downloadUrl}
-                              download={block.mainAction.assetPreview.name}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="cursor-pointer touch-manipulation mt-1 inline-flex items-center gap-1 text-[10px] font-black bg-slate-800 text-white px-2 py-0.5 rounded-md shadow-xs"
-                            >
-                              <Download className="w-2.5 h-2.5" /> Bajar Portada
-                            </a>
-                          </div>
-                        </div>
-                      )}
-
-                      {/* 3. CARRUSEL */}
-                      {block.carousel && (
-                        <div className="bg-white p-2.5 rounded-xl border border-slate-200 space-y-2 shadow-xs">
-                          <div className="flex items-center justify-between">
-                            <span className="text-[10px] font-mono font-black text-amber-700 uppercase flex items-center gap-1">
-                              <Layers className="w-3 h-3 text-amber-600" />
-                              <span>3. Carrusel ({block.carousel.slides.length} Láminas)</span>
-                            </span>
-                            {block.carousel.sheetUrl && (
+                          )}
+                          <div className="px-2.5 py-1.5 bg-slate-900 flex items-center justify-between text-white text-xs">
+                            <div className="min-w-0 pr-2">
+                              <div className="font-mono text-[10.5px] font-bold text-slate-200 truncate">
+                                {block.mainAction.videoLabel || "Video Master Vertical (9:16)"}
+                              </div>
+                              <span className="text-[9px] text-emerald-400 font-mono">
+                                {isVideoDone ? "🟢 Video subido a internet" : "🟡 Video pendiente"}
+                              </span>
+                            </div>
+                            {block.mainAction.videoDownloadUrl && (
                               <a
-                                href={block.carousel.sheetUrl}
+                                href={block.mainAction.videoDownloadUrl}
                                 download
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="cursor-pointer touch-manipulation text-[10px] font-black bg-amber-500 text-slate-950 px-2 py-0.5 rounded-md shadow-xs"
+                                className="cursor-pointer touch-manipulation px-2.5 py-1 rounded-lg bg-blue-600 hover:bg-blue-700 font-black text-[10px] flex items-center gap-1 shrink-0"
                               >
-                                Hoja Completa
+                                <Download className="w-3 h-3" /> Bajar MP4
                               </a>
                             )}
                           </div>
-                          <div className="flex gap-2 overflow-x-auto pb-1">
-                            {block.carousel.slides.map((sl) => {
-                              const slideUrl = `${block.carousel!.folderPath}/${sl.file}`;
-                              return (
-                                <div
-                                  key={sl.num}
-                                  className="w-20 shrink-0 bg-slate-50 p-1 rounded-lg border border-slate-200 text-center space-y-1"
-                                >
-                                  <div className="relative w-full h-24 bg-slate-100 rounded overflow-hidden">
-                                    <Image
-                                      src={slideUrl}
-                                      alt={`${sl.num} ${sl.name}`}
-                                      fill
-                                      unoptimized
-                                      className="object-cover"
-                                    />
-                                  </div>
-                                  <a
-                                    href={slideUrl}
-                                    download={sl.file}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="cursor-pointer touch-manipulation text-[9px] font-black bg-slate-200 hover:bg-slate-300 text-slate-800 rounded py-0.5 block"
-                                  >
-                                    #{sl.num} Bajar
-                                  </a>
-                                </div>
-                              );
-                            })}
-                          </div>
                         </div>
-                      )}
 
-                      {/* 4. STORIES */}
-                      {block.stories.length > 0 && (
-                        <div className="bg-white p-2.5 rounded-xl border border-slate-200 space-y-1.5 shadow-xs">
-                          <span className="text-[10px] font-mono font-black text-purple-700 uppercase block">
-                            4. Stories 9:16 ({block.stories.length})
-                          </span>
-                          <div className="grid grid-cols-2 gap-2">
-                            {block.stories.map((st) => (
+                        {/* 2. CHECKLIST MINIMALISTA CLICKEABLE DE SUBPRODUCTOS */}
+                        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-xs">
+                          {/* CABECERA DEL CHECKLIST CON DIAGNÓSTICO */}
+                          <div className="px-3 py-2 bg-slate-100/80 border-b border-slate-200 flex items-center justify-between text-xs">
+                            <span className="font-mono font-black text-[10.5px] text-slate-700 uppercase">
+                              Checklist: {subDoneCount} de {subTotalCount} subidos
+                            </span>
+                            <span
+                              className={`font-mono text-[9.5px] font-black px-2 py-0.5 rounded ${
+                                subDoneCount === subTotalCount
+                                  ? "bg-emerald-600 text-white"
+                                  : isOnlyVideoDone
+                                  ? "bg-amber-500 text-slate-950"
+                                  : "bg-slate-200 text-slate-700"
+                              }`}
+                            >
+                              {subDoneCount === subTotalCount
+                                ? "🟢 100% SUBIDO"
+                                : isOnlyVideoDone
+                                ? "🟡 SOLO EL VIDEO"
+                                : `${Math.round((subDoneCount / subTotalCount) * 100)}%`}
+                            </span>
+                          </div>
+
+                          {/* FILAS CLICKEABLES DE CADA SUBPRODUCTO */}
+                          <div className="divide-y divide-slate-100">
+                            {subproductsList.map((item) => (
                               <div
-                                key={st.id}
-                                className="bg-slate-50 p-1.5 rounded-lg border border-slate-200 text-center space-y-1"
+                                key={item.id}
+                                onClick={() => toggleTask(item.id)}
+                                className={`px-3 py-2 flex items-center justify-between gap-2 cursor-pointer transition select-none ${
+                                  item.isDone
+                                    ? "bg-emerald-50/50 hover:bg-emerald-50/80"
+                                    : "hover:bg-slate-50"
+                                }`}
                               >
-                                <div className="relative w-full h-24 bg-slate-100 rounded overflow-hidden">
-                                  <Image src={st.url} alt={st.title} fill unoptimized className="object-cover" />
+                                {/* Checkbox táctil minimalista y nombre */}
+                                <div className="flex items-center gap-2 min-w-0">
+                                  <div
+                                    className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 transition ${
+                                      item.isDone
+                                        ? "bg-emerald-600 border-emerald-600 text-white"
+                                        : "bg-white border-slate-300 text-transparent"
+                                    }`}
+                                  >
+                                    <Check className="w-3 h-3 stroke-[3]" />
+                                  </div>
+
+                                  <div className="min-w-0">
+                                    <div
+                                      className={`text-xs font-black truncate leading-tight ${
+                                        item.isDone
+                                          ? "line-through text-slate-400"
+                                          : "text-slate-900"
+                                      }`}
+                                    >
+                                      {item.name}
+                                    </div>
+                                    <div className="text-[10px] text-slate-500 truncate leading-none mt-0.5">
+                                      {item.detail}
+                                    </div>
+                                  </div>
                                 </div>
-                                <a
-                                  href={st.url}
-                                  download={st.downloadName}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="cursor-pointer touch-manipulation text-[9.5px] font-black bg-purple-50 text-purple-700 border border-purple-200 rounded py-0.5 block shadow-xs"
+
+                                {/* Botón de acción directo (bajar / copiar) */}
+                                <div
+                                  className="shrink-0 flex items-center"
+                                  onClick={(e) => e.stopPropagation()}
                                 >
-                                  Bajar Story
-                                </a>
+                                  {item.action}
+                                </div>
                               </div>
                             ))}
                           </div>
                         </div>
-                      )}
 
-                      {/* 5. COPIES LISTOS */}
-                      {block.mainAction.copies && block.mainAction.copies.length > 0 && (
-                        <div className="bg-white p-2.5 rounded-xl border border-slate-200 space-y-1.5 shadow-xs">
-                          <span className="text-[10px] font-mono font-black text-slate-600 uppercase block">
-                            5. Textos Listos para Publicar
-                          </span>
-                          {block.mainAction.copies.map((c) => (
-                            <button
-                              key={c.key}
-                              type="button"
-                              onClick={() => handleCopy(c.key, c.text)}
-                              className="cursor-pointer touch-manipulation w-full p-2 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg text-left flex items-center justify-between text-xs"
-                            >
-                              <div className="min-w-0 pr-2">
-                                <div className="font-black text-slate-900 truncate">{c.label}</div>
-                                <div className="text-[10px] text-slate-500 truncate">{c.text.slice(0, 50)}...</div>
-                              </div>
-                              <span className="font-mono text-[10px] text-blue-700 font-black shrink-0 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded">
-                                {copiedKey === c.key ? "¡COPIADO!" : "COPIAR"}
-                              </span>
-                            </button>
-                          ))}
+                        {/* 3. ATAJOS RÁPIDOS PARA ABRIR REDES */}
+                        <div className="grid grid-cols-2 gap-1.5 pt-0.5">
+                          <a
+                            href="https://www.instagram.com"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="cursor-pointer touch-manipulation min-h-[34px] px-2 rounded-xl bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white font-black text-xs flex items-center justify-center gap-1 shadow-xs hover:opacity-90 active:scale-95 transition"
+                          >
+                            <span>Abrir Instagram 📸</span>
+                          </a>
+                          <a
+                            href="https://www.tiktok.com"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="cursor-pointer touch-manipulation min-h-[34px] px-2 rounded-xl bg-black text-white font-black text-xs flex items-center justify-center gap-1 shadow-xs hover:bg-slate-800 active:scale-95 transition"
+                          >
+                            <span>Abrir TikTok 🎵</span>
+                          </a>
                         </div>
-                      )}
-                    </div>
-                  )}
+                      </div>
+                    );
+                  })()}
                 </div>
               );
             })}
