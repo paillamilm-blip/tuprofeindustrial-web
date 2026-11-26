@@ -1,5 +1,5 @@
 {
-  "syncedAt": "2026-11-25T21:54:09-03:00",
+  "syncedAt": "2026-11-26T07:07:22-03:00",
   "syncSource": "publicar-scan",
   "registroEntries": 0,
   "completedBaseline": {
@@ -9,9 +9,13 @@
     },
     "jue26": {}
   },
-  "prunedPastVideos": [],
-  "activeVideoCount": 6,
-  "activeVideoSizeMb": 26.3,
+  "prunedPastVideos": [
+    "MIERCOLES-1230-video-discriminante.mp4",
+    "MIERCOLES-1730-video-duplica-arista.mp4",
+    "MIERCOLES-2115-noche05-dividir-por-cero.mp4"
+  ],
+  "activeVideoCount": 3,
+  "activeVideoSizeMb": 12.4,
   "weekendReadiness": [
     {
       "iso": "2026-11-27",
