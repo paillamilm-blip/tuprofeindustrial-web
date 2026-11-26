@@ -17,10 +17,9 @@ import {
   Bell,
   BellRing,
   Users,
-  Target,
-  TrendingUp,
-  Sparkles,
-  Lightbulb,
+  Clock,
+  Layers,
+  Film,
 } from "lucide-react";
 import type { ActionItem, DayKey, DaySchedule } from "./grilla-data";
 import {
@@ -179,12 +178,11 @@ export function GrillaCockpitClient({
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
 
-  // Modales ligeros para mantener la pantalla principal en 1 sola vista exacta sin scroll
+  // Modales ligeros y pestañas operativas de mando
+  const [viewMode, setViewMode] = useState<"diario" | "semanal">("diario");
   const [inspectBlockId, setInspectBlockId] = useState<string | null>(null);
-  const [showWeekModal, setShowWeekModal] = useState(false);
   const [showQuotesModal, setShowQuotesModal] = useState(false);
   const [showSyncModal, setShowSyncModal] = useState(false);
-  const [showStrategyModal, setShowStrategyModal] = useState(false);
   const [manualSyncInput, setManualSyncInput] = useState("");
   const [pushEnabled, setPushEnabled] = useState(() => {
     if (typeof window !== "undefined" && "Notification" in window) {
@@ -446,81 +444,166 @@ export function GrillaCockpitClient({
     return videoBlocks.find((b) => b.id === inspectBlockId) ?? null;
   }, [videoBlocks, inspectBlockId]);
 
+  // Medición de tiempo operativo hacia el próximo turno
+  const nextPendingBlock = useMemo(() => {
+    return videoBlocks.find((b) => !completedMap[b.mainAction.id]) ?? null;
+  }, [videoBlocks, completedMap]);
+
+  const timeDiffMins = nextPendingBlock
+    ? nextPendingBlock.mainAction.minutesFromMidnight - santiagoNow.minutes
+    : null;
+
+  const WEEK_PLAN = [
+    {
+      day: "Lunes 23 Nov",
+      status: "🟢 Listo (3/3)",
+      badgeColor: "bg-emerald-600 text-white",
+      cardBg: "bg-emerald-50 border-emerald-300 text-emerald-950",
+      topics: ["12:30 Simplificar", "17:30 1m² a cm²", "21:15 i² = -1"],
+      key: null,
+    },
+    {
+      day: "Martes 24 Nov",
+      status: "🟢 Listo (3/3)",
+      badgeColor: "bg-emerald-600 text-white",
+      cardBg: "bg-emerald-50 border-emerald-300 text-emerald-950",
+      topics: ["12:30 Olvido del ±", "17:30 Vértice parábola", "21:15 Secreto π"],
+      key: null,
+    },
+    {
+      day: "Miércoles 25 Nov",
+      status: "🟢 Operativo (3/3)",
+      badgeColor: "bg-emerald-600 text-white",
+      cardBg: "bg-emerald-50 border-emerald-300 text-emerald-950",
+      topics: ["12:30 Discriminante", "17:30 Arista 3D", "21:15 Dividir por 0"],
+      key: "mie25" as DayKey,
+    },
+    {
+      day: "Jueves 26 Nov",
+      status: "🔴 Turno de Hoy",
+      badgeColor: "bg-red-600 text-white animate-pulse",
+      cardBg: "bg-red-50 border-red-400 text-red-950 ring-2 ring-red-200",
+      topics: ["12:30 Parábola y Recta", "17:30 Truco Viète", "21:15 Euler + Formulario"],
+      key: "jue26" as DayKey,
+    },
+    {
+      day: "Viernes 27 Nov",
+      status: "🟡 Guiones Listos",
+      badgeColor: "bg-amber-500 text-slate-950",
+      cardBg: "bg-amber-50 border-amber-300 text-amber-950",
+      topics: ["12:30 Inecuaciones (signo)", "17:30 Ganancia máx (vértice)", "21:15 Fractales (Koch)"],
+      key: null,
+    },
+    {
+      day: "Sábado 28 Nov",
+      status: "🟡 Programado",
+      badgeColor: "bg-slate-700 text-white",
+      cardBg: "bg-slate-50 border-slate-300 text-slate-900",
+      topics: ["12:30 Intersección ejes", "17:30 Inversa función", "21:15 Hilbert"],
+      key: null,
+    },
+    {
+      day: "Domingo 29 Nov",
+      status: "🟡 Víspera PAES",
+      badgeColor: "bg-purple-600 text-white",
+      cardBg: "bg-purple-50 border-purple-300 text-purple-950",
+      topics: ["12:30 10 Puntos Clave", "17:30 Calma y Ritmo", "21:15 Mensaje Éxito"],
+      key: null,
+    },
+    {
+      day: "Lunes 30 Nov",
+      status: "🎓 ¡DÍA 1 PAES M1!",
+      badgeColor: "bg-blue-600 text-white font-black",
+      cardBg: "bg-blue-50 border-blue-300 text-blue-950",
+      topics: ["08:00 Desayuno y Calma", "14:00 Ánimo prueba", "18:00 Feedback inicial"],
+      key: null,
+    },
+  ];
+
   return (
-    <div className="h-[100dvh] w-full max-w-md mx-auto bg-slate-100 text-slate-900 font-sans flex flex-col justify-between overflow-hidden antialiased select-none p-3">
-      {/* 1. CABECERA LIMPIA Y SELECTOR DE DÍA */}
-      <header className="flex items-center justify-between gap-2 bg-white rounded-2xl p-2.5 border border-slate-200 shadow-xs shrink-0">
-        <div className="flex items-center gap-2 min-w-0">
-          <span className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-          <div className="min-w-0">
-            <h1 className="text-xs font-black tracking-tight text-slate-900 leading-none truncate">
-              @tuprofeindustrial
-            </h1>
-            <span className="text-[10px] font-mono font-bold text-slate-500 leading-none">
-              {santiagoNow.timeStr} CLT · PAES: {paesDaysLeft}d
-            </span>
+    <div className="h-[100dvh] w-full max-w-md mx-auto bg-slate-100 text-slate-900 font-sans flex flex-col justify-between overflow-hidden antialiased select-none p-2.5 sm:p-3">
+      {/* 1. CABECERA: IDENTIFICACIÓN, RELOJ Y SWITCH DE MANDO */}
+      <header className="bg-white rounded-2xl p-2.5 border border-slate-200 shadow-xs shrink-0 space-y-2">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+            <div className="min-w-0">
+              <h1 className="text-xs font-black tracking-tight text-slate-900 leading-none truncate">
+                Mando de Operaciones · @tuprofeindustrial
+              </h1>
+              <span className="text-[10px] font-mono font-bold text-slate-500 leading-none">
+                {santiagoNow.timeStr} CLT · PAES: {paesDaysLeft}d
+              </span>
+            </div>
+          </div>
+
+          {/* BOTONES PUSH, SYNC Y LOCK */}
+          <div className="flex items-center gap-1 shrink-0">
+            <button
+              type="button"
+              onClick={requestPushPermission}
+              title={pushEnabled ? "Notificaciones push activas" : "Activar recordatorios push"}
+              className={`cursor-pointer touch-manipulation min-h-[30px] px-2 py-0.5 rounded-lg border text-xs font-black flex items-center gap-1 transition ${
+                pushEnabled
+                  ? "bg-emerald-50 text-emerald-700 border-emerald-300"
+                  : "bg-slate-100 text-slate-500 border-slate-200 hover:text-slate-900"
+              }`}
+            >
+              {pushEnabled ? <BellRing className="w-3.5 h-3.5 text-emerald-600 animate-bounce" /> : <Bell className="w-3.5 h-3.5" />}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setShowSyncModal(true)}
+              className="cursor-pointer touch-manipulation min-h-[30px] px-2 py-0.5 rounded-lg bg-blue-50 text-blue-700 border border-blue-200 text-xs font-black flex items-center gap-1 hover:bg-blue-100"
+            >
+              <RefreshCw className="w-3 h-3" />
+              <span>Sync</span>
+            </button>
+            {isPinProtected && (
+              <form action={lockGrillaAction}>
+                <button
+                  type="submit"
+                  className="cursor-pointer touch-manipulation min-h-[30px] p-1.5 rounded-lg bg-slate-100 text-slate-600 hover:text-slate-900 border border-slate-200"
+                  title="Bloquear grilla"
+                >
+                  <Lock className="w-3.5 h-3.5" />
+                </button>
+              </form>
+            )}
           </div>
         </div>
 
-        {/* SELECTOR DE DÍA (MIÉ / JUE) */}
-        <div className="flex items-center gap-1 bg-slate-100 p-0.5 rounded-xl border border-slate-200 shrink-0">
-          {DAY_KEYS.map((key) => {
-            const active = selectedDay === key;
-            return (
-              <button
-                key={key}
-                type="button"
-                onClick={() => setDayOverride(key)}
-                className={`cursor-pointer touch-manipulation px-2.5 py-1 rounded-lg text-xs font-black transition ${
-                  active
-                    ? "bg-slate-900 text-white shadow-xs"
-                    : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                {daysData[key].shortLabel}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* BOTÓN PUSH, CONTADOR DE LEADS Y SYNC */}
-        <div className="flex items-center gap-1 shrink-0">
+        {/* SWITCH PRINCIPAL DE OPERACIONES: [📅 PLAN DIARIO] vs [🗓️ PLAN SEMANAL] */}
+        <div className="grid grid-cols-2 gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200">
           <button
             type="button"
-            onClick={requestPushPermission}
-            title={pushEnabled ? "Notificaciones push activas" : "Activar recordatorios push"}
-            className={`cursor-pointer touch-manipulation min-h-[32px] px-2 py-1 rounded-lg border text-xs font-black flex items-center gap-1 transition ${
-              pushEnabled
-                ? "bg-emerald-50 text-emerald-700 border-emerald-300"
-                : "bg-slate-100 text-slate-500 border-slate-200 hover:text-slate-900"
+            onClick={() => setViewMode("diario")}
+            className={`cursor-pointer touch-manipulation min-h-[34px] rounded-lg text-xs font-black flex items-center justify-center gap-1.5 transition ${
+              viewMode === "diario"
+                ? "bg-slate-900 text-white shadow-xs"
+                : "text-slate-600 hover:text-slate-900"
             }`}
           >
-            {pushEnabled ? <BellRing className="w-3.5 h-3.5 text-emerald-600 animate-bounce" /> : <Bell className="w-3.5 h-3.5" />}
+            <Clock className="w-3.5 h-3.5" />
+            <span>Plan Diario (Hoy)</span>
           </button>
-
           <button
             type="button"
-            onClick={() => setShowSyncModal(true)}
-            className="cursor-pointer touch-manipulation min-h-[32px] px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 border border-blue-200 text-xs font-black flex items-center gap-1 hover:bg-blue-100"
+            onClick={() => setViewMode("semanal")}
+            className={`cursor-pointer touch-manipulation min-h-[34px] rounded-lg text-xs font-black flex items-center justify-center gap-1.5 transition ${
+              viewMode === "semanal"
+                ? "bg-slate-900 text-white shadow-xs"
+                : "text-slate-600 hover:text-slate-900"
+            }`}
           >
-            <RefreshCw className="w-3 h-3" />
-            <span>Sync</span>
+            <Calendar className="w-3.5 h-3.5" />
+            <span>Plan Semanal</span>
           </button>
-          {isPinProtected && (
-            <form action={lockGrillaAction}>
-              <button
-                type="submit"
-                className="cursor-pointer touch-manipulation min-h-[32px] p-1.5 rounded-lg bg-slate-100 text-slate-600 hover:text-slate-900 border border-slate-200"
-                title="Bloquear grilla"
-              >
-                <Lock className="w-3.5 h-3.5" />
-              </button>
-            </form>
-          )}
         </div>
       </header>
 
-      {/* 2. SEMÁFORO SENSORIAL DE ALTO IMPACTO (VERDE / AMARILLO / ROJO) */}
+      {/* 2. PANEL DE MÉTRICAS OPERATIVAS Y CONTROL DE TIEMPO */}
       <section className="bg-white rounded-2xl p-2.5 border-2 border-slate-200 shadow-xs shrink-0 space-y-2">
         <div className="flex items-center justify-between text-xs font-black">
           <span className="text-slate-700 uppercase tracking-wide text-[10.5px]">
@@ -531,185 +614,240 @@ export function GrillaCockpitClient({
           </span>
         </div>
 
-        {/* 3 CAJAS TIPO SEMÁFORO REAL: VERDE / AMARILLO / ROJO */}
-        <div className="grid grid-cols-3 gap-1.5 text-center">
-          {/* VERDE: LISTO */}
-          <div className="rounded-xl p-2 bg-emerald-500 text-white flex flex-col items-center justify-center shadow-xs">
-            <span className="text-lg font-black leading-none">{completedCount}</span>
-            <span className="text-[10px] font-black uppercase tracking-wider mt-0.5">🟢 LISTO</span>
+        {/* FILA DE TIEMPO OPERATIVO (HITO ACTUAL / PRÓXIMO / ATRASO) */}
+        <div className="flex items-center justify-between gap-1.5">
+          <div
+            className={`flex-1 min-w-0 px-2.5 py-1.5 rounded-xl border flex items-center gap-1.5 font-black text-xs ${
+              isAllDone || !nextPendingBlock
+                ? "bg-emerald-50 text-emerald-800 border-emerald-300"
+                : timeDiffMins !== null && timeDiffMins <= 0
+                ? "bg-red-600 text-white border-red-700 animate-pulse"
+                : "bg-slate-900 text-amber-300 border-slate-800"
+            }`}
+          >
+            <Clock className="w-3.5 h-3.5 shrink-0" />
+            <span className="truncate">
+              {isAllDone || !nextPendingBlock
+                ? "🟢 Día 100% completado (3/3 videos)"
+                : timeDiffMins !== null && timeDiffMins <= 0
+                ? `🚨 Turno ${nextPendingBlock.timeSlot} ATRASADO (+${Math.abs(timeDiffMins)}m)`
+                : `⏳ Próximo Turno: ${nextPendingBlock.timeSlot} (en ${Math.floor(timeDiffMins! / 60)}h ${timeDiffMins! % 60}m)`}
+            </span>
           </div>
 
-          {/* AMARILLO: EN PROCESO */}
-          <div className="rounded-xl p-2 bg-amber-400 text-slate-950 flex flex-col items-center justify-center shadow-xs">
-            <span className="text-lg font-black leading-none">{procesoTasks.length}</span>
-            <span className="text-[10px] font-black uppercase tracking-wider mt-0.5">🟡 EN ESPERA</span>
+          {/* SELECTOR RÁPIDO DE DÍA (SI ESTÁ EN MODO DIARIO) */}
+          {viewMode === "diario" && (
+            <div className="flex items-center gap-0.5 bg-slate-100 p-0.5 rounded-lg border border-slate-200 shrink-0">
+              {DAY_KEYS.map((key) => {
+                const active = selectedDay === key;
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => setDayOverride(key)}
+                    className={`cursor-pointer touch-manipulation px-2.5 py-1 rounded-md text-xs font-black transition ${
+                      active
+                        ? "bg-blue-600 text-white shadow-xs"
+                        : "text-slate-600 hover:text-slate-900"
+                    }`}
+                  >
+                    {daysData[key].shortLabel}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* 3 CAJAS DE SEMÁFORO CON MÉTRICAS NUMÉRICAS REALES */}
+        <div className="grid grid-cols-3 gap-1.5 text-center">
+          {/* VERDE: LISTO */}
+          <div className="rounded-xl p-1.5 bg-emerald-500 text-white flex flex-col items-center justify-center shadow-xs">
+            <span className="text-base font-black leading-none">{completedCount}</span>
+            <span className="text-[9.5px] font-black uppercase tracking-wider mt-0.5">🟢 LISTO</span>
+          </div>
+
+          {/* AMARILLO: EN ESPERA */}
+          <div className="rounded-xl p-1.5 bg-amber-400 text-slate-950 flex flex-col items-center justify-center shadow-xs">
+            <span className="text-base font-black leading-none">{procesoTasks.length}</span>
+            <span className="text-[9.5px] font-black uppercase tracking-wider mt-0.5">🟡 EN ESPERA</span>
           </div>
 
           {/* ROJO: EN ALERTA */}
           <div
-            className={`rounded-xl p-2 flex flex-col items-center justify-center transition shadow-xs ${
+            className={`rounded-xl p-1.5 flex flex-col items-center justify-center transition shadow-xs ${
               alertaTasks.length > 0
                 ? "bg-red-600 text-white animate-pulse"
                 : "bg-slate-200 text-slate-500"
             }`}
           >
-            <span className="text-lg font-black leading-none">{alertaTasks.length}</span>
-            <span className="text-[10px] font-black uppercase tracking-wider mt-0.5">
-              {alertaTasks.length > 0 ? "🔴 EN ALERTA" : "⚪ AL DÍA"}
+            <span className="text-base font-black leading-none">{alertaTasks.length}</span>
+            <span className="text-[9.5px] font-black uppercase tracking-wider mt-0.5">
+              {alertaTasks.length > 0 ? "🔴 ATRASO" : "⚪ AL DÍA"}
             </span>
           </div>
         </div>
       </section>
 
-      {/* 3. PLAN DE MARKETING & ESTRATEGIA DE CONVERSIÓN */}
-      <section className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white rounded-2xl p-2.5 sm:p-3 border-2 border-indigo-400/40 shadow-xs shrink-0 space-y-1.5">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1.5 min-w-0">
-            <span className="p-1 rounded-lg bg-indigo-500/30 text-indigo-300 shrink-0">
-              <Target className="w-4 h-4 text-indigo-300 stroke-[2.5]" />
-            </span>
-            <div className="min-w-0">
-              <div className="text-[9.5px] font-mono font-black uppercase tracking-wider text-indigo-300 flex items-center gap-1">
-                <span>PLAN MARKETING · {currentDayData.shortLabel}</span>
-                {isAllDone && (
-                  <span className="bg-emerald-500/30 text-emerald-300 px-1 rounded text-[8.5px]">
-                    100% LISTO
+      {/* 3. VISTA DIARIA: LOS 3 BLOQUES DE CONTENIDO DE HOY */}
+      {viewMode === "diario" ? (
+        <section className="space-y-1.5 shrink-0">
+          <div className="flex items-center justify-between text-[10.5px] font-black text-slate-600 uppercase px-1">
+            <span>Contenido de Hoy ({videoBlocks.length} Productos)</span>
+            <span className="text-blue-700 font-bold">Toca para abrir subproductos</span>
+          </div>
+
+          <div className="space-y-1.5">
+            {videoBlocks.map((block) => {
+              const isVideoDone = !!completedMap[block.mainAction.id];
+              const hasAlert = block.allActions.some((a) => isTaskUrgent(a));
+
+              const cardBg = isVideoDone
+                ? "bg-emerald-50 border-emerald-500 text-emerald-950"
+                : hasAlert
+                ? "bg-red-50 border-red-500 text-red-950 ring-2 ring-red-200"
+                : "bg-amber-50 border-amber-400 text-amber-950";
+
+              const badgeBg = isVideoDone
+                ? "bg-emerald-600 text-white"
+                : hasAlert
+                ? "bg-red-600 text-white animate-pulse"
+                : "bg-amber-500 text-slate-950";
+
+              const subproductsBadges = [
+                block.mainAction.videoDownloadUrl ? "🎬 MP4" : null,
+                block.mainAction.assetPreview ? "🖼️ Portada" : null,
+                block.carousel ? `📑 Carrusel (${block.carousel.slides.length})` : null,
+                block.stories.length > 0 ? `📱 ${block.stories.length} Stories` : null,
+              ].filter(Boolean);
+
+              return (
+                <div
+                  key={block.id}
+                  className={`p-2.5 rounded-2xl border-2 flex items-center justify-between gap-2 shadow-xs transition ${cardBg}`}
+                >
+                  {/* Tocar el bloque abre el modal con TODOS los subproductos */}
+                  <button
+                    type="button"
+                    onClick={() => setInspectBlockId(block.id)}
+                    className="cursor-pointer touch-manipulation min-w-0 flex-1 text-left flex items-center gap-2"
+                  >
+                    <span
+                      className={`font-mono font-black text-xs px-2 py-1 rounded-lg shrink-0 ${badgeBg}`}
+                    >
+                      {block.timeSlot}
+                    </span>
+
+                    <div className="min-w-0 flex-1">
+                      <div className="text-xs font-black truncate leading-tight flex items-center gap-1">
+                        <span>{block.title.replace(/^Video.*?: /, "")}</span>
+                        <ChevronRight className="w-3.5 h-3.5 opacity-60 shrink-0" />
+                      </div>
+
+                      {/* BADGES DE SUBPRODUCTOS INCLUIDOS DETRÁS DEL VIDEO */}
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {subproductsBadges.map((badge, idx) => (
+                          <span
+                            key={idx}
+                            className="text-[9px] font-mono font-bold bg-white/80 px-1.5 py-0.5 rounded border border-slate-300/60 text-slate-800"
+                          >
+                            {badge}
+                          </span>
+                        ))}
+                      </div>
+
+                      <div className="text-[10px] font-bold opacity-80 truncate mt-0.5">
+                        {isVideoDone
+                          ? "🟢 Video subido y confirmado"
+                          : hasAlert
+                          ? "🔴 ¡En alerta! Turno pendiente"
+                          : "🟡 En espera para publicar"}
+                      </div>
+                    </div>
+                  </button>
+
+                  {/* BOTÓN TICKET RÁPIDO PARA MORDIENDO EL AVANCE */}
+                  <button
+                    type="button"
+                    onClick={() => toggleTask(block.mainAction.id)}
+                    className={`cursor-pointer touch-manipulation min-h-[42px] px-3.5 rounded-xl text-xs font-black border flex items-center gap-1 shrink-0 transition active:scale-95 shadow-xs ${
+                      isVideoDone
+                        ? "bg-emerald-600 border-emerald-600 text-white"
+                        : "bg-white border-slate-300 hover:border-slate-400 text-slate-800"
+                    }`}
+                  >
+                    {isVideoDone ? (
+                      <>
+                        <Check className="w-4 h-4 stroke-[3]" />
+                        <span>Listo</span>
+                      </>
+                    ) : (
+                      <span>Marcar</span>
+                    )}
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      ) : (
+        /* 4. VISTA SEMANAL: MATRIZ DE TODA LA SEMANA */
+        <section className="space-y-1.5 shrink-0 max-h-[50dvh] overflow-y-auto pr-0.5">
+          <div className="flex items-center justify-between text-[10.5px] font-black text-slate-600 uppercase px-1">
+            <span>Planificación Semanal (23–30 Nov)</span>
+            <span className="text-blue-700 font-bold">Toca para auditar el día</span>
+          </div>
+
+          <div className="space-y-1.5">
+            {WEEK_PLAN.map((row) => (
+              <div
+                key={row.day}
+                className={`p-2.5 rounded-xl border-2 flex items-center justify-between gap-2 shadow-xs transition ${row.cardBg}`}
+              >
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xs font-black">{row.day}</span>
+                    <span className={`text-[9px] font-mono font-black px-1.5 py-0.5 rounded ${row.badgeColor}`}>
+                      {row.status}
+                    </span>
+                  </div>
+                  <div className="text-[10px] opacity-90 truncate mt-0.5 font-medium">
+                    {row.topics.join(" · ")}
+                  </div>
+                </div>
+
+                {row.key ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setDayOverride(row.key!);
+                      setViewMode("diario");
+                    }}
+                    className="cursor-pointer touch-manipulation min-h-[34px] px-2.5 bg-blue-600 hover:bg-blue-700 text-white font-black text-[10.5px] rounded-lg shrink-0 shadow-xs flex items-center gap-1"
+                  >
+                    <span>Auditar</span>
+                    <ChevronRight className="w-3 h-3" />
+                  </button>
+                ) : (
+                  <span className="text-[10px] font-mono text-slate-500 font-bold shrink-0">
+                    Planificado
                   </span>
                 )}
               </div>
-              <div className="text-xs font-black text-white truncate">
-                Cazabobos PAES & Refuerzo Ingeniería
-              </div>
-            </div>
+            ))}
           </div>
-
-          <button
-            type="button"
-            onClick={() => setShowStrategyModal(true)}
-            className="cursor-pointer touch-manipulation min-h-[28px] px-2.5 py-0.5 rounded-lg bg-indigo-500/30 hover:bg-indigo-500/40 border border-indigo-400/30 text-[10px] font-black text-indigo-200 flex items-center gap-0.5 shrink-0 transition"
-          >
-            <span>Ver Embudo</span>
-            <ChevronRight className="w-3 h-3" />
-          </button>
-        </div>
-
-        {/* 2 PILARES CLAVE: GATILLO DE CAPTACIÓN & META DE VENTAS */}
-        <div className="grid grid-cols-2 gap-1.5 pt-0.5 text-slate-100">
-          {/* GATILLO CAPTACIÓN */}
-          <div className="bg-white/10 rounded-xl p-2 border border-white/10 flex flex-col justify-between">
-            <div className="text-[9.5px] font-mono font-bold uppercase text-amber-300 flex items-center gap-1">
-              <Sparkles className="w-3 h-3 text-amber-300 shrink-0" />
-              <span className="truncate">Gatillo Viral</span>
-            </div>
-            <div className="text-[10.5px] font-black leading-tight mt-1 text-slate-100">
-              Comentar <span className="text-amber-300">&quot;FORMULARIO&quot;</span> → DM con PDF → WA
-            </div>
-          </div>
-
-          {/* META DE CONVERSIÓN */}
-          <div className="bg-white/10 rounded-xl p-2 border border-white/10 flex flex-col justify-between">
-            <div className="text-[9.5px] font-mono font-bold uppercase text-emerald-300 flex items-center gap-1">
-              <TrendingUp className="w-3 h-3 text-emerald-400 shrink-0" />
-              <span className="truncate">Meta Diaria</span>
-            </div>
-            <div className="text-[10.5px] font-black leading-tight mt-1 text-slate-100">
-              <span className="text-emerald-300">3 consultas WA</span> · Cierre $100k / $20k
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 4. LOS 3 VIDEOS DEL DÍA CON COLOR DE SEMÁFORO REAL (VERDE / AMARILLO / ROJO) */}
-      <section className="space-y-1.5 shrink-0">
-        <div className="flex items-center justify-between text-[10.5px] font-black text-slate-500 uppercase px-1">
-          <span>Videos de Hoy ({videoBlocks.length})</span>
-          <span>Toca para ver el pack completo</span>
-        </div>
-
-        <div className="space-y-1.5">
-          {videoBlocks.map((block) => {
-            const isVideoDone = !!completedMap[block.mainAction.id];
-            const hasAlert = block.allActions.some((a) => isTaskUrgent(a));
-
-            // COLOR DEL SEMÁFORO PARA ESTE VIDEO
-            const cardBg = isVideoDone
-              ? "bg-emerald-50 border-emerald-500 text-emerald-950"
-              : hasAlert
-              ? "bg-red-50 border-red-500 text-red-950 ring-2 ring-red-200"
-              : "bg-amber-50 border-amber-400 text-amber-950";
-
-            const badgeBg = isVideoDone
-              ? "bg-emerald-600 text-white"
-              : hasAlert
-              ? "bg-red-600 text-white animate-pulse"
-              : "bg-amber-500 text-slate-950";
-
-            return (
-              <div
-                key={block.id}
-                className={`p-2.5 rounded-2xl border-2 flex items-center justify-between gap-2 shadow-xs transition ${cardBg}`}
-              >
-                {/* Tocar el video abre el modal con historias, carrusel y copies */}
-                <button
-                  type="button"
-                  onClick={() => setInspectBlockId(block.id)}
-                  className="cursor-pointer touch-manipulation min-w-0 flex-1 text-left flex items-center gap-2"
-                >
-                  <span
-                    className={`font-mono font-black text-xs px-2 py-1 rounded-lg shrink-0 ${badgeBg}`}
-                  >
-                    {block.timeSlot}
-                  </span>
-
-                  <div className="min-w-0 flex-1">
-                    <div className="text-xs font-black truncate leading-tight flex items-center gap-1">
-                      <span>{block.title.replace(/^Video.*?: /, "")}</span>
-                      <ChevronRight className="w-3.5 h-3.5 opacity-60 shrink-0" />
-                    </div>
-                    <div className="text-[10.5px] font-bold opacity-80 truncate mt-0.5">
-                      {isVideoDone
-                        ? "🟢 Video subido y confirmado"
-                        : hasAlert
-                        ? "🔴 ¡En alerta! Requiere subir"
-                        : "🟡 En espera para publicar"}
-                    </div>
-                  </div>
-                </button>
-
-                {/* BOTÓN TICKET */}
-                <button
-                  type="button"
-                  onClick={() => toggleTask(block.mainAction.id)}
-                  className={`cursor-pointer touch-manipulation min-h-[40px] px-3.5 rounded-xl text-xs font-black border flex items-center gap-1 shrink-0 transition active:scale-95 shadow-xs ${
-                    isVideoDone
-                      ? "bg-emerald-600 border-emerald-600 text-white"
-                      : "bg-white border-slate-300 hover:border-slate-400 text-slate-800"
-                  }`}
-                >
-                  {isVideoDone ? (
-                    <>
-                      <Check className="w-4 h-4 stroke-[3]" />
-                      <span>Listo</span>
-                    </>
-                  ) : (
-                    <span>Marcar</span>
-                  )}
-                </button>
-              </div>
-            );
-          })}
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* 5. BARRA INFERIOR DE ACCESO RÁPIDO CON CONTADOR DE LEADS */}
       <footer className="grid grid-cols-4 gap-1.5 pt-1 shrink-0">
         <button
           type="button"
-          onClick={() => setShowWeekModal(true)}
+          onClick={() => setViewMode(viewMode === "diario" ? "semanal" : "diario")}
           className="cursor-pointer touch-manipulation min-h-[44px] bg-white hover:bg-slate-50 border-2 border-slate-200 rounded-xl text-xs font-black text-slate-800 flex flex-col items-center justify-center shadow-xs"
         >
           <Calendar className="w-3.5 h-3.5 text-amber-500" />
-          <span className="text-[10px]">Semana</span>
+          <span className="text-[10px]">{viewMode === "diario" ? "Semana" : "Hoy"}</span>
         </button>
 
         <button
@@ -748,15 +886,16 @@ export function GrillaCockpitClient({
       </footer>
 
       {/* ======================================================== */}
-      {/* MODAL GAVETA DE EMERGENCIA (AL TOCAR EL VIDEO)           */}
+      {/* MODAL FICHA DE OPERACIONES (ENTREGA DE TODOS LOS SUBPRODUCTOS) */}
       {/* ======================================================== */}
       {inspectedBlock && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-3 animate-in fade-in">
-          <div className="bg-white border-2 border-slate-300 rounded-3xl w-full max-w-sm max-h-[85dvh] flex flex-col overflow-hidden shadow-2xl text-slate-900">
-            <div className="p-3.5 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+          <div className="bg-white border-2 border-slate-300 rounded-3xl w-full max-w-sm max-h-[88dvh] flex flex-col overflow-hidden shadow-2xl text-slate-900">
+            {/* CABECERA DE LA FICHA */}
+            <div className="p-3.5 border-b border-slate-200 flex items-center justify-between bg-slate-50 shrink-0">
               <div className="min-w-0">
-                <span className="text-[10px] font-mono font-black text-emerald-700 uppercase">
-                  {inspectedBlock.timeSlot} HRS · PACK COMPLETO
+                <span className="text-[10px] font-mono font-black text-blue-700 uppercase">
+                  {inspectedBlock.timeSlot} HRS · ENTREGA TOTAL DE SUBPRODUCTOS
                 </span>
                 <h3 className="text-xs font-black text-slate-900 truncate">
                   {inspectedBlock.title}
@@ -771,34 +910,230 @@ export function GrillaCockpitClient({
               </button>
             </div>
 
-            <div className="p-3.5 space-y-3 overflow-y-auto text-xs">
-              {/* VIDEO Y PORTADA */}
-              <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200 flex items-center justify-between gap-2">
-                <div>
-                  <div className="font-black text-slate-900">Video MP4 9:16</div>
-                  <div className="text-[10px] text-slate-500">Reels / TikTok</div>
-                </div>
-                {inspectedBlock.mainAction.videoDownloadUrl && (
-                  <a
-                    href={inspectedBlock.mainAction.videoDownloadUrl}
-                    download
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="cursor-pointer touch-manipulation min-h-[38px] px-3 bg-slate-900 hover:bg-slate-800 text-white font-black text-xs rounded-xl flex items-center gap-1 shadow-xs"
+            {/* CONTENIDO SCROLLABLE DE TODOS LOS SUBPRODUCTOS */}
+            <div className="p-3.5 space-y-3.5 overflow-y-auto text-xs">
+              {/* CONTROL DE AVANCE OPERATIVO: ¿SUBIÓ O NO SE SUBIÓ? */}
+              {(() => {
+                const isVideoDone = !!completedMap[inspectedBlock.mainAction.id];
+                return (
+                  <div
+                    className={`p-3 rounded-2xl border-2 flex items-center justify-between gap-2 shadow-xs transition ${
+                      isVideoDone
+                        ? "bg-emerald-50 border-emerald-500 text-emerald-950"
+                        : "bg-amber-50 border-amber-400 text-amber-950"
+                    }`}
                   >
-                    <Download className="w-3.5 h-3.5" /> Bajar MP4
-                  </a>
+                    <div>
+                      <div className="text-xs font-black uppercase flex items-center gap-1">
+                        {isVideoDone ? "🟢 Video Subido y Confirmado" : "🟡 Video Pendiente de Subir"}
+                      </div>
+                      <div className="text-[10px] opacity-80 mt-0.5">
+                        {isVideoDone
+                          ? "Marcado en tu mando de operaciones"
+                          : "Toca para registrar la subida"}
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => toggleTask(inspectedBlock.mainAction.id)}
+                      className={`cursor-pointer touch-manipulation min-h-[38px] px-3.5 rounded-xl font-black text-xs shadow-xs transition active:scale-95 flex items-center gap-1 ${
+                        isVideoDone
+                          ? "bg-emerald-600 text-white hover:bg-emerald-700"
+                          : "bg-slate-900 text-white hover:bg-slate-800"
+                      }`}
+                    >
+                      {isVideoDone ? (
+                        <>
+                          <Check className="w-3.5 h-3.5 stroke-[3]" />
+                          <span>Listo ✓</span>
+                        </>
+                      ) : (
+                        <span>Marcar Subido</span>
+                      )}
+                    </button>
+                  </div>
+                );
+              })()}
+
+              {/* 1. SUBPRODUCTO VIDEO MASTER (MP4 9:16) */}
+              <div className="bg-slate-50 p-3 rounded-2xl border border-slate-200 space-y-2">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="text-[10px] font-mono font-black text-slate-500 uppercase flex items-center gap-1">
+                      <Film className="w-3 h-3 text-blue-600" />
+                      <span>Subproducto 1: Video Master (9:16)</span>
+                    </div>
+                    <div className="text-xs font-black text-slate-900 truncate mt-0.5">
+                      {inspectedBlock.mainAction.videoLabel || "Video Vertical HD"}
+                    </div>
+                  </div>
+                  {inspectedBlock.mainAction.videoDownloadUrl && (
+                    <a
+                      href={inspectedBlock.mainAction.videoDownloadUrl}
+                      download
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="cursor-pointer touch-manipulation min-h-[34px] px-3 bg-slate-900 hover:bg-slate-800 text-white font-black text-xs rounded-xl flex items-center gap-1 shadow-xs shrink-0"
+                    >
+                      <Download className="w-3.5 h-3.5" /> Bajar MP4
+                    </a>
+                  )}
+                </div>
+
+                {/* REPRODUCTOR HTML5 EN VIVO */}
+                {inspectedBlock.mainAction.videoDownloadUrl && (
+                  <video
+                    controls
+                    playsInline
+                    preload="metadata"
+                    src={inspectedBlock.mainAction.videoDownloadUrl}
+                    className="w-full max-h-48 rounded-xl bg-black border border-slate-300"
+                  />
                 )}
               </div>
 
-              {/* TEXTO PARA PEGAR EN LA DESCRIPCIÓN DEL VIDEO (INSTAGRAM / TIKTOK) */}
-              {inspectedBlock.mainAction.copies && (
+              {/* 2. SUBPRODUCTO PORTADA OFICIAL DEL VIDEO */}
+              {inspectedBlock.mainAction.assetPreview && (
+                <div className="bg-slate-50 p-3 rounded-2xl border border-slate-200 flex items-center gap-3">
+                  <div className="relative w-16 h-20 bg-slate-200 rounded-xl overflow-hidden shrink-0 border border-slate-300">
+                    <Image
+                      src={inspectedBlock.mainAction.assetPreview.url}
+                      alt={inspectedBlock.mainAction.assetPreview.name}
+                      fill
+                      unoptimized
+                      className="object-cover"
+                    />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="text-[10px] font-mono font-black text-slate-500 uppercase">
+                      Subproducto 2: Portada HD
+                    </div>
+                    <div className="text-xs font-black text-slate-900 truncate">
+                      {inspectedBlock.mainAction.assetPreview.name}
+                    </div>
+                    <div className="text-[10px] text-slate-500 mt-0.5">
+                      1080×1920 px · Calibrada para Reels y TikTok
+                    </div>
+                    <a
+                      href={inspectedBlock.mainAction.assetPreview.downloadUrl}
+                      download={inspectedBlock.mainAction.assetPreview.name}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="cursor-pointer touch-manipulation mt-1.5 inline-flex items-center gap-1 min-h-[30px] px-2.5 bg-slate-900 hover:bg-slate-800 text-white font-black text-[10.5px] rounded-lg shadow-xs"
+                    >
+                      <Download className="w-3 h-3" /> Bajar Portada
+                    </a>
+                  </div>
+                </div>
+              )}
+
+              {/* 3. SUBPRODUCTO CARRUSEL (LÁMINAS HD) */}
+              {inspectedBlock.carousel && (
+                <div className="space-y-2 bg-slate-50 p-3 rounded-2xl border border-slate-200">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="text-[10px] font-mono font-black text-amber-700 uppercase flex items-center gap-1">
+                        <Layers className="w-3 h-3 text-amber-600" />
+                        <span>Subproducto 3: Carrusel ({inspectedBlock.carousel.slides.length} Láminas)</span>
+                      </span>
+                      <div className="text-xs font-black text-slate-900 truncate mt-0.5">
+                        {inspectedBlock.carousel.title}
+                      </div>
+                    </div>
+                    {inspectedBlock.carousel.sheetUrl && (
+                      <a
+                        href={inspectedBlock.carousel.sheetUrl}
+                        download
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="cursor-pointer touch-manipulation text-[10px] font-black bg-amber-500 hover:bg-amber-600 text-slate-950 px-2.5 py-1 rounded-lg shrink-0 shadow-xs"
+                      >
+                        Hoja Completa
+                      </a>
+                    )}
+                  </div>
+
+                  {/* Galería horizontal deslizable con cada una de las láminas */}
+                  <div className="flex gap-2 overflow-x-auto pb-1 pt-0.5">
+                    {inspectedBlock.carousel.slides.map((sl) => {
+                      const slideUrl = `${inspectedBlock.carousel!.folderPath}/${sl.file}`;
+                      return (
+                        <div
+                          key={sl.num}
+                          className="w-24 shrink-0 bg-white p-1.5 rounded-xl border border-slate-200 text-center space-y-1 shadow-xs"
+                        >
+                          <div className="relative w-full h-28 bg-slate-100 rounded-lg overflow-hidden border border-slate-200">
+                            <Image
+                              src={slideUrl}
+                              alt={`${sl.num} ${sl.name}`}
+                              fill
+                              unoptimized
+                              className="object-cover"
+                            />
+                          </div>
+                          <div className="text-[9px] font-black text-slate-800 truncate">
+                            {sl.num}. {sl.name}
+                          </div>
+                          <a
+                            href={slideUrl}
+                            download={sl.file}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="cursor-pointer touch-manipulation min-h-[26px] w-full bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-md text-[9px] font-black flex items-center justify-center gap-0.5"
+                          >
+                            <Download className="w-2.5 h-2.5" /> Bajar
+                          </a>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* 4. SUBPRODUCTO STORIES 9:16 */}
+              {inspectedBlock.stories.length > 0 && (
+                <div className="space-y-1.5 bg-slate-50 p-3 rounded-2xl border border-slate-200">
+                  <span className="text-[10px] font-mono font-black text-purple-700 uppercase flex items-center gap-1">
+                    <span>Subproducto 4: Stories 9:16 ({inspectedBlock.stories.length} Láminas)</span>
+                  </span>
+                  <div className="grid grid-cols-2 gap-2 pt-1">
+                    {inspectedBlock.stories.map((st) => (
+                      <div key={st.id} className="bg-white p-2 rounded-xl border border-slate-200 text-center space-y-1.5">
+                        <div className="relative w-full h-28 bg-slate-100 rounded-lg overflow-hidden border border-slate-300">
+                          <Image
+                            src={st.url}
+                            alt={st.title}
+                            fill
+                            unoptimized
+                            className="object-cover"
+                          />
+                        </div>
+                        <div className="text-[9.5px] font-black text-slate-800 truncate">
+                          {st.title}
+                        </div>
+                        <a
+                          href={st.url}
+                          download={st.downloadName}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="cursor-pointer touch-manipulation min-h-[30px] w-full bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 rounded-lg text-[10px] font-black flex items-center justify-center gap-1 shadow-xs"
+                        >
+                          <Download className="w-3 h-3" /> Bajar Story
+                        </a>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* 5. SUBPRODUCTO COPIES Y TEXTOS LISTOS */}
+              {inspectedBlock.mainAction.copies && inspectedBlock.mainAction.copies.length > 0 && (
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between">
                     <span className="text-[10.5px] font-black text-slate-700 uppercase tracking-wide">
-                      Texto para pegar en tu publicación:
+                      Subproducto 5: Copies Listos para Publicar
                     </span>
-                    <span className="text-[10px] text-slate-500 font-medium">Toca para copiar</span>
+                    <span className="text-[10px] text-slate-500 font-medium">1 toque para copiar</span>
                   </div>
                   {inspectedBlock.mainAction.copies.map((c) => (
                     <button
@@ -810,10 +1145,10 @@ export function GrillaCockpitClient({
                       <div className="min-w-0 pr-2">
                         <div className="truncate text-slate-900 font-black">{c.label}</div>
                         <div className="text-[10px] text-slate-500 truncate font-normal">
-                          {c.text.slice(0, 50)}...
+                          {c.text.slice(0, 55)}...
                         </div>
                       </div>
-                      <span className="font-mono text-[11px] text-blue-700 font-black shrink-0 bg-blue-50 border border-blue-200 px-2 py-1 rounded-lg">
+                      <span className="font-mono text-[11px] text-blue-700 font-black shrink-0 bg-blue-50 border border-blue-200 px-2.5 py-1 rounded-lg">
                         {copiedKey === c.key ? "¡COPIADO!" : "COPIAR"}
                       </span>
                     </button>
@@ -821,129 +1156,48 @@ export function GrillaCockpitClient({
                 </div>
               )}
 
-              {/* HISTORIAS */}
-              {inspectedBlock.stories.length > 0 && (
-                <div className="space-y-1.5">
-                  <span className="text-[10px] font-mono font-bold text-purple-700 uppercase">
-                    Stories 9:16 ({inspectedBlock.stories.length} láminas):
+              {/* ACCIONES VINCULADAS (WHATSAPP / GRUPOS) */}
+              {inspectedBlock.associatedActions.length > 0 && (
+                <div className="space-y-1.5 pt-1">
+                  <span className="text-[10px] font-mono font-bold text-slate-500 uppercase">
+                    Difusión en Grupos & WhatsApp:
                   </span>
-                  <div className="grid grid-cols-2 gap-2">
-                    {inspectedBlock.stories.map((st) => (
-                      <div key={st.id} className="bg-slate-50 p-2 rounded-xl border border-slate-200 text-center space-y-1">
-                        <Image
-                          src={st.url}
-                          alt={st.title}
-                          width={90}
-                          height={140}
-                          unoptimized
-                          className="w-full h-24 object-cover rounded-lg border border-slate-300"
-                        />
-                        <a
-                          href={st.url}
-                          download={st.downloadName}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="cursor-pointer touch-manipulation min-h-[32px] w-full bg-purple-50 text-purple-700 border border-purple-200 rounded-lg text-[10.5px] font-black flex items-center justify-center gap-1"
-                        >
-                          <Download className="w-3 h-3" /> Bajar
-                        </a>
+                  {inspectedBlock.associatedActions.map((a) => {
+                    const done = !!completedMap[a.id];
+                    return (
+                      <div
+                        key={a.id}
+                        className="p-2.5 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between gap-2"
+                      >
+                        <span className={`text-xs truncate ${done ? "line-through text-slate-400" : "text-slate-900 font-bold"}`}>
+                          {a.time} · {a.title}
+                        </span>
+                        <div className="flex items-center gap-1 shrink-0">
+                          {a.copies && a.copies[0]?.waShare && (
+                            <a
+                              href={`https://wa.me/?text=${encodeURIComponent(a.copies[0].text)}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="cursor-pointer touch-manipulation min-h-[34px] px-2.5 bg-[#25D366] text-white text-[11px] font-black rounded-lg flex items-center gap-1"
+                            >
+                              WA
+                            </a>
+                          )}
+                          <button
+                            type="button"
+                            onClick={() => toggleTask(a.id)}
+                            className={`cursor-pointer touch-manipulation min-h-[34px] px-3 rounded-lg text-xs font-black ${
+                              done ? "bg-emerald-600 text-white" : "bg-white border border-slate-300 text-slate-800"
+                            }`}
+                          >
+                            {done ? "✓" : "Marcar"}
+                          </button>
+                        </div>
                       </div>
-                    ))}
-                  </div>
+                    );
+                  })}
                 </div>
               )}
-
-              {/* ACCIONES VINCULADAS */}
-              <div className="space-y-1.5">
-                <span className="text-[10px] font-mono font-bold text-slate-500 uppercase">Grupos y WhatsApp:</span>
-                {inspectedBlock.associatedActions.map((a) => {
-                  const done = !!completedMap[a.id];
-                  return (
-                    <div key={a.id} className="p-2 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between gap-2">
-                      <span className={`text-xs truncate ${done ? "line-through text-slate-400" : "text-slate-900 font-bold"}`}>
-                        {a.time} · {a.title}
-                      </span>
-                      <div className="flex items-center gap-1 shrink-0">
-                        {a.copies && a.copies[0]?.waShare && (
-                          <a
-                            href={`https://wa.me/?text=${encodeURIComponent(a.copies[0].text)}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="cursor-pointer touch-manipulation min-h-[34px] px-2.5 bg-[#25D366] text-white text-[11px] font-black rounded-lg flex items-center gap-1"
-                          >
-                            WA
-                          </a>
-                        )}
-                        <button
-                          type="button"
-                          onClick={() => toggleTask(a.id)}
-                          className={`cursor-pointer touch-manipulation min-h-[34px] px-3 rounded-lg text-xs font-black ${
-                            done ? "bg-emerald-600 text-white" : "bg-white border border-slate-300 text-slate-800"
-                          }`}
-                        >
-                          {done ? "✓" : "Marcar"}
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ======================================================== */}
-      {/* MODAL SEMANA (SEMÁFORO DE LA SEMANA COMPLETA)            */}
-      {/* ======================================================== */}
-      {showWeekModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 animate-in fade-in">
-          <div className="bg-white border-2 border-slate-300 rounded-3xl w-full max-w-sm max-h-[85dvh] flex flex-col overflow-hidden shadow-2xl text-slate-900">
-            <div className="p-3.5 border-b border-slate-200 flex items-center justify-between bg-slate-50">
-              <h3 className="text-xs font-black text-slate-900 flex items-center gap-1.5">
-                <Calendar className="w-4 h-4 text-amber-500" />
-                Semáforo Semanal (23–29 Nov)
-              </h3>
-              <button
-                type="button"
-                onClick={() => setShowWeekModal(false)}
-                className="p-1 rounded-full bg-slate-200 text-slate-700"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-            <div className="p-3.5 space-y-2 overflow-y-auto text-xs">
-              {[
-                { day: "Lunes 23 Nov", status: "🟢 Listo (3/3 videos)", desc: "Simplificar · 1m² a cm² · i²=-1", color: "bg-emerald-50 border-emerald-300 text-emerald-950" },
-                { day: "Martes 24 Nov", status: "🟢 Listo (3/3 videos)", desc: "Olvido del ± · Vértice · Secreto π", color: "bg-emerald-50 border-emerald-300 text-emerald-950" },
-                { day: "Miércoles 25 Nov", status: "🟢 Operativo", desc: "Discriminante · Arista 3D · Dividir por 0", key: "mie25" as DayKey, color: "bg-emerald-50 border-emerald-300 text-emerald-950" },
-                { day: "Jueves 26 Nov", status: "🔴 Hoy Crítico", desc: "Parábola · Viète · Euler + Formulario", key: "jue26" as DayKey, color: "bg-red-50 border-red-300 text-red-950" },
-                { day: "Viernes 27 Nov", status: "🟡 Falta Render V2", desc: "Inecuaciones · Ganancia máx · Fractales", color: "bg-amber-50 border-amber-300 text-amber-950" },
-                { day: "Sábado 28 Nov", status: "🟡 Falta Render V2", desc: "Intersección ejes · Inversa · Hilbert", color: "bg-amber-50 border-amber-300 text-amber-950" },
-                { day: "Domingo 29 Nov", status: "🟡 Víspera PAES", desc: "10 Puntos Clave · Calma · Confianza", color: "bg-amber-50 border-amber-300 text-amber-950" },
-              ].map((row) => (
-                <div key={row.day} className={`p-2.5 rounded-xl border-2 flex items-center justify-between gap-2 ${row.color}`}>
-                  <div className="min-w-0">
-                    <div className="text-xs font-black">{row.day}</div>
-                    <div className="text-[10px] opacity-80 truncate">{row.desc}</div>
-                  </div>
-                  <div className="text-right shrink-0">
-                    <span className="text-[10px] font-mono font-black block">{row.status}</span>
-                    {row.key && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setDayOverride(row.key!);
-                          setShowWeekModal(false);
-                        }}
-                        className="text-[10.5px] text-blue-700 underline font-black mt-0.5"
-                      >
-                        Abrir turno →
-                      </button>
-                    )}
-                  </div>
-                </div>
-              ))}
             </div>
           </div>
         </div>
@@ -994,122 +1248,6 @@ export function GrillaCockpitClient({
                   </div>
                 </div>
               ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ======================================================== */}
-      {/* MODAL PLAN DE MARKETING & ESTRATEGIA DE CONVERSIÓN       */}
-      {/* ======================================================== */}
-      {showStrategyModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 animate-in fade-in">
-          <div className="bg-white border-2 border-slate-300 rounded-3xl w-full max-w-sm max-h-[85dvh] flex flex-col overflow-hidden shadow-2xl text-slate-900">
-            <div className="p-3.5 border-b border-slate-200 flex items-center justify-between bg-slate-50">
-              <h3 className="text-xs font-black text-slate-900 flex items-center gap-1.5">
-                <Target className="w-4 h-4 text-indigo-600" />
-                Plan Estratégico & Embudo de Marketing
-              </h3>
-              <button
-                type="button"
-                onClick={() => setShowStrategyModal(false)}
-                className="p-1 rounded-full bg-slate-200 text-slate-700 hover:bg-slate-300"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            <div className="p-3.5 space-y-3 overflow-y-auto text-xs">
-              {/* PROPÓSITO GENERAL */}
-              <div className="bg-indigo-50 border border-indigo-200 rounded-2xl p-3 space-y-1">
-                <div className="text-[10px] font-mono font-black uppercase text-indigo-800 flex items-center gap-1">
-                  <Lightbulb className="w-3.5 h-3.5 text-indigo-600" />
-                  Estrategia de Marca & Autoridad
-                </div>
-                <p className="text-[11px] text-indigo-950 font-medium leading-relaxed">
-                  Posicionar a <strong>@tuprofeindustrial</strong> como el docente especialista de mayor rigor técnico y pedagogía ágil en Chile para Matemáticas PAES y Ramos Universitarios de Ingeniería.
-                </p>
-              </div>
-
-              {/* EMBUDO DE 3 FASES */}
-              <div className="space-y-1.5">
-                <span className="text-[10px] font-mono font-black uppercase text-slate-500">
-                  Embudo Diario en 3 Fases (Videos)
-                </span>
-                
-                <div className="space-y-1.5">
-                  <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-200 flex gap-2">
-                    <span className="font-mono font-black text-[11px] text-amber-800 bg-amber-100 border border-amber-300 px-1.5 py-0.5 rounded-md h-fit shrink-0">
-                      12:30
-                    </span>
-                    <div className="min-w-0">
-                      <div className="font-black text-slate-900 text-[11px]">Tope de Embudo: Cazabobos Viral</div>
-                      <div className="text-[10px] text-slate-600 leading-tight">Gancho en los primeros 2.5s con error típico. Máxima retención y visualizaciones orgánicas.</div>
-                    </div>
-                  </div>
-
-                  <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-200 flex gap-2">
-                    <span className="font-mono font-black text-[11px] text-blue-800 bg-blue-100 border border-blue-300 px-1.5 py-0.5 rounded-md h-fit shrink-0">
-                      17:30
-                    </span>
-                    <div className="min-w-0">
-                      <div className="font-black text-slate-900 text-[11px]">Medio de Embudo: Generación de Comentarios</div>
-                      <div className="text-[10px] text-slate-600 leading-tight">Resolución con método rápido. Llamado a la acción: &quot;Comenta FORMULARIO y te lo mando por interno&quot;.</div>
-                    </div>
-                  </div>
-
-                  <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-200 flex gap-2">
-                    <span className="font-mono font-black text-[11px] text-emerald-800 bg-emerald-100 border border-emerald-300 px-1.5 py-0.5 rounded-md h-fit shrink-0">
-                      21:15
-                    </span>
-                    <div className="min-w-0">
-                      <div className="font-black text-slate-900 text-[11px]">Fondo de Embudo: Cierre & Venta Tutorías</div>
-                      <div className="text-[10px] text-slate-600 leading-tight">Autoridad de ingeniería. Derivación directa al link de la bio / WhatsApp para agendar cupo.</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* PROTOCOLO DE CONVERSIÓN EN WHATSAPP */}
-              <div className="space-y-1.5 pt-1">
-                <span className="text-[10px] font-mono font-black uppercase text-slate-500">
-                  Script Rápido para Prospectos en WA
-                </span>
-                <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-200 space-y-2">
-                  <div className="text-[10.5px] text-emerald-950 leading-relaxed font-medium">
-                    &ldquo;¡Hola! Soy Matías Alonso, Ingeniero Civil Industrial y Profe de Matemáticas de la USM. Te dejé el formulario maestro. Cuéntame, ¿para qué examen o ramo te preparas y cuál es tu meta?&rdquo;
-                  </div>
-                  <div className="flex gap-1.5">
-                    <button
-                      type="button"
-                      onClick={() => handleCopy("wa_script_mkt", "¡Hola! Soy Matías Alonso, Ingeniero Civil Industrial y Profe de Matemáticas de la USM. Te dejé el formulario maestro. Cuéntame, ¿para qué examen o ramo te preparas y cuál es tu meta?")}
-                      className="cursor-pointer touch-manipulation min-h-[36px] flex-1 bg-white border border-emerald-300 text-emerald-900 font-black rounded-xl text-xs hover:bg-emerald-100 flex items-center justify-center gap-1 shadow-xs"
-                    >
-                      <Copy className="w-3.5 h-3.5" />
-                      <span>{copiedKey === "wa_script_mkt" ? "¡Copiado!" : "Copiar Script"}</span>
-                    </button>
-                    <a
-                      href={`https://wa.me/?text=${encodeURIComponent("¡Hola! Soy Matías Alonso, Ingeniero Civil Industrial y Profe de Matemáticas de la USM. Te dejé el formulario maestro. Cuéntame, ¿para qué examen o ramo te preparas y cuál es tu meta?")}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="cursor-pointer touch-manipulation min-h-[36px] px-3 bg-[#25D366] text-white font-black rounded-xl text-xs flex items-center justify-center gap-1 shadow-xs"
-                    >
-                      Abrir WA
-                    </a>
-                  </div>
-                </div>
-              </div>
-
-              {/* RESUMEN DE TARIFAS VIGENTES */}
-              <div className="p-2.5 bg-slate-100 rounded-xl border border-slate-200 flex items-center justify-between">
-                <div>
-                  <div className="font-black text-slate-900 text-xs">Valores Tutorías</div>
-                  <div className="text-[10px] text-slate-500">Clase individual / Pack 5</div>
-                </div>
-                <div className="text-right font-mono font-black text-xs text-emerald-700">
-                  $20.000 / $100.000
-                </div>
-              </div>
             </div>
           </div>
         </div>
