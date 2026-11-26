@@ -417,7 +417,7 @@ export function GrillaCockpitClient({
   };
 
   const handleLaunchSocialUpload = async (
-    platform: "instagram" | "tiktok",
+    platform: "instagram" | "tiktok" | "facebook",
     block?: VideoBlock
   ) => {
     if (block && block.mainAction.copies && block.mainAction.copies.length > 0) {
@@ -426,13 +426,17 @@ export function GrillaCockpitClient({
       showToast(
         platform === "instagram"
           ? "📋 ¡Copy copiado! Abriendo Instagram..."
-          : "📋 ¡Copy copiado! Abriendo TikTok..."
+          : platform === "tiktok"
+          ? "📋 ¡Copy copiado! Abriendo TikTok..."
+          : "📋 ¡Copy copiado con links! Abriendo Facebook..."
       );
     } else {
       showToast(
         platform === "instagram"
           ? "📸 Abriendo Instagram Creator..."
-          : "🎵 Abriendo TikTok Upload..."
+          : platform === "tiktok"
+          ? "🎵 Abriendo TikTok Upload..."
+          : "📘 Abriendo Facebook Fan Page..."
       );
     }
   };
@@ -1380,10 +1384,10 @@ export function GrillaCockpitClient({
                           e.stopPropagation();
                           handleLaunchSocialUpload("instagram", block);
                         }}
-                        className="cursor-pointer touch-manipulation px-2 py-0.5 rounded-lg bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white font-black text-[10px] flex items-center gap-1 shadow-2xs hover:opacity-90 active:scale-95 transition"
+                        className="cursor-pointer touch-manipulation px-1.5 py-0.5 rounded-lg bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white font-black text-[9.5px] flex items-center gap-0.5 shadow-2xs hover:opacity-90 active:scale-95 transition"
                         title="Copiar Copy y abrir Instagram Creator"
                       >
-                        <span>📸 Subir IG</span>
+                        <span>📸 IG</span>
                       </a>
                       <a
                         href="https://www.tiktok.com/upload"
@@ -1393,10 +1397,23 @@ export function GrillaCockpitClient({
                           e.stopPropagation();
                           handleLaunchSocialUpload("tiktok", block);
                         }}
-                        className="cursor-pointer touch-manipulation px-2 py-0.5 rounded-lg bg-black text-white font-black text-[10px] flex items-center gap-1 shadow-2xs hover:bg-slate-800 active:scale-95 transition"
+                        className="cursor-pointer touch-manipulation px-1.5 py-0.5 rounded-lg bg-black text-white font-black text-[9.5px] flex items-center gap-0.5 shadow-2xs hover:bg-slate-800 active:scale-95 transition"
                         title="Copiar Copy y abrir TikTok Upload"
                       >
-                        <span>🎵 Subir TT</span>
+                        <span>🎵 TT</span>
+                      </a>
+                      <a
+                        href="https://www.facebook.com/people/Tuprofeindustrial/61596403543170/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleLaunchSocialUpload("facebook", block);
+                        }}
+                        className="cursor-pointer touch-manipulation px-1.5 py-0.5 rounded-lg bg-blue-600 text-white font-black text-[9.5px] flex items-center gap-0.5 shadow-2xs hover:bg-blue-700 active:scale-95 transition"
+                        title="Copiar Copy con links y abrir Facebook Fan Page"
+                      >
+                        <span>📘 FB</span>
                       </a>
                     </div>
 
@@ -1509,6 +1526,16 @@ export function GrillaCockpitClient({
                             >
                               TT
                             </a>
+                            <a
+                              href="https://www.facebook.com/people/Tuprofeindustrial/61596403543170/"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={() => handleLaunchSocialUpload("facebook", block)}
+                              className="px-1.5 py-0.5 rounded bg-blue-600 text-white font-mono text-[9px] font-black shadow-xs"
+                              title="Copiar Copy con links y subir a Facebook"
+                            >
+                              FB
+                            </a>
                           </div>
                         ),
                       },
@@ -1565,6 +1592,16 @@ export function GrillaCockpitClient({
                                   >
                                     IG
                                   </a>
+                                  <a
+                                    href="https://www.facebook.com/people/Tuprofeindustrial/61596403543170/"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    onClick={() => handleLaunchSocialUpload("facebook", block)}
+                                    className="px-1.5 py-0.5 rounded bg-blue-600 text-white font-mono text-[9px] font-black shadow-xs"
+                                    title="Subir carrusel a Facebook Fan Page"
+                                  >
+                                    FB
+                                  </a>
                                 </div>
                               ),
                             },
@@ -1598,6 +1635,16 @@ export function GrillaCockpitClient({
                                     title="Subir story a Instagram"
                                   >
                                     IG
+                                  </a>
+                                  <a
+                                    href="https://www.facebook.com/people/Tuprofeindustrial/61596403543170/"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    onClick={() => handleLaunchSocialUpload("facebook", block)}
+                                    className="px-1.5 py-0.5 rounded bg-blue-600 text-white font-mono text-[9px] font-black shadow-xs"
+                                    title="Subir story a Facebook Fan Page"
+                                  >
+                                    FB
                                   </a>
                                 </div>
                               ),
@@ -1814,24 +1861,33 @@ export function GrillaCockpitClient({
                         </div>
 
                         {/* 3. ATAJOS RÁPIDOS PARA PUBLICAR DIRECTO EN REDES */}
-                        <div className="grid grid-cols-2 gap-1.5 pt-0.5">
+                        <div className="grid grid-cols-3 gap-1 pt-0.5">
                           <a
                             href="https://www.instagram.com/create/select/"
                             target="_blank"
                             rel="noopener noreferrer"
                             onClick={() => handleLaunchSocialUpload("instagram", block)}
-                            className="cursor-pointer touch-manipulation min-h-[34px] px-2 rounded-xl bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white font-black text-xs flex items-center justify-center gap-1 shadow-xs hover:opacity-90 active:scale-95 transition"
+                            className="cursor-pointer touch-manipulation min-h-[34px] px-1 rounded-xl bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white font-black text-[11px] flex items-center justify-center gap-1 shadow-xs hover:opacity-90 active:scale-95 transition"
                           >
-                            <span>📸 Subir a Instagram</span>
+                            <span>📸 Instagram</span>
                           </a>
                           <a
                             href="https://www.tiktok.com/upload"
                             target="_blank"
                             rel="noopener noreferrer"
                             onClick={() => handleLaunchSocialUpload("tiktok", block)}
-                            className="cursor-pointer touch-manipulation min-h-[34px] px-2 rounded-xl bg-black text-white font-black text-xs flex items-center justify-center gap-1 shadow-xs hover:bg-slate-800 active:scale-95 transition"
+                            className="cursor-pointer touch-manipulation min-h-[34px] px-1 rounded-xl bg-black text-white font-black text-[11px] flex items-center justify-center gap-1 shadow-xs hover:bg-slate-800 active:scale-95 transition"
                           >
-                            <span>🎵 Subir a TikTok</span>
+                            <span>🎵 TikTok</span>
+                          </a>
+                          <a
+                            href="https://www.facebook.com/people/Tuprofeindustrial/61596403543170/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={() => handleLaunchSocialUpload("facebook", block)}
+                            className="cursor-pointer touch-manipulation min-h-[34px] px-1 rounded-xl bg-blue-600 text-white font-black text-[11px] flex items-center justify-center gap-1 shadow-xs hover:bg-blue-700 active:scale-95 transition"
+                          >
+                            <span>📘 Facebook</span>
                           </a>
                         </div>
                       </div>
@@ -2004,7 +2060,7 @@ export function GrillaCockpitClient({
         </section>
       )}
 
-      {/* 4. ENGANCHE DIRECTO DE SUBIDA A REDES (INSTAGRAM Y TIKTOK) */}
+      {/* 4. ENGANCHE DIRECTO DE SUBIDA A REDES (INSTAGRAM, TIKTOK Y FACEBOOK) */}
       <div className="bg-white rounded-2xl p-2 border-2 border-slate-200 shadow-xs space-y-1.5 shrink-0">
         <div className="flex items-center justify-between px-1">
           <div className="flex items-center gap-1.5 text-[10px] font-black uppercase text-slate-700">
@@ -2016,28 +2072,36 @@ export function GrillaCockpitClient({
           </span>
         </div>
 
-        <div className="grid grid-cols-2 gap-1.5">
+        <div className="grid grid-cols-3 gap-1">
           <a
             href="https://www.instagram.com/create/select/"
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => handleLaunchSocialUpload("instagram")}
-            className="cursor-pointer touch-manipulation min-h-[36px] px-2 rounded-xl bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white font-black text-xs flex items-center justify-center gap-1 shadow-xs hover:opacity-95 active:scale-95 transition"
+            className="cursor-pointer touch-manipulation min-h-[36px] px-1 rounded-xl bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white font-black text-[11px] flex items-center justify-center gap-1 shadow-xs hover:opacity-95 active:scale-95 transition"
             title="Abrir Instagram Creator para subir"
           >
-            <span>📸 Subir a Instagram</span>
-            <ExternalLink className="w-3 h-3 opacity-80" />
+            <span>📸 Instagram</span>
           </a>
           <a
             href="https://www.tiktok.com/upload"
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => handleLaunchSocialUpload("tiktok")}
-            className="cursor-pointer touch-manipulation min-h-[36px] px-2 rounded-xl bg-black text-white font-black text-xs flex items-center justify-center gap-1 shadow-xs hover:bg-slate-800 active:scale-95 transition"
+            className="cursor-pointer touch-manipulation min-h-[36px] px-1 rounded-xl bg-black text-white font-black text-[11px] flex items-center justify-center gap-1 shadow-xs hover:bg-slate-800 active:scale-95 transition"
             title="Abrir TikTok Upload para subir"
           >
-            <span>🎵 Subir a TikTok</span>
-            <ExternalLink className="w-3 h-3 opacity-80" />
+            <span>🎵 TikTok</span>
+          </a>
+          <a
+            href="https://www.facebook.com/people/Tuprofeindustrial/61596403543170/"
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => handleLaunchSocialUpload("facebook")}
+            className="cursor-pointer touch-manipulation min-h-[36px] px-1 rounded-xl bg-blue-600 text-white font-black text-[11px] flex items-center justify-center gap-1 shadow-xs hover:bg-blue-700 active:scale-95 transition"
+            title="Abrir Fan Page de Facebook para subir"
+          >
+            <span>📘 Facebook</span>
           </a>
         </div>
       </div>
