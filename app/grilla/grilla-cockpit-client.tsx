@@ -183,6 +183,7 @@ export function GrillaCockpitClient({
   // Modales ligeros y pestañas operativas de mando
   const [viewMode, setViewMode] = useState<"diario" | "semanal">("diario");
   const [expandedBlockId, setExpandedBlockId] = useState<string | null>(null);
+  const [expandedWeekDay, setExpandedWeekDay] = useState<string | null>("sab28");
   const [inspectBlockId, setInspectBlockId] = useState<string | null>(null);
   const [showQuotesModal, setShowQuotesModal] = useState(false);
   const [showSyncModal, setShowSyncModal] = useState(false);
@@ -579,70 +580,345 @@ export function GrillaCockpitClient({
 
   const WEEK_PLAN = [
     {
+      id: "lun23",
       day: "Lunes 23 Nov",
       status: "🟢 Listo (3/3)",
-      badgeColor: "bg-emerald-600 text-white",
+      badgeColor: "bg-emerald-600 text-white font-black",
       cardBg: "bg-emerald-50 border-emerald-300 text-emerald-950",
-      topics: ["12:30 Simplificar", "17:30 1m² a cm²", "21:15 i² = -1"],
-      key: null,
+      topicsSummary: "12:30 Simplificar · 17:30 1m² a cm² · 21:15 i² = -1",
+      key: null as DayKey | null,
+      readiness: {
+        ready: [
+          "3 Videos publicados en redes (Instagram & TikTok)",
+          "Portadas y copies subidos",
+          "Archivado en registro histórico",
+        ],
+        pending: [],
+      },
+      slots: [
+        {
+          time: "12:30",
+          title: "Simplificar Fracciones con Letras",
+          format: "Reel / TikTok + Stories",
+          hook: "El error fatal de tachar términos sumando en vez de factorizar.",
+        },
+        {
+          time: "17:30",
+          title: "Convertir 1m² a cm² sin memorizar",
+          format: "Reel / TikTok + Stories",
+          hook: "El truco visual del cuadrado de 100cm × 100cm = 10.000 cm².",
+        },
+        {
+          time: "21:15",
+          title: "Dato Nocturno 03: ¿Por qué i² = -1?",
+          format: "Curiosidad Matemática",
+          hook: "La necesidad de los números complejos y rotación en 90°.",
+        },
+      ],
     },
     {
+      id: "mar24",
       day: "Martes 24 Nov",
       status: "🟢 Listo (3/3)",
-      badgeColor: "bg-emerald-600 text-white",
+      badgeColor: "bg-emerald-600 text-white font-black",
       cardBg: "bg-emerald-50 border-emerald-300 text-emerald-950",
-      topics: ["12:30 Olvido del ±", "17:30 Vértice parábola", "21:15 Secreto π"],
-      key: null,
+      topicsSummary: "12:30 Olvido del ± · 17:30 Vértice parábola · 21:15 Secreto π",
+      key: null as DayKey | null,
+      readiness: {
+        ready: [
+          "3 Videos publicados en redes",
+          "Portadas y copies subidos",
+          "Archivado en registro histórico",
+        ],
+        pending: [],
+      },
+      slots: [
+        {
+          time: "12:30",
+          title: "El olvido del ± al sacar raíz cuadrada",
+          format: "Reel / TikTok + Stories",
+          hook: "x² = 9 tiene dos soluciones: jamás olvides la raíz negativa.",
+        },
+        {
+          time: "17:30",
+          title: "Vértice de una Parábola sin fórmulas",
+          format: "Reel / TikTok + Stories",
+          hook: "El punto medio exacto entre las dos raíces reales.",
+        },
+        {
+          time: "21:15",
+          title: "Dato Nocturno 04: El misterio de Pi (π)",
+          format: "Curiosidad Matemática",
+          hook: "La constante universal que une el perímetro y el diámetro.",
+        },
+      ],
     },
     {
+      id: "mie25",
       day: "Miércoles 25 Nov",
       status: "🟢 Operativo (3/3)",
-      badgeColor: "bg-emerald-600 text-white",
+      badgeColor: "bg-emerald-600 text-white font-black",
       cardBg: "bg-emerald-50 border-emerald-300 text-emerald-950",
-      topics: ["12:30 Discriminante", "17:30 Arista 3D", "21:15 Dividir por 0"],
+      topicsSummary: "12:30 Discriminante · 17:30 Arista 3D · 21:15 Dividir por 0",
       key: "mie25" as DayKey,
+      readiness: {
+        ready: [
+          "3 Videos MP4 renderizados y subidos a servidor",
+          "Portadas en alta resolución",
+          "Carrusel de 8 láminas generado",
+          "Historias interactivas listas",
+        ],
+        pending: [],
+      },
+      slots: [
+        {
+          time: "12:30",
+          title: "Discriminante en 1 minuto",
+          format: "Reel + Carrusel 8 láminas + Stories",
+          hook: "¿Corta al eje X en dos puntos, uno o flota en el plano?",
+        },
+        {
+          time: "17:30",
+          title: "Duplicar arista de un cubo y su volumen",
+          format: "Reel + Cover + Stories",
+          hook: "Cuidado: el volumen no se duplica, crece 8 veces (2³).",
+        },
+        {
+          time: "21:15",
+          title: "Dato Nocturno 05: No dividir por cero",
+          format: "Reel + Cover + Stories",
+          hook: "La contradicción matemática que destruiría la lógica numérica.",
+        },
+      ],
     },
     {
-      day: "Jueves 26 Nov",
-      status: "🔴 Turno de Hoy",
-      badgeColor: "bg-red-600 text-white animate-pulse",
+      id: "jue26",
+      day: "Jueves 26 Nov (Hoy)",
+      status: "🔴 Turno Activo Hoy",
+      badgeColor: "bg-red-600 text-white animate-pulse font-black",
       cardBg: "bg-red-50 border-red-400 text-red-950 ring-2 ring-red-200",
-      topics: ["12:30 Parábola y Recta", "17:30 Truco Viète", "21:15 Euler + Formulario"],
+      topicsSummary: "12:30 Parábola y Recta · 17:30 Truco Viète · 21:15 Euler + Formulario",
       key: "jue26" as DayKey,
+      readiness: {
+        ready: [
+          "3 Videos MP4 listos en servidor público",
+          "3 Portadas de alto impacto listas",
+          "Carrusel 8 láminas generado",
+          "Stories con stickers de encuesta",
+          "Formulario Maestro PAES PDF servido",
+        ],
+        pending: [
+          "Subir a Instagram y TikTok en los turnos",
+          "Publicar stories y enviar broadcast a WhatsApp",
+        ],
+      },
+      slots: [
+        {
+          time: "12:30",
+          title: "¿Parábola y Recta se cortan?",
+          format: "Reel + Carrusel 8 láminas + Stories",
+          hook: "Igualar las ecuaciones y calcular el discriminante en 30 segundos.",
+        },
+        {
+          time: "17:30",
+          title: "Truco de las Raíces de Viète",
+          format: "Reel + Carrusel 8 láminas + Stories",
+          hook: "Suma (-b/a) y producto (c/a) para resolver en 15 seg sin la cuadrática.",
+        },
+        {
+          time: "21:15",
+          title: "Dato Nocturno 06: Identidad de Euler",
+          format: "Reel + Cover + Stories + PDF Formulario",
+          hook: "e^(iπ) + 1 = 0 y descarga exclusiva del Formulario PAES M1.",
+        },
+      ],
     },
     {
+      id: "vie27",
       day: "Viernes 27 Nov",
       status: "🟡 Guiones Listos",
-      badgeColor: "bg-amber-500 text-slate-950",
+      badgeColor: "bg-amber-500 text-slate-950 font-black",
       cardBg: "bg-amber-50 border-amber-300 text-amber-950",
-      topics: ["12:30 Inecuaciones (signo)", "17:30 Ganancia máx (vértice)", "21:15 Fractales (Koch)"],
-      key: null,
+      topicsSummary: "12:30 Inecuaciones · 17:30 Ganancia máx · 21:15 Fractales Koch",
+      key: null as DayKey | null,
+      readiness: {
+        ready: [
+          "3 Guiones técnicos escritos y cronometrados",
+          "3 Ejercicios modelo PAES M1 seleccionados",
+          "Estructura de hooks y llamados de acción listas",
+        ],
+        pending: [
+          "Grabación / renderizado de MP4 (Motor V2)",
+          "Exportación de láminas de carrusel",
+        ],
+      },
+      slots: [
+        {
+          time: "12:30",
+          title: "Inecuaciones: el signo que se da vuelta",
+          format: "Reel / TikTok + Carrusel 8 láminas",
+          hook: "Por qué al multiplicar o dividir por un negativo la desigualdad se invierte.",
+        },
+        {
+          time: "17:30",
+          title: "Problema de Ganancia Máxima PAES",
+          format: "Reel / TikTok + Stories",
+          hook: "Cómo hallar el precio óptimo usando el vértice de la cuadrática.",
+        },
+        {
+          time: "21:15",
+          title: "Dato Nocturno 07: Fractales (Copo de Koch)",
+          format: "Curiosidad Nocturna + Stories",
+          hook: "Una figura con perímetro infinito encerrada en un área finita.",
+        },
+      ],
     },
     {
+      id: "sab28",
       day: "Sábado 28 Nov",
-      status: "🟡 Programado",
-      badgeColor: "bg-slate-700 text-white",
+      status: "🟡 Programado · Guiones Listos",
+      badgeColor: "bg-slate-700 text-white font-black",
       cardBg: "bg-slate-50 border-slate-300 text-slate-900",
-      topics: ["12:30 Intersección ejes", "17:30 Inversa función", "21:15 Hilbert"],
-      key: null,
+      topicsSummary: "12:30 Intersección ejes · 17:30 Inversa función · 21:15 Hotel Hilbert",
+      key: null as DayKey | null,
+      readiness: {
+        ready: [
+          "3 Guiones técnicos redactados con pautas de edición",
+          "Hooks de alta retención seleccionados",
+          "Ejercicios tipo DEMRE seleccionados",
+        ],
+        pending: [
+          "Renderizado de videos MP4 (Motor V2)",
+          "Exportación de 8 láminas carrusel y portadas",
+          "Programación en redes sociales",
+        ],
+      },
+      slots: [
+        {
+          time: "12:30",
+          title: "Intersección con los ejes X e Y",
+          format: "Reel / TikTok + Carrusel 8 láminas + Stories",
+          hook: "El 90% duda cuándo vale x=0 y cuándo y=0 en geometría analítica.",
+        },
+        {
+          time: "17:30",
+          title: "Función Inversa Paso a Paso",
+          format: "Reel / TikTok + Cover + Stories",
+          hook: "Intercambio de variables y despeje infalible para asegurar los puntos.",
+        },
+        {
+          time: "21:15",
+          title: "Dato Nocturno 08: Hotel Infinito de Hilbert",
+          format: "Curiosidad Matemática + Enlace Formulario",
+          hook: "Cómo hospedar a un nuevo huésped en un hotel con infinitas piezas ocupadas.",
+        },
+      ],
     },
     {
+      id: "dom29",
       day: "Domingo 29 Nov",
-      status: "🟡 Víspera PAES",
-      badgeColor: "bg-purple-600 text-white",
+      status: "🟣 Víspera PAES · Calma y Estrategia",
+      badgeColor: "bg-purple-600 text-white font-black",
       cardBg: "bg-purple-50 border-purple-300 text-purple-950",
-      topics: ["12:30 10 Puntos Clave", "17:30 Calma y Ritmo", "21:15 Mensaje Éxito"],
-      key: null,
+      topicsSummary: "12:30 10 Mandamientos · 17:30 Control de Tiempo · 21:15 Mensaje de Calma",
+      key: null as DayKey | null,
+      readiness: {
+        ready: [
+          "Pauta de 3 contenidos estratégicos de víspera",
+          "Recomendaciones contra la ansiedad y bloqueo mental",
+        ],
+        pending: [
+          "Grabación de video en cámara cercana",
+          "Cierre de inscripciones formulario",
+        ],
+      },
+      slots: [
+        {
+          time: "12:30",
+          title: "Los 10 Mandamientos de la PAES M1",
+          format: "Reel / TikTok + Carrusel Resumen",
+          hook: "3 errores fatales de distracción que no debes cometer mañana.",
+        },
+        {
+          time: "17:30",
+          title: "Control de Tiempo: Regla de los 2 Minutos",
+          format: "Reel / TikTok + Stories",
+          hook: "65 preguntas en 140 minutos: si te trabas en una, salta de inmediato.",
+        },
+        {
+          time: "21:15",
+          title: "Dato Nocturno Especial: Mente Fría y Éxito",
+          format: "Video Cercano + Story de Apoyo",
+          hook: "Todo el estudio ya está hecho. Descansa temprano y confía en tu proceso.",
+        },
+      ],
     },
     {
+      id: "lun30",
       day: "Lunes 30 Nov",
       status: "🎓 ¡DÍA 1 PAES M1!",
       badgeColor: "bg-blue-600 text-white font-black",
       cardBg: "bg-blue-50 border-blue-300 text-blue-950",
-      topics: ["08:00 Desayuno y Calma", "14:00 Ánimo prueba", "18:00 Feedback inicial"],
-      key: null,
+      topicsSummary: "08:00 Desayuno y Calma · 14:00 Impresiones M1 · 18:00 Feedback e Intensivos",
+      key: null as DayKey | null,
+      readiness: {
+        ready: [
+          "Estrategia de cobertura en vivo de la jornada",
+          "Pauta de captación para cursos universitarios y reforzamiento",
+        ],
+        pending: [
+          "Historias en tiempo real desde el local de rendición",
+          "Live de feedback tras la prueba",
+        ],
+      },
+      slots: [
+        {
+          time: "08:00",
+          title: "Último Aliento: Cédula, Lápiz N°2 y Calma",
+          format: "Story Matutina + Video Ánimo",
+          hook: "¡Respira hondo, ya estás listo para dar lo mejor de ti!",
+        },
+        {
+          time: "14:00",
+          title: "Primeras Impresiones tras la PAES M1",
+          format: "Reel / Story de Reacción",
+          hook: "Cómo estuvo la dificultad y cómo sacudirse los nervios para la siguiente.",
+        },
+        {
+          time: "18:00",
+          title: "Feedback General y Apertura Cursos Universidad",
+          format: "Post / Story de Convocatoria",
+          hook: "Para quienes entran a Ingeniería: nivelación de Cálculo y Álgebra.",
+        },
+      ],
     },
   ];
+
+  const handleCopyWeekDayPlan = async (row: (typeof WEEK_PLAN)[number]) => {
+    const lines = [
+      `📅 *PLANIFICACIÓN: ${row.day.toUpperCase()}*`,
+      `📌 *Estado:* ${row.status}`,
+      "",
+      `✅ *¿Qué está listo?:*`,
+      ...row.readiness.ready.map((item) => `  • ${item}`),
+      "",
+      row.readiness.pending.length > 0
+        ? `⏳ *¿Qué falta por subir/renderizar?:*\n${row.readiness.pending
+            .map((item) => `  • ${item}`)
+            .join("\n")}\n`
+        : "✅ *Contenido 100% producido y listo.*\n",
+      "🎬 *TURNOS Y PRODUCTOS:*",
+      ...row.slots.map(
+        (s) =>
+          `⏰ *${s.time}* · ${s.title}\n   Formato: ${s.format}\n   Gancho: "${s.hook}"`
+      ),
+      "",
+      "🎯 *Mando de Operaciones @tuprofeindustrial*",
+    ].join("\n");
+
+    const ok = await copyTextSafe(lines);
+    showToast(ok ? `📋 Plan de ${row.day} copiado` : "⚠️ Error al copiar");
+  };
 
   return (
     <div className="h-[100dvh] w-full max-w-md mx-auto bg-slate-100 text-slate-900 font-sans flex flex-col justify-between overflow-hidden antialiased select-none p-2.5 sm:p-3">
@@ -1281,50 +1557,163 @@ export function GrillaCockpitClient({
           </div>
         </section>
       ) : (
-        /* 4. VISTA SEMANAL: MATRIZ DE TODA LA SEMANA */
-        <section className="space-y-1.5 shrink-0 max-h-[50dvh] overflow-y-auto pr-0.5">
+        /* 4. VISTA SEMANAL: MATRIZ DE TODA LA SEMANA INTERACTIVA */
+        <section className="flex-1 min-h-0 overflow-y-auto pr-0.5 space-y-2">
           <div className="flex items-center justify-between text-[10.5px] font-black text-slate-600 uppercase px-1">
             <span>Planificación Semanal (23–30 Nov)</span>
-            <span className="text-blue-700 font-bold">Toca para auditar el día</span>
+            <span className="text-blue-700 font-bold">Toca un día para ver qué hay listo</span>
           </div>
 
-          <div className="space-y-1.5">
-            {WEEK_PLAN.map((row) => (
-              <div
-                key={row.day}
-                className={`p-2.5 rounded-xl border-2 flex items-center justify-between gap-2 shadow-xs transition ${row.cardBg}`}
-              >
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-xs font-black">{row.day}</span>
-                    <span className={`text-[9px] font-mono font-black px-1.5 py-0.5 rounded ${row.badgeColor}`}>
-                      {row.status}
-                    </span>
-                  </div>
-                  <div className="text-[10px] opacity-90 truncate mt-0.5 font-medium">
-                    {row.topics.join(" · ")}
-                  </div>
-                </div>
-
-                {row.key ? (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setDayOverride(row.key!);
-                      setViewMode("diario");
-                    }}
-                    className="cursor-pointer touch-manipulation min-h-[34px] px-2.5 bg-blue-600 hover:bg-blue-700 text-white font-black text-[10.5px] rounded-lg shrink-0 shadow-xs flex items-center gap-1"
+          <div className="space-y-2">
+            {WEEK_PLAN.map((row) => {
+              const isExpanded = expandedWeekDay === row.id;
+              return (
+                <div
+                  key={row.id}
+                  className={`rounded-2xl border-2 transition overflow-hidden shadow-xs ${row.cardBg}`}
+                >
+                  {/* CABECERA DE DÍA (CLICKEABLE) */}
+                  <div
+                    onClick={() => setExpandedWeekDay(isExpanded ? null : row.id)}
+                    className="p-2.5 flex items-center justify-between gap-2 cursor-pointer touch-manipulation select-none hover:opacity-95"
                   >
-                    <span>Auditar</span>
-                    <ChevronRight className="w-3 h-3" />
-                  </button>
-                ) : (
-                  <span className="text-[10px] font-mono text-slate-500 font-bold shrink-0">
-                    Planificado
-                  </span>
-                )}
-              </div>
-            ))}
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="text-xs font-black">{row.day}</span>
+                        <span
+                          className={`text-[9px] font-mono font-black px-1.5 py-0.5 rounded ${row.badgeColor}`}
+                        >
+                          {row.status}
+                        </span>
+                      </div>
+                      <div className="text-[10px] opacity-90 truncate mt-0.5 font-medium">
+                        {row.topicsSummary}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <span className="text-[10px] font-bold text-slate-600">
+                        {isExpanded ? "Ocultar" : "Detalle"}
+                      </span>
+                      <div
+                        className={`w-6 h-6 rounded-full bg-white/70 flex items-center justify-center transition-transform ${
+                          isExpanded ? "rotate-180" : ""
+                        }`}
+                      >
+                        <ChevronDown className="w-3.5 h-3.5 text-slate-700" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* DESPLIEGUE COMPLETO: QUÉ HAY LISTO VS QUÉ FALTA + 3 TURNOS */}
+                  {isExpanded && (
+                    <div className="p-2.5 pt-0 border-t border-black/10 space-y-2 text-xs bg-white/60">
+                      {/* ESTADO DE PRODUCCIÓN */}
+                      <div className="bg-white rounded-xl p-2.5 border border-slate-200/80 shadow-2xs space-y-1.5">
+                        <div className="text-[10.5px] font-black uppercase text-slate-800 tracking-wide">
+                          📊 Estado de Producción
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
+                          <div className="bg-emerald-50/70 border border-emerald-200 rounded-lg p-2">
+                            <div className="font-bold text-emerald-800 flex items-center gap-1 mb-1">
+                              <Check className="w-3 h-3 text-emerald-600 stroke-[3]" />
+                              <span>¿Qué está listo?</span>
+                            </div>
+                            <ul className="space-y-0.5 text-emerald-950 font-medium list-disc list-inside text-[10px]">
+                              {row.readiness.ready.map((item, idx) => (
+                                <li key={idx} className="leading-tight">
+                                  {item}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+
+                          <div className="bg-amber-50/70 border border-amber-200 rounded-lg p-2">
+                            <div className="font-bold text-amber-800 flex items-center gap-1 mb-1">
+                              <Clock className="w-3 h-3 text-amber-600" />
+                              <span>
+                                {row.readiness.pending.length > 0 ? "¿Qué falta?" : "Completado"}
+                              </span>
+                            </div>
+                            {row.readiness.pending.length > 0 ? (
+                              <ul className="space-y-0.5 text-amber-950 font-medium list-disc list-inside text-[10px]">
+                                {row.readiness.pending.map((item, idx) => (
+                                  <li key={idx} className="leading-tight">
+                                    {item}
+                                  </li>
+                                ))}
+                              </ul>
+                            ) : (
+                              <div className="text-[10px] text-emerald-700 font-bold">
+                                Todo el contenido de este día está finalizado y publicado.
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* CONTENIDOS Y TURNOS DEL DÍA */}
+                      <div className="bg-white rounded-xl p-2.5 border border-slate-200/80 shadow-2xs space-y-2">
+                        <div className="text-[10.5px] font-black uppercase text-slate-800 tracking-wide">
+                          🎬 Turnos Planificados (3 Productos)
+                        </div>
+                        <div className="space-y-1.5">
+                          {row.slots.map((slot, sIdx) => (
+                            <div
+                              key={sIdx}
+                              className="p-2 rounded-lg bg-slate-50 border border-slate-200 flex flex-col gap-1"
+                            >
+                              <div className="flex items-center justify-between gap-1 flex-wrap">
+                                <div className="flex items-center gap-1.5 min-w-0">
+                                  <span className="font-mono font-black text-[10.5px] bg-slate-900 text-white px-1.5 py-0.5 rounded shrink-0">
+                                    {slot.time}
+                                  </span>
+                                  <span className="font-black text-slate-900 text-xs truncate">
+                                    {slot.title}
+                                  </span>
+                                </div>
+                                <span className="text-[9.5px] font-bold text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded shrink-0">
+                                  {slot.format}
+                                </span>
+                              </div>
+                              <div className="text-[10px] text-slate-600 italic">
+                                &ldquo;{slot.hook}&rdquo;
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* BOTONES DE ACCIÓN */}
+                      <div className="flex items-center gap-2 pt-0.5">
+                        {row.key ? (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setDayOverride(row.key!);
+                              setViewMode("diario");
+                            }}
+                            className="cursor-pointer touch-manipulation flex-1 min-h-[34px] px-3 bg-blue-600 hover:bg-blue-700 text-white font-black text-xs rounded-xl shadow-xs flex items-center justify-center gap-1.5 transition active:scale-95"
+                          >
+                            <span>⚡ Abrir Mando Diario</span>
+                            <ChevronRight className="w-3.5 h-3.5" />
+                          </button>
+                        ) : null}
+
+                        <button
+                          type="button"
+                          onClick={() => handleCopyWeekDayPlan(row)}
+                          className="cursor-pointer touch-manipulation flex-1 min-h-[34px] px-3 bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 font-black text-xs rounded-xl shadow-xs flex items-center justify-center gap-1.5 transition active:scale-95"
+                        >
+                          <Share2 className="w-3.5 h-3.5 text-slate-600" />
+                          <span>Copiar Pauta WA</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </section>
       )}
