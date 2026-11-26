@@ -172,6 +172,40 @@ export interface VideoBlock {
   videoAsset?: DaySchedule["videos"][number];
 }
 
+export const getSubproductExactTimes = (slot: string) => {
+  if (slot === "12:30") {
+    return {
+      video: "12:30",
+      cover: "12:30",
+      carousel: "12:45",
+      stories: "13:00",
+      copy: "12:30",
+      comment: "12:35",
+      wa: "13:15",
+    };
+  }
+  if (slot === "17:30") {
+    return {
+      video: "17:30",
+      cover: "17:30",
+      carousel: "17:45",
+      stories: "18:00",
+      copy: "17:30",
+      comment: "17:35",
+      wa: "18:30",
+    };
+  }
+  return {
+    video: "21:15",
+    cover: "21:15",
+    carousel: "21:20",
+    stories: "21:30",
+    copy: "21:15",
+    comment: "21:20",
+    wa: "21:45",
+  };
+};
+
 export function GrillaCockpitClient({
   daysData,
   quotesWa,
@@ -505,55 +539,56 @@ export function GrillaCockpitClient({
     }[] = [];
 
     for (const b of videoBlocks) {
+      const times = getSubproductExactTimes(b.timeSlot);
       list.push({
         id: b.mainAction.id,
         blockId: b.id,
-        timeSlot: b.timeSlot,
+        timeSlot: times.video,
         type: "video",
-        name: `${b.timeSlot} Video Master`,
+        name: `${times.video} Video Master`,
       });
       if (b.mainAction.assetPreview) {
         list.push({
           id: `${b.id}_cover`,
           blockId: b.id,
-          timeSlot: b.timeSlot,
+          timeSlot: times.cover,
           type: "cover",
-          name: `${b.timeSlot} Portada Oficial HD`,
+          name: `${times.cover} Portada Oficial HD`,
         });
       }
       if (b.carousel) {
         list.push({
           id: `${b.id}_carousel`,
           blockId: b.id,
-          timeSlot: b.timeSlot,
+          timeSlot: times.carousel,
           type: "carousel",
-          name: `${b.timeSlot} Carrusel (${b.carousel.slides.length} láminas)`,
+          name: `${times.carousel} Carrusel (${b.carousel.slides.length} láminas)`,
         });
       }
       if (b.stories.length > 0) {
         list.push({
           id: `${b.id}_stories`,
           blockId: b.id,
-          timeSlot: b.timeSlot,
+          timeSlot: times.stories,
           type: "stories",
-          name: `${b.timeSlot} Stories (${b.stories.length})`,
+          name: `${times.stories} Stories (${b.stories.length})`,
         });
       }
       if (b.mainAction.copies && b.mainAction.copies.length > 0) {
         list.push({
           id: `${b.id}_copy`,
           blockId: b.id,
-          timeSlot: b.timeSlot,
+          timeSlot: times.copy,
           type: "copy",
-          name: `${b.timeSlot} Copy Publicación`,
+          name: `${times.copy} Copy Publicación`,
         });
         if (b.mainAction.copies.length > 2) {
           list.push({
             id: `${b.id}_comment`,
             blockId: b.id,
-            timeSlot: b.timeSlot,
+            timeSlot: times.comment,
             type: "comment",
-            name: `${b.timeSlot} Comentario Alumnos`,
+            name: `${times.comment} Comentario Alumnos`,
           });
         }
       }
@@ -561,9 +596,9 @@ export function GrillaCockpitClient({
         list.push({
           id: `${b.id}_wa`,
           blockId: b.id,
-          timeSlot: b.timeSlot,
+          timeSlot: times.wa,
           type: "wa",
-          name: `${b.timeSlot} Difusión WhatsApp`,
+          name: `${times.wa} Difusión WhatsApp`,
         });
       }
     }
@@ -1202,6 +1237,7 @@ export function GrillaCockpitClient({
 
             {/* FILAS PLEGABLES */}
             {videoBlocks.map((block) => {
+              const times = getSubproductExactTimes(block.timeSlot);
               const isVideoDone = !!completedMap[block.mainAction.id];
               const isCoverDone = block.mainAction.assetPreview ? !!completedMap[`${block.id}_cover`] : null;
               const isCarouselDone = block.carousel ? !!completedMap[`${block.id}_carousel`] : null;
@@ -1254,7 +1290,7 @@ export function GrillaCockpitClient({
                                 : "bg-slate-200 text-slate-700"
                             }`}
                           >
-                            🎬 Video {isVideoDone ? "✓" : "⏳"}
+                            🎬 Video {times.video} {isVideoDone ? "✓" : "⏳"}
                           </span>
                           {block.mainAction.assetPreview && (
                             <span
@@ -1264,7 +1300,7 @@ export function GrillaCockpitClient({
                                   : "bg-slate-200 text-slate-700"
                               }`}
                             >
-                              🖼️ Cover {isCoverDone ? "✓" : "⏳"}
+                              🖼️ Cover {times.cover} {isCoverDone ? "✓" : "⏳"}
                             </span>
                           )}
                           {block.carousel && (
@@ -1275,7 +1311,7 @@ export function GrillaCockpitClient({
                                   : "bg-amber-100 text-amber-900"
                               }`}
                             >
-                              📑 Carrusel {isCarouselDone ? "✓" : "⏳"}
+                              📑 Carrusel {times.carousel} {isCarouselDone ? "✓" : "⏳"}
                             </span>
                           )}
                           {block.stories.length > 0 && (
@@ -1286,7 +1322,7 @@ export function GrillaCockpitClient({
                                   : "bg-purple-100 text-purple-900"
                               }`}
                             >
-                              📱 Story {isStoriesDone ? "✓" : "⏳"}
+                              📱 Story {times.stories} {isStoriesDone ? "✓" : "⏳"}
                             </span>
                           )}
                         </div>
@@ -1435,6 +1471,7 @@ export function GrillaCockpitClient({
                     const subproductsList = [
                       {
                         id: block.mainAction.id,
+                        time: times.video,
                         name: "1. Video Master (Reels / TikTok)",
                         detail: "Vertical 9:16 con audio calibrado",
                         isDone: !!completedMap[block.mainAction.id],
@@ -1479,6 +1516,7 @@ export function GrillaCockpitClient({
                         ? [
                             {
                               id: `${block.id}_cover`,
+                              time: times.cover,
                               name: "2. Portada Oficial HD",
                               detail: "1080×1920 calibrada para Feed",
                               isDone: !!completedMap[`${block.id}_cover`],
@@ -1500,6 +1538,7 @@ export function GrillaCockpitClient({
                         ? [
                             {
                               id: `${block.id}_carousel`,
+                              time: times.carousel,
                               name: `3. Carrusel Educativo (${block.carousel.slides.length} láminas)`,
                               detail: "Secuencia didáctica paso a paso",
                               isDone: !!completedMap[`${block.id}_carousel`],
@@ -1535,6 +1574,7 @@ export function GrillaCockpitClient({
                         ? [
                             {
                               id: `${block.id}_stories`,
+                              time: times.stories,
                               name: `4. Stories de Apoyo (${block.stories.length} láminas)`,
                               detail: "Encuesta y reto 9:16",
                               isDone: !!completedMap[`${block.id}_stories`],
@@ -1568,6 +1608,7 @@ export function GrillaCockpitClient({
                         ? [
                             {
                               id: `${block.id}_copy`,
+                              time: times.copy,
                               name: "5. Copy / Texto Publicación",
                               detail: block.mainAction.copies[0].text.slice(0, 38) + "...",
                               isDone: !!completedMap[`${block.id}_copy`],
@@ -1592,6 +1633,7 @@ export function GrillaCockpitClient({
                               ? [
                                   {
                                     id: `${block.id}_comment`,
+                                    time: times.comment,
                                     name: "6. Primer Comentario Fijado",
                                     detail: "Captación WhatsApp tutorías",
                                     isDone: !!completedMap[`${block.id}_comment`],
@@ -1620,6 +1662,7 @@ export function GrillaCockpitClient({
                         ? [
                             {
                               id: `${block.id}_wa`,
+                              time: times.wa,
                               name: "7. Difusión en Grupos WhatsApp",
                               detail: "Avisar en grupos de alumnos",
                               isDone: !!completedMap[`${block.id}_wa`],
@@ -1720,7 +1763,7 @@ export function GrillaCockpitClient({
                                     : "hover:bg-slate-50"
                                 }`}
                               >
-                                {/* Checkbox táctil minimalista y nombre */}
+                                {/* Checkbox táctil minimalista y nombre con hora */}
                                 <div className="flex items-center gap-2 min-w-0">
                                   <div
                                     className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 transition ${
@@ -1731,6 +1774,16 @@ export function GrillaCockpitClient({
                                   >
                                     <Check className="w-3 h-3 stroke-[3]" />
                                   </div>
+
+                                  <span
+                                    className={`font-mono text-[10px] font-black px-1.5 py-0.5 rounded shrink-0 ${
+                                      item.isDone
+                                        ? "bg-emerald-100 text-emerald-800"
+                                        : "bg-slate-900 text-amber-300"
+                                    }`}
+                                  >
+                                    {item.time}
+                                  </span>
 
                                   <div className="min-w-0">
                                     <div
