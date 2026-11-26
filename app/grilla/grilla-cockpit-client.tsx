@@ -1553,23 +1553,23 @@ export function GrillaCockpitClient({
                           </div>
                         </div>
 
-                        {/* 3. ATAJOS RÁPIDOS PARA ABRIR REDES */}
+                        {/* 3. ATAJOS RÁPIDOS PARA PUBLICAR DIRECTO EN REDES */}
                         <div className="grid grid-cols-2 gap-1.5 pt-0.5">
                           <a
-                            href="https://www.instagram.com"
+                            href="https://www.instagram.com/create/select/"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="cursor-pointer touch-manipulation min-h-[34px] px-2 rounded-xl bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white font-black text-xs flex items-center justify-center gap-1 shadow-xs hover:opacity-90 active:scale-95 transition"
                           >
-                            <span>Abrir Instagram 📸</span>
+                            <span>📸 Subir a Instagram</span>
                           </a>
                           <a
-                            href="https://www.tiktok.com"
+                            href="https://www.tiktok.com/upload"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="cursor-pointer touch-manipulation min-h-[34px] px-2 rounded-xl bg-black text-white font-black text-xs flex items-center justify-center gap-1 shadow-xs hover:bg-slate-800 active:scale-95 transition"
                           >
-                            <span>Abrir TikTok 🎵</span>
+                            <span>🎵 Subir a TikTok</span>
                           </a>
                         </div>
                       </div>
@@ -1883,23 +1883,23 @@ export function GrillaCockpitClient({
                       </button>
                     </div>
 
-                    {/* ATAJOS DIRECTOS A REDES SOCIALES */}
+                    {/* ATAJOS DIRECTOS PARA SUBIR A REDES SOCIALES */}
                     <div className="grid grid-cols-2 gap-1.5">
                       <a
-                        href="https://www.instagram.com"
+                        href="https://www.instagram.com/create/select/"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="cursor-pointer touch-manipulation min-h-[36px] px-2 rounded-xl bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white font-black text-xs flex items-center justify-center gap-1 shadow-xs hover:opacity-90 active:scale-95 transition"
                       >
-                        <span>Abrir Instagram</span>
+                        <span>📸 Subir a Instagram</span>
                       </a>
                       <a
-                        href="https://www.tiktok.com"
+                        href="https://www.tiktok.com/upload"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="cursor-pointer touch-manipulation min-h-[36px] px-2 rounded-xl bg-black text-white font-black text-xs flex items-center justify-center gap-1 shadow-xs hover:bg-slate-800 active:scale-95 transition"
                       >
-                        <span>Abrir TikTok</span>
+                        <span>🎵 Subir a TikTok</span>
                       </a>
                     </div>
                   </div>
