@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
+import Link from "next/link";
 import Image from "next/image";
 import {
   Copy,
@@ -22,6 +23,8 @@ import {
   Layers,
   Film,
   Camera,
+  Globe,
+  ExternalLink,
 } from "lucide-react";
 import type { ActionItem, DayKey, DaySchedule } from "./grilla-data";
 import {
@@ -173,6 +176,7 @@ export function GrillaCockpitClient({
   daysData,
   quotesWa,
   formularioMaestroPdf,
+  superprofUrl,
   syncedData,
   isPinProtected,
 }: GrillaCockpitClientProps) {
@@ -1726,7 +1730,35 @@ export function GrillaCockpitClient({
         </section>
       )}
 
-      {/* 5. BARRA INFERIOR DE ACCESO RÁPIDO CON CONTADOR DE LEADS */}
+      {/* 5. ACCESOS DIRECTOS EXTERNOS: MI PÁGINA WEB & SUPERPROF */}
+      <div className="grid grid-cols-2 gap-1.5 pt-1 shrink-0">
+        <Link
+          href="/"
+          target="_blank"
+          className="cursor-pointer touch-manipulation min-h-[34px] px-2.5 bg-white hover:bg-slate-50 border-2 border-slate-200 rounded-xl text-[11px] font-black text-slate-800 flex items-center justify-center gap-1.5 shadow-xs transition active:scale-95"
+          title="Abrir landing page pública de tuprofeindustrial"
+        >
+          <Globe className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+          <span className="truncate">Mi Página Web</span>
+          <ExternalLink className="w-2.5 h-2.5 text-slate-400 shrink-0" />
+        </Link>
+        <a
+          href={
+            superprofUrl ||
+            "https://www.superprof.cl/ingeniero-industrial-docente-scuola-italiana-preparacion-intensiva-paes-matematica-calculo-domicilio-santiago.html"
+          }
+          target="_blank"
+          rel="noopener noreferrer"
+          className="cursor-pointer touch-manipulation min-h-[34px] px-2.5 bg-amber-50 hover:bg-amber-100 border-2 border-amber-300 rounded-xl text-[11px] font-black text-amber-950 flex items-center justify-center gap-1.5 shadow-xs transition active:scale-95"
+          title="Abrir perfil verificado en Superprof Chile"
+        >
+          <span className="text-amber-500 shrink-0">⭐</span>
+          <span className="truncate">Superprof (5.0)</span>
+          <ExternalLink className="w-2.5 h-2.5 text-amber-700 shrink-0" />
+        </a>
+      </div>
+
+      {/* 6. BARRA INFERIOR DE ACCESO RÁPIDO CON CONTADOR DE LEADS */}
       <footer className="grid grid-cols-4 gap-1.5 pt-1 shrink-0">
         <button
           type="button"
