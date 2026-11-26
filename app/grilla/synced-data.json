@@ -1,0 +1,41 @@
+{
+  "syncedAt": "2026-11-25T21:54:09-03:00",
+  "syncSource": "publicar-scan",
+  "registroEntries": 0,
+  "completedBaseline": {
+    "mie25": {
+      "mie-1230-video": true,
+      "mie-1300-story": true
+    },
+    "jue26": {}
+  },
+  "prunedPastVideos": [],
+  "activeVideoCount": 6,
+  "activeVideoSizeMb": 26.3,
+  "weekendReadiness": [
+    {
+      "iso": "2026-11-27",
+      "label": "Viernes 27 Noviembre",
+      "status": "pendiente_render",
+      "summary": "Inecuaciones trampa · Máxima Ganancia · Fractales",
+      "assetCount": 0,
+      "notes": "Falta generar en motor V2 (guion + MP4 + carrusel 8 láminas)"
+    },
+    {
+      "iso": "2026-11-28",
+      "label": "Sábado 28 Noviembre",
+      "status": "pendiente_render",
+      "summary": "Intersección Ejes · Función Inversa · Infinito de Hilbert",
+      "assetCount": 0,
+      "notes": "Falta generar en motor V2 (guion + MP4 + carrusel 8 láminas)"
+    },
+    {
+      "iso": "2026-11-29",
+      "label": "Domingo 29 Noviembre",
+      "status": "pendiente_render",
+      "summary": "Puntos Clave PAES · Ritual Calma · Mensaje de Confianza",
+      "assetCount": 0,
+      "notes": "Víspera PAES · Falta generar en motor V2"
+    }
+  ]
+}
