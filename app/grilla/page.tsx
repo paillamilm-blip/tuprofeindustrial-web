@@ -1,5 +1,8 @@
 import { Suspense } from "react";
 import { cookies } from "next/headers";
+
+export const dynamic = "force-dynamic";
+
 import {
   DAYS_DATA,
   QUICK_APPS,
