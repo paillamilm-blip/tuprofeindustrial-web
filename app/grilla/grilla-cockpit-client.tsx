@@ -382,6 +382,27 @@ export function GrillaCockpitClient({
     setTimeout(() => setCopiedKey(null), 2000);
   };
 
+  const handleLaunchSocialUpload = async (
+    platform: "instagram" | "tiktok",
+    block?: VideoBlock
+  ) => {
+    if (block && block.mainAction.copies && block.mainAction.copies.length > 0) {
+      const copyText = block.mainAction.copies[0].text;
+      await copyTextSafe(copyText);
+      showToast(
+        platform === "instagram"
+          ? "📋 ¡Copy copiado! Abriendo Instagram..."
+          : "📋 ¡Copy copiado! Abriendo TikTok..."
+      );
+    } else {
+      showToast(
+        platform === "instagram"
+          ? "📸 Abriendo Instagram Creator..."
+          : "🎵 Abriendo TikTok Upload..."
+      );
+    }
+  };
+
   const buildCurrentSyncUrl = (): string => {
     const allMap = readAllCompletedFromStorage(syncedData.completedBaseline);
     const token = encodeSyncState(allMap);
@@ -1274,6 +1295,93 @@ export function GrillaCockpitClient({
                     </div>
                   </div>
 
+                  {/* BARRA DE ACCIÓN DIRECTA: ENGANCHE DE SUBIDA Y DESCARGA INMEDIATA */}
+                  <div className="px-2.5 py-1.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between gap-1 flex-wrap">
+                    <div className="flex items-center gap-1">
+                      <span className="text-[9px] font-mono font-black uppercase text-slate-500">
+                        Subir:
+                      </span>
+                      <a
+                        href="https://www.instagram.com/create/select/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleLaunchSocialUpload("instagram", block);
+                        }}
+                        className="cursor-pointer touch-manipulation px-2 py-0.5 rounded-lg bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white font-black text-[10px] flex items-center gap-1 shadow-2xs hover:opacity-90 active:scale-95 transition"
+                        title="Copiar Copy y abrir Instagram Creator"
+                      >
+                        <span>📸 Subir IG</span>
+                      </a>
+                      <a
+                        href="https://www.tiktok.com/upload"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleLaunchSocialUpload("tiktok", block);
+                        }}
+                        className="cursor-pointer touch-manipulation px-2 py-0.5 rounded-lg bg-black text-white font-black text-[10px] flex items-center gap-1 shadow-2xs hover:bg-slate-800 active:scale-95 transition"
+                        title="Copiar Copy y abrir TikTok Upload"
+                      >
+                        <span>🎵 Subir TT</span>
+                      </a>
+                    </div>
+
+                    <div className="flex items-center gap-1 shrink-0">
+                      {block.mainAction.videoDownloadUrl && (
+                        <a
+                          href={block.mainAction.videoDownloadUrl}
+                          download
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          className="cursor-pointer touch-manipulation px-1.5 py-0.5 rounded-md bg-slate-900 text-white font-mono text-[9px] font-black flex items-center gap-0.5 shadow-2xs hover:bg-slate-800 active:scale-95"
+                          title="Descargar Video MP4 vertical"
+                        >
+                          <Download className="w-2.5 h-2.5" /> MP4
+                        </a>
+                      )}
+                      {block.mainAction.assetPreview && (
+                        <a
+                          href={block.mainAction.assetPreview.downloadUrl}
+                          download={block.mainAction.assetPreview.name}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          className="cursor-pointer touch-manipulation px-1.5 py-0.5 rounded-md bg-white border border-slate-300 text-slate-800 font-mono text-[9px] font-bold flex items-center gap-0.5 shadow-2xs hover:bg-slate-50 active:scale-95"
+                          title="Descargar Portada HD"
+                        >
+                          <Download className="w-2.5 h-2.5" /> Portada
+                        </a>
+                      )}
+                      {block.carousel?.sheetUrl && (
+                        <a
+                          href={block.carousel.sheetUrl}
+                          download
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          className="cursor-pointer touch-manipulation px-1.5 py-0.5 rounded-md bg-amber-100 border border-amber-300 text-amber-950 font-mono text-[9px] font-bold flex items-center gap-0.5 shadow-2xs hover:bg-amber-200 active:scale-95"
+                          title="Descargar Hoja Completa de Carrusel"
+                        >
+                          <Download className="w-2.5 h-2.5" /> Carrusel
+                        </a>
+                      )}
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setExpandedBlockId(isExpanded ? null : block.id);
+                        }}
+                        className="cursor-pointer touch-manipulation px-1.5 py-0.5 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 font-mono text-[9px] font-bold flex items-center gap-0.5"
+                      >
+                        {isExpanded ? "Ocultar" : "Detalle"}
+                      </button>
+                    </div>
+                  </div>
+
                   {/* CONTENIDO DESPLEGADO: VIDEO ARRIBA + LISTADO CLICKEABLE MINIMALISTA ABAJO */}
                   {isExpanded && (() => {
                     const subproductsList = [
@@ -1282,17 +1390,42 @@ export function GrillaCockpitClient({
                         name: "1. Video Master (Reels / TikTok)",
                         detail: "Vertical 9:16 con audio calibrado",
                         isDone: !!completedMap[block.mainAction.id],
-                        action: block.mainAction.videoDownloadUrl ? (
-                          <a
-                            href={block.mainAction.videoDownloadUrl}
-                            download
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="px-2 py-0.5 rounded bg-slate-900 text-white font-mono text-[9.5px] font-black flex items-center gap-0.5 shadow-xs"
-                          >
-                            <Download className="w-2.5 h-2.5" /> MP4
-                          </a>
-                        ) : null,
+                        action: (
+                          <div className="flex items-center gap-1 shrink-0">
+                            {block.mainAction.videoDownloadUrl && (
+                              <a
+                                href={block.mainAction.videoDownloadUrl}
+                                download
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="px-1.5 py-0.5 rounded bg-slate-900 text-white font-mono text-[9.5px] font-black flex items-center gap-0.5 shadow-xs"
+                                title="Descargar Video MP4"
+                              >
+                                <Download className="w-2.5 h-2.5" /> MP4
+                              </a>
+                            )}
+                            <a
+                              href="https://www.instagram.com/create/select/"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={() => handleLaunchSocialUpload("instagram", block)}
+                              className="px-1.5 py-0.5 rounded bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white font-mono text-[9px] font-black shadow-xs"
+                              title="Copiar Copy y subir a Instagram"
+                            >
+                              IG
+                            </a>
+                            <a
+                              href="https://www.tiktok.com/upload"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={() => handleLaunchSocialUpload("tiktok", block)}
+                              className="px-1.5 py-0.5 rounded bg-black text-white font-mono text-[9px] font-black shadow-xs"
+                              title="Copiar Copy y subir a TikTok"
+                            >
+                              TT
+                            </a>
+                          </div>
+                        ),
                       },
                       ...(block.mainAction.assetPreview
                         ? [
@@ -1322,17 +1455,31 @@ export function GrillaCockpitClient({
                               name: `3. Carrusel Educativo (${block.carousel.slides.length} láminas)`,
                               detail: "Secuencia didáctica paso a paso",
                               isDone: !!completedMap[`${block.id}_carousel`],
-                              action: block.carousel.sheetUrl ? (
-                                <a
-                                  href={block.carousel.sheetUrl}
-                                  download
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="px-2 py-0.5 rounded bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 font-mono text-[9.5px] font-bold flex items-center gap-0.5 shadow-xs"
-                                >
-                                  <Download className="w-2.5 h-2.5" /> Hoja
-                                </a>
-                              ) : null,
+                              action: (
+                                <div className="flex items-center gap-1 shrink-0">
+                                  {block.carousel.sheetUrl && (
+                                    <a
+                                      href={block.carousel.sheetUrl}
+                                      download
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="px-1.5 py-0.5 rounded bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 font-mono text-[9.5px] font-bold flex items-center gap-0.5 shadow-xs"
+                                    >
+                                      <Download className="w-2.5 h-2.5" /> Hoja
+                                    </a>
+                                  )}
+                                  <a
+                                    href="https://www.instagram.com/create/select/"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    onClick={() => handleLaunchSocialUpload("instagram", block)}
+                                    className="px-1.5 py-0.5 rounded bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white font-mono text-[9px] font-black shadow-xs"
+                                    title="Subir carrusel a Instagram"
+                                  >
+                                    IG
+                                  </a>
+                                </div>
+                              ),
                             },
                           ]
                         : []),
@@ -1344,15 +1491,27 @@ export function GrillaCockpitClient({
                               detail: "Encuesta y reto 9:16",
                               isDone: !!completedMap[`${block.id}_stories`],
                               action: (
-                                <a
-                                  href={block.stories[0]?.url}
-                                  download={block.stories[0]?.downloadName}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="px-2 py-0.5 rounded bg-purple-100 hover:bg-purple-200 text-purple-900 border border-purple-300 font-mono text-[9.5px] font-bold flex items-center gap-0.5 shadow-xs"
-                                >
-                                  <Download className="w-2.5 h-2.5" /> Bajar
-                                </a>
+                                <div className="flex items-center gap-1 shrink-0">
+                                  <a
+                                    href={block.stories[0]?.url}
+                                    download={block.stories[0]?.downloadName}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="px-1.5 py-0.5 rounded bg-purple-100 hover:bg-purple-200 text-purple-900 border border-purple-300 font-mono text-[9.5px] font-bold flex items-center gap-0.5 shadow-xs"
+                                  >
+                                    <Download className="w-2.5 h-2.5" /> Bajar
+                                  </a>
+                                  <a
+                                    href="https://www.instagram.com/create/select/"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    onClick={() => handleLaunchSocialUpload("instagram", block)}
+                                    className="px-1.5 py-0.5 rounded bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white font-mono text-[9px] font-black shadow-xs"
+                                    title="Subir story a Instagram"
+                                  >
+                                    IG
+                                  </a>
+                                </div>
                               ),
                             },
                           ]
@@ -1559,6 +1718,7 @@ export function GrillaCockpitClient({
                             href="https://www.instagram.com/create/select/"
                             target="_blank"
                             rel="noopener noreferrer"
+                            onClick={() => handleLaunchSocialUpload("instagram", block)}
                             className="cursor-pointer touch-manipulation min-h-[34px] px-2 rounded-xl bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white font-black text-xs flex items-center justify-center gap-1 shadow-xs hover:opacity-90 active:scale-95 transition"
                           >
                             <span>📸 Subir a Instagram</span>
@@ -1567,6 +1727,7 @@ export function GrillaCockpitClient({
                             href="https://www.tiktok.com/upload"
                             target="_blank"
                             rel="noopener noreferrer"
+                            onClick={() => handleLaunchSocialUpload("tiktok", block)}
                             className="cursor-pointer touch-manipulation min-h-[34px] px-2 rounded-xl bg-black text-white font-black text-xs flex items-center justify-center gap-1 shadow-xs hover:bg-slate-800 active:scale-95 transition"
                           >
                             <span>🎵 Subir a TikTok</span>
@@ -1742,6 +1903,44 @@ export function GrillaCockpitClient({
         </section>
       )}
 
+      {/* 4. ENGANCHE DIRECTO DE SUBIDA A REDES (INSTAGRAM Y TIKTOK) */}
+      <div className="bg-white rounded-2xl p-2 border-2 border-slate-200 shadow-xs space-y-1.5 shrink-0">
+        <div className="flex items-center justify-between px-1">
+          <div className="flex items-center gap-1.5 text-[10px] font-black uppercase text-slate-700">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span>Enganche Directo de Subida</span>
+          </div>
+          <span className="text-[10px] font-mono text-emerald-700 font-black">
+            {checklistPercent}% completado
+          </span>
+        </div>
+
+        <div className="grid grid-cols-2 gap-1.5">
+          <a
+            href="https://www.instagram.com/create/select/"
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => handleLaunchSocialUpload("instagram")}
+            className="cursor-pointer touch-manipulation min-h-[36px] px-2 rounded-xl bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white font-black text-xs flex items-center justify-center gap-1 shadow-xs hover:opacity-95 active:scale-95 transition"
+            title="Abrir Instagram Creator para subir"
+          >
+            <span>📸 Subir a Instagram</span>
+            <ExternalLink className="w-3 h-3 opacity-80" />
+          </a>
+          <a
+            href="https://www.tiktok.com/upload"
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => handleLaunchSocialUpload("tiktok")}
+            className="cursor-pointer touch-manipulation min-h-[36px] px-2 rounded-xl bg-black text-white font-black text-xs flex items-center justify-center gap-1 shadow-xs hover:bg-slate-800 active:scale-95 transition"
+            title="Abrir TikTok Upload para subir"
+          >
+            <span>🎵 Subir a TikTok</span>
+            <ExternalLink className="w-3 h-3 opacity-80" />
+          </a>
+        </div>
+      </div>
+
       {/* 5. ACCESOS DIRECTOS EXTERNOS: MI PÁGINA WEB & SUPERPROF */}
       <div className="grid grid-cols-2 gap-1.5 pt-1 shrink-0">
         <Link
@@ -1889,6 +2088,7 @@ export function GrillaCockpitClient({
                         href="https://www.instagram.com/create/select/"
                         target="_blank"
                         rel="noopener noreferrer"
+                        onClick={() => handleLaunchSocialUpload("instagram", inspectedBlock)}
                         className="cursor-pointer touch-manipulation min-h-[36px] px-2 rounded-xl bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white font-black text-xs flex items-center justify-center gap-1 shadow-xs hover:opacity-90 active:scale-95 transition"
                       >
                         <span>📸 Subir a Instagram</span>
@@ -1897,6 +2097,7 @@ export function GrillaCockpitClient({
                         href="https://www.tiktok.com/upload"
                         target="_blank"
                         rel="noopener noreferrer"
+                        onClick={() => handleLaunchSocialUpload("tiktok", inspectedBlock)}
                         className="cursor-pointer touch-manipulation min-h-[36px] px-2 rounded-xl bg-black text-white font-black text-xs flex items-center justify-center gap-1 shadow-xs hover:bg-slate-800 active:scale-95 transition"
                       >
                         <span>🎵 Subir a TikTok</span>
