@@ -1,0 +1,18 @@
+{
+  "name": "Cockpit TPI",
+  "short_name": "Grilla TPI",
+  "description": "Cockpit operativo y grilla de contenidos para @tuprofeindustrial",
+  "start_url": "/grilla",
+  "display": "standalone",
+  "background_color": "#f1f5f9",
+  "theme_color": "#0f172a",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
