@@ -181,7 +181,15 @@ export function GrillaCockpitClient({
   const [toastMsg, setToastMsg] = useState<string | null>(null);
 
   // Modales ligeros y pestañas operativas de mando
-  const [viewMode, setViewMode] = useState<"diario" | "semanal">("diario");
+  const [viewMode, setViewMode] = useState<"diario" | "semanal">(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("view") === "semanal" || window.location.hash.includes("semanal")) {
+        return "semanal";
+      }
+    }
+    return "diario";
+  });
   const [expandedBlockId, setExpandedBlockId] = useState<string | null>(null);
   const [expandedWeekDay, setExpandedWeekDay] = useState<string | null>("sab28");
   const [inspectBlockId, setInspectBlockId] = useState<string | null>(null);
