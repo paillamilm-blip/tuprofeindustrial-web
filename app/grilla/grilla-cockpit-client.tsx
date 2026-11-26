@@ -580,37 +580,44 @@ export function GrillaCockpitClient({
           </div>
         </div>
 
-        {/* SWITCH PRINCIPAL DE OPERACIONES Y SELECTOR DE DÍA */}
-        <div className="flex items-center gap-1.5">
-          <div className="flex-1 grid grid-cols-2 gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200">
-            <button
-              type="button"
-              onClick={() => setViewMode("diario")}
-              className={`cursor-pointer touch-manipulation min-h-[32px] rounded-lg text-xs font-black flex items-center justify-center gap-1.5 transition ${
-                viewMode === "diario"
-                  ? "bg-slate-900 text-white shadow-xs"
-                  : "text-slate-600 hover:text-slate-900"
-              }`}
-            >
-              <Clock className="w-3.5 h-3.5" />
-              <span>Plan Diario (Hoy)</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setViewMode("semanal")}
-              className={`cursor-pointer touch-manipulation min-h-[32px] rounded-lg text-xs font-black flex items-center justify-center gap-1.5 transition ${
-                viewMode === "semanal"
-                  ? "bg-slate-900 text-white shadow-xs"
-                  : "text-slate-600 hover:text-slate-900"
-              }`}
-            >
-              <Calendar className="w-3.5 h-3.5" />
-              <span>Plan Semanal</span>
-            </button>
-          </div>
+        {/* SWITCH PRINCIPAL DE OPERACIONES: [📅 PLAN DIARIO] vs [🗓️ PLAN SEMANAL] */}
+        <div className="grid grid-cols-2 gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200">
+          <button
+            type="button"
+            onClick={() => setViewMode("diario")}
+            className={`cursor-pointer touch-manipulation min-h-[32px] rounded-lg text-xs font-black flex items-center justify-center gap-1.5 transition ${
+              viewMode === "diario"
+                ? "bg-slate-900 text-white shadow-xs"
+                : "text-slate-600 hover:text-slate-900"
+            }`}
+          >
+            <Clock className="w-3.5 h-3.5" />
+            <span>Plan Diario (Hoy)</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setViewMode("semanal")}
+            className={`cursor-pointer touch-manipulation min-h-[32px] rounded-lg text-xs font-black flex items-center justify-center gap-1.5 transition ${
+              viewMode === "semanal"
+                ? "bg-slate-900 text-white shadow-xs"
+                : "text-slate-600 hover:text-slate-900"
+            }`}
+          >
+            <Calendar className="w-3.5 h-3.5" />
+            <span>Plan Semanal</span>
+          </button>
+        </div>
+      </header>
 
-          {/* SELECTOR RÁPIDO DE DÍA REUBICADO EN CABECERA */}
-          <div className="flex items-center gap-0.5 bg-slate-100 p-1 rounded-xl border border-slate-200 shrink-0">
+      {/* 2. PANEL DE MÉTRICAS OPERATIVAS Y CONTROL DE TIEMPO */}
+      <section className="bg-white rounded-2xl p-2.5 border-2 border-slate-200 shadow-xs shrink-0 space-y-2">
+        {/* CABECERA SEMÁFORO CON SELECTOR DE DÍA */}
+        <div className="flex items-center justify-between gap-1 text-xs font-black">
+          <span className="text-slate-700 uppercase tracking-wide text-[10.5px]">
+            Semáforo de Hoy
+          </span>
+          {/* SELECTOR RÁPIDO DE DÍA (MIÉ / JUE) */}
+          <div className="flex items-center gap-0.5 bg-slate-100 p-0.5 rounded-lg border border-slate-200">
             {DAY_KEYS.map((key) => {
               const active = selectedDay === key;
               return (
@@ -621,7 +628,7 @@ export function GrillaCockpitClient({
                     setDayOverride(key);
                     setViewMode("diario");
                   }}
-                  className={`cursor-pointer touch-manipulation px-2.5 py-1 rounded-lg text-xs font-black transition ${
+                  className={`cursor-pointer touch-manipulation px-2.5 py-0.5 rounded-md text-[11px] font-black transition ${
                     active
                       ? "bg-blue-600 text-white shadow-xs"
                       : "text-slate-600 hover:text-slate-900"
@@ -633,39 +640,20 @@ export function GrillaCockpitClient({
             })}
           </div>
         </div>
-      </header>
-
-      {/* 2. PANEL DE MÉTRICAS OPERATIVAS Y CONTROL DE TIEMPO */}
-      <section className="bg-white rounded-2xl p-2.5 border-2 border-slate-200 shadow-xs shrink-0 space-y-2">
-        {/* CABECERA SEMÁFORO CON BADGE DE ESTADO */}
-        <div className="flex items-center justify-between text-xs font-black">
-          <span className="text-slate-700 uppercase tracking-wide text-[10.5px]">
-            Semáforo de Hoy ({currentDayData.shortLabel})
-          </span>
-          <span
-            className={`font-mono text-xs px-2 py-0.5 rounded-md border font-black ${
-              isAllVideosDone
-                ? "bg-emerald-500 text-white border-emerald-600 animate-pulse"
-                : "text-emerald-700 bg-emerald-50 border-emerald-200"
-            }`}
-          >
-            {videoProgressPercent}% completado
-          </span>
-        </div>
 
         {/* BARRA COCKPIT FULL-WIDTH DE CUENTA REGRESIVA */}
         <div
-          className={`w-full px-3 py-2 rounded-xl border flex items-center justify-between font-black text-xs shadow-xs transition ${
+          className={`w-full px-3 py-1.5 rounded-xl border flex items-center justify-between font-black text-xs shadow-xs transition ${
             isAllVideosDone
-              ? "bg-emerald-600 text-white border-emerald-700 shadow-emerald-200"
+              ? "bg-emerald-600 text-white border-emerald-700"
               : timeDiffMins !== null && timeDiffMins <= 0
               ? "bg-red-600 text-white border-red-700 animate-pulse"
               : "bg-slate-950 text-amber-300 border-slate-800"
           }`}
         >
-          <div className="flex items-center gap-2 truncate">
-            <Clock className="w-4 h-4 shrink-0" />
-            <span className="truncate tracking-tight">
+          <div className="flex items-center gap-1.5 min-w-0">
+            <Clock className="w-3.5 h-3.5 shrink-0" />
+            <span className="truncate tracking-tight text-[11.5px]">
               {isAllVideosDone
                 ? "🟢 ¡DÍA CUMPLIDO! Todos los videos (3/3) subidos"
                 : timeDiffMins !== null && timeDiffMins <= 0
@@ -673,7 +661,7 @@ export function GrillaCockpitClient({
                 : `⏳ PRÓXIMO TURNO: ${nextPendingBlock?.timeSlot ?? "12:30"} (en ${Math.floor((timeDiffMins ?? 0) / 60)}h ${(timeDiffMins ?? 0) % 60}m)`}
             </span>
           </div>
-          <span className="text-[10px] font-mono uppercase tracking-wider opacity-80 shrink-0 pl-1">
+          <span className="text-[10px] font-mono uppercase tracking-wider opacity-90 shrink-0 bg-white/20 px-1.5 py-0.5 rounded ml-1">
             {isAllVideosDone ? "3/3 OK" : `${videosCompletedCount}/3`}
           </span>
         </div>
@@ -681,67 +669,65 @@ export function GrillaCockpitClient({
         {/* 3 CAJAS DE SEMÁFORO COHERENTES CON LOS 3 VIDEOS */}
         <div className="grid grid-cols-3 gap-1.5 text-center">
           {/* VERDE: VIDEOS LISTOS */}
-          <div className="rounded-xl p-2 bg-emerald-500 text-white flex flex-col items-center justify-center shadow-xs">
-            <div className="flex items-baseline gap-1">
-              <span className="text-lg font-black leading-none">{videosCompletedCount}</span>
-              <span className="text-[11px] font-bold opacity-80">/ {totalVideos}</span>
+          <div className="rounded-xl p-1.5 bg-emerald-500 text-white flex flex-col items-center justify-center shadow-xs">
+            <div className="flex items-baseline gap-0.5">
+              <span className="text-base font-black leading-none">{videosCompletedCount}</span>
+              <span className="text-[10px] font-bold opacity-80">/{totalVideos}</span>
             </div>
-            <span className="text-[9.5px] font-black uppercase tracking-wider mt-0.5 leading-none">
+            <span className="text-[9px] font-black uppercase tracking-wider mt-0.5 leading-none">
               🟢 LISTOS
             </span>
-            <span className="text-[8.5px] font-mono opacity-80 mt-0.5 leading-none">
+            <span className="text-[8px] font-mono opacity-80 mt-0.5 leading-none">
               {completedCount} subprod.
             </span>
           </div>
 
           {/* AMARILLO: VIDEOS EN ESPERA */}
-          <div className="rounded-xl p-2 bg-amber-400 text-slate-950 flex flex-col items-center justify-center shadow-xs">
-            <div className="flex items-baseline gap-1">
-              <span className="text-lg font-black leading-none">{videosPendingCount}</span>
-              <span className="text-[11px] font-bold opacity-80">/ {totalVideos}</span>
+          <div className="rounded-xl p-1.5 bg-amber-400 text-slate-950 flex flex-col items-center justify-center shadow-xs">
+            <div className="flex items-baseline gap-0.5">
+              <span className="text-base font-black leading-none">{videosPendingCount}</span>
+              <span className="text-[10px] font-bold opacity-80">/{totalVideos}</span>
             </div>
-            <span className="text-[9.5px] font-black uppercase tracking-wider mt-0.5 leading-none">
+            <span className="text-[9px] font-black uppercase tracking-wider mt-0.5 leading-none">
               🟡 EN ESPERA
             </span>
-            <span className="text-[8.5px] font-mono opacity-80 mt-0.5 leading-none">
+            <span className="text-[8px] font-mono opacity-80 mt-0.5 leading-none">
               {procesoTasks.length} subprod.
             </span>
           </div>
 
           {/* ROJO / AZUL: ALERTA O PROGRESO */}
           <div
-            className={`rounded-xl p-2 flex flex-col items-center justify-center transition shadow-xs ${
+            className={`rounded-xl p-1.5 flex flex-col items-center justify-center transition shadow-xs ${
               videosAlertCount > 0
                 ? "bg-red-600 text-white animate-pulse"
                 : "bg-slate-100 text-slate-700 border border-slate-200"
             }`}
           >
             <div className="flex items-baseline gap-0.5">
-              <span className="text-lg font-black leading-none">
+              <span className="text-base font-black leading-none">
                 {videosAlertCount > 0 ? videosAlertCount : `${videoProgressPercent}%`}
               </span>
             </div>
-            <span className="text-[9.5px] font-black uppercase tracking-wider mt-0.5 leading-none">
-              {videosAlertCount > 0 ? "🔴 ATRASO" : "⚪ PROGRESO"}
+            <span className="text-[9px] font-black uppercase tracking-wider mt-0.5 leading-none">
+              {videosAlertCount > 0 ? "🔴 ATRASO" : "⚪ AL DÍA"}
             </span>
-            <span className="text-[8.5px] font-mono opacity-80 mt-0.5 leading-none">
+            <span className="text-[8px] font-mono opacity-80 mt-0.5 leading-none">
               {videosAlertCount > 0 ? "¡Revisar turno!" : "Meta diaria"}
             </span>
           </div>
         </div>
 
         {/* BARRA DE AVANCE GRÁFICA TIPO BATERÍA */}
-        <div className="space-y-1 pt-0.5">
-          <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden border border-slate-200/80 p-0.5">
-            <div
-              className={`h-full rounded-full transition-all duration-500 ${
-                isAllVideosDone
-                  ? "bg-emerald-500 shadow-sm"
-                  : "bg-gradient-to-r from-amber-400 via-emerald-400 to-emerald-500"
-              }`}
-              style={{ width: `${Math.max(6, videoProgressPercent)}%` }}
-            />
-          </div>
+        <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden border border-slate-200">
+          <div
+            className={`h-full rounded-full transition-all duration-500 ${
+              isAllVideosDone
+                ? "bg-emerald-500"
+                : "bg-gradient-to-r from-amber-400 via-emerald-400 to-emerald-500"
+            }`}
+            style={{ width: `${Math.max(5, videoProgressPercent)}%` }}
+          />
         </div>
       </section>
 
@@ -784,39 +770,39 @@ export function GrillaCockpitClient({
               return (
                 <div
                   key={block.id}
-                  className={`p-2.5 rounded-2xl border-2 flex items-center justify-between gap-2 shadow-xs transition duration-300 ${cardBg}`}
+                  className={`p-2 rounded-2xl border-2 flex items-center justify-between gap-1.5 shadow-xs transition duration-300 ${cardBg}`}
                 >
                   {/* Tocar el bloque abre el modal con TODOS los subproductos */}
                   <button
                     type="button"
                     onClick={() => setInspectBlockId(block.id)}
-                    className="cursor-pointer touch-manipulation min-w-0 flex-1 text-left flex items-center gap-2"
+                    className="cursor-pointer touch-manipulation min-w-0 flex-1 text-left flex items-center gap-1.5"
                   >
                     <span
-                      className={`font-mono font-black text-xs px-2 py-1 rounded-lg shrink-0 ${badgeBg}`}
+                      className={`font-mono font-black text-[11px] px-1.5 py-1 rounded-lg shrink-0 ${badgeBg}`}
                     >
                       {block.timeSlot}
                     </span>
 
                     <div className="min-w-0 flex-1">
-                      <div className="text-xs font-black truncate leading-tight flex items-center gap-1">
+                      <div className="text-xs font-black truncate leading-tight flex items-center gap-0.5">
                         <span className="truncate">{cleanTitle}</span>
-                        <ChevronRight className="w-3.5 h-3.5 opacity-60 shrink-0" />
+                        <ChevronRight className="w-3.5 h-3.5 opacity-50 shrink-0" />
                       </div>
 
                       {/* BADGES DE SUBPRODUCTOS INCLUIDOS */}
-                      <div className="flex items-center gap-1 mt-1 overflow-hidden">
+                      <div className="flex items-center gap-1 mt-0.5 overflow-hidden">
                         {subproductsBadges.map((badge, idx) => (
                           <span
                             key={idx}
-                            className="text-[9px] font-mono font-bold bg-white/90 px-1.5 py-0.5 rounded border border-slate-300/70 text-slate-800 shrink-0"
+                            className="text-[8.5px] font-mono font-bold bg-white/90 px-1 py-0.2 rounded border border-slate-300/70 text-slate-800 shrink-0"
                           >
                             {badge}
                           </span>
                         ))}
                       </div>
 
-                      <div className="text-[10px] font-bold opacity-80 truncate mt-0.5">
+                      <div className="text-[9.5px] font-bold opacity-80 truncate mt-0.5">
                         {isVideoDone
                           ? "🟢 Video subido y confirmado"
                           : hasAlert
@@ -826,36 +812,25 @@ export function GrillaCockpitClient({
                     </div>
                   </button>
 
-                  {/* ATAJOS DIRECTOS Y BOTÓN MARCAR */}
-                  <div className="flex items-center gap-1 shrink-0">
-                    <a
-                      href="https://www.instagram.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      title="Abrir Instagram"
-                      className="cursor-pointer touch-manipulation min-h-[40px] px-2 rounded-xl bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white font-black text-[10px] flex items-center justify-center shadow-xs hover:opacity-90 active:scale-95 transition"
-                    >
-                      IG
-                    </a>
-                    <button
-                      type="button"
-                      onClick={() => toggleTask(block.mainAction.id)}
-                      className={`cursor-pointer touch-manipulation min-h-[40px] px-3 rounded-xl text-xs font-black border flex items-center gap-1 transition active:scale-95 shadow-xs ${
-                        isVideoDone
-                          ? "bg-emerald-600 border-emerald-600 text-white"
-                          : "bg-white border-slate-300 hover:border-slate-400 text-slate-800"
-                      }`}
-                    >
-                      {isVideoDone ? (
-                        <>
-                          <Check className="w-3.5 h-3.5 stroke-[3]" />
-                          <span>Listo</span>
-                        </>
-                      ) : (
-                        <span>Marcar</span>
-                      )}
-                    </button>
-                  </div>
+                  {/* BOTÓN MARCAR DIRECTO */}
+                  <button
+                    type="button"
+                    onClick={() => toggleTask(block.mainAction.id)}
+                    className={`cursor-pointer touch-manipulation min-h-[38px] px-3 rounded-xl text-xs font-black border flex items-center gap-1 shrink-0 transition active:scale-95 shadow-xs ${
+                      isVideoDone
+                        ? "bg-emerald-600 border-emerald-600 text-white"
+                        : "bg-white border-slate-300 hover:border-slate-400 text-slate-800"
+                    }`}
+                  >
+                    {isVideoDone ? (
+                      <>
+                        <Check className="w-3.5 h-3.5 stroke-[3]" />
+                        <span>Listo</span>
+                      </>
+                    ) : (
+                      <span>Marcar</span>
+                    )}
+                  </button>
                 </div>
               );
             })}
@@ -987,41 +962,63 @@ export function GrillaCockpitClient({
               {(() => {
                 const isVideoDone = !!completedMap[inspectedBlock.mainAction.id];
                 return (
-                  <div
-                    className={`p-3 rounded-2xl border-2 flex items-center justify-between gap-2 shadow-xs transition ${
-                      isVideoDone
-                        ? "bg-emerald-50 border-emerald-500 text-emerald-950"
-                        : "bg-amber-50 border-amber-400 text-amber-950"
-                    }`}
-                  >
-                    <div>
-                      <div className="text-xs font-black uppercase flex items-center gap-1">
-                        {isVideoDone ? "🟢 Video Subido y Confirmado" : "🟡 Video Pendiente de Subir"}
-                      </div>
-                      <div className="text-[10px] opacity-80 mt-0.5">
-                        {isVideoDone
-                          ? "Marcado en tu mando de operaciones"
-                          : "Toca para registrar la subida"}
-                      </div>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => toggleTask(inspectedBlock.mainAction.id)}
-                      className={`cursor-pointer touch-manipulation min-h-[38px] px-3.5 rounded-xl font-black text-xs shadow-xs transition active:scale-95 flex items-center gap-1 ${
+                  <div className="space-y-1.5">
+                    <div
+                      className={`p-3 rounded-2xl border-2 flex items-center justify-between gap-2 shadow-xs transition ${
                         isVideoDone
-                          ? "bg-emerald-600 text-white hover:bg-emerald-700"
-                          : "bg-slate-900 text-white hover:bg-slate-800"
+                          ? "bg-emerald-50 border-emerald-500 text-emerald-950"
+                          : "bg-amber-50 border-amber-400 text-amber-950"
                       }`}
                     >
-                      {isVideoDone ? (
-                        <>
-                          <Check className="w-3.5 h-3.5 stroke-[3]" />
-                          <span>Listo ✓</span>
-                        </>
-                      ) : (
-                        <span>Marcar Subido</span>
-                      )}
-                    </button>
+                      <div>
+                        <div className="text-xs font-black uppercase flex items-center gap-1">
+                          {isVideoDone ? "🟢 Video Subido y Confirmado" : "🟡 Video Pendiente de Subir"}
+                        </div>
+                        <div className="text-[10px] opacity-80 mt-0.5">
+                          {isVideoDone
+                            ? "Marcado en tu mando de operaciones"
+                            : "Toca para registrar la subida"}
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => toggleTask(inspectedBlock.mainAction.id)}
+                        className={`cursor-pointer touch-manipulation min-h-[38px] px-3.5 rounded-xl font-black text-xs shadow-xs transition active:scale-95 flex items-center gap-1 ${
+                          isVideoDone
+                            ? "bg-emerald-600 text-white hover:bg-emerald-700"
+                            : "bg-slate-900 text-white hover:bg-slate-800"
+                        }`}
+                      >
+                        {isVideoDone ? (
+                          <>
+                            <Check className="w-3.5 h-3.5 stroke-[3]" />
+                            <span>Listo ✓</span>
+                          </>
+                        ) : (
+                          <span>Marcar Subido</span>
+                        )}
+                      </button>
+                    </div>
+
+                    {/* ATAJOS DIRECTOS A REDES SOCIALES */}
+                    <div className="grid grid-cols-2 gap-1.5">
+                      <a
+                        href="https://www.instagram.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="cursor-pointer touch-manipulation min-h-[36px] px-2 rounded-xl bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white font-black text-xs flex items-center justify-center gap-1 shadow-xs hover:opacity-90 active:scale-95 transition"
+                      >
+                        <span>Abrir Instagram</span>
+                      </a>
+                      <a
+                        href="https://www.tiktok.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="cursor-pointer touch-manipulation min-h-[36px] px-2 rounded-xl bg-black text-white font-black text-xs flex items-center justify-center gap-1 shadow-xs hover:bg-slate-800 active:scale-95 transition"
+                      >
+                        <span>Abrir TikTok</span>
+                      </a>
+                    </div>
                   </div>
                 );
               })()}
