@@ -15,6 +15,9 @@ import {
   X,
   Calendar,
   CheckCircle2,
+  Bell,
+  BellRing,
+  Users,
 } from "lucide-react";
 import type { ActionItem, DayKey, DaySchedule } from "./grilla-data";
 import {
@@ -179,6 +182,65 @@ export function GrillaCockpitClient({
   const [showQuotesModal, setShowQuotesModal] = useState(false);
   const [showSyncModal, setShowSyncModal] = useState(false);
   const [manualSyncInput, setManualSyncInput] = useState("");
+  const [pushEnabled, setPushEnabled] = useState(() => {
+    if (typeof window !== "undefined" && "Notification" in window) {
+      return Notification.permission === "granted";
+    }
+    return false;
+  });
+  const [leadCount, setLeadCount] = useState(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const stored = localStorage.getItem("tpi_leads_today");
+        return stored ? Number(stored) : 0;
+      } catch {
+        return 0;
+      }
+    }
+    return 0;
+  });
+
+  // Registrar Service Worker para notificaciones push
+  useEffect(() => {
+    if (typeof window !== "undefined" && "serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js").catch(() => {});
+    }
+  }, []);
+
+  const addLead = (delta: number) => {
+    const next = Math.max(0, leadCount + delta);
+    setLeadCount(next);
+    try {
+      localStorage.setItem("tpi_leads_today", String(next));
+    } catch {}
+    showToast(delta > 0 ? `🎯 Alumno registrado (+1) Total: ${next}` : `Restado: ${next}`);
+  };
+
+  const requestPushPermission = async () => {
+    if (typeof window === "undefined" || !("Notification" in window)) {
+      showToast("⚠️ Tu navegador no soporta notificaciones");
+      return;
+    }
+    try {
+      const perm = await Notification.requestPermission();
+      setPushEnabled(perm === "granted");
+      if (perm === "granted") {
+        showToast("🔔 Alertas activadas a las 12:15, 17:15 y 21:00");
+        if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+          navigator.serviceWorker.controller.postMessage({
+            type: "SCHEDULE_NOTIFICATION",
+            title: "⏰ Turno 12:30 listo para publicar",
+            body: "Revisa la grilla móvil para copiar el texto y subir tu video.",
+            delayMs: 1000,
+          });
+        }
+      } else {
+        showToast("⚠️ Permiso de notificaciones denegado");
+      }
+    } catch {
+      showToast("⚠️ Error al pedir permisos");
+    }
+  };
 
   const clockKey = useSyncExternalStore(
     subscribeClock,
@@ -419,8 +481,21 @@ export function GrillaCockpitClient({
           })}
         </div>
 
-        {/* BOTÓN SYNC */}
+        {/* BOTÓN PUSH, CONTADOR DE LEADS Y SYNC */}
         <div className="flex items-center gap-1 shrink-0">
+          <button
+            type="button"
+            onClick={requestPushPermission}
+            title={pushEnabled ? "Notificaciones push activas" : "Activar recordatorios push"}
+            className={`cursor-pointer touch-manipulation min-h-[32px] px-2 py-1 rounded-lg border text-xs font-black flex items-center gap-1 transition ${
+              pushEnabled
+                ? "bg-emerald-50 text-emerald-700 border-emerald-300"
+                : "bg-slate-100 text-slate-500 border-slate-200 hover:text-slate-900"
+            }`}
+          >
+            {pushEnabled ? <BellRing className="w-3.5 h-3.5 text-emerald-600 animate-bounce" /> : <Bell className="w-3.5 h-3.5" />}
+          </button>
+
           <button
             type="button"
             onClick={() => setShowSyncModal(true)}
@@ -548,7 +623,7 @@ export function GrillaCockpitClient({
             </button>
           </div>
 
-          {/* BOTONES DIRECTOS */}
+        {/* BOTONES DIRECTOS + DEEP LINKS A APPS */}
           <div className="flex gap-1.5 pt-0.5">
             {nextPriorityAction.videoDownloadUrl && (
               <a
@@ -561,6 +636,29 @@ export function GrillaCockpitClient({
                 <Download className="w-3.5 h-3.5" /> Bajar MP4
               </a>
             )}
+
+            {/* ABRIR INSTAGRAM DIRECTO */}
+            <a
+              href="https://www.instagram.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="cursor-pointer touch-manipulation min-h-[36px] px-2.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-[11px] font-black rounded-xl flex items-center justify-center gap-1 shadow-xs"
+              title="Abrir Instagram"
+            >
+              <span>IG</span>
+            </a>
+
+            {/* ABRIR TIKTOK DIRECTO */}
+            <a
+              href="https://www.tiktok.com/@tuprofeindustrial"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="cursor-pointer touch-manipulation min-h-[36px] px-2.5 bg-black text-white text-[11px] font-black rounded-xl flex items-center justify-center gap-1 shadow-xs border border-slate-700"
+              title="Abrir TikTok"
+            >
+              <span>TikTok</span>
+            </a>
+
             {nextPriorityAction.copies && nextPriorityAction.copies[0] && (
               <>
                 {nextPriorityAction.copies[0].waShare && (
@@ -669,24 +767,38 @@ export function GrillaCockpitClient({
         </div>
       </section>
 
-      {/* 5. BARRA INFERIOR DE ACCESO RÁPIDO */}
-      <footer className="grid grid-cols-3 gap-1.5 pt-1 shrink-0">
+      {/* 5. BARRA INFERIOR DE ACCESO RÁPIDO CON CONTADOR DE LEADS */}
+      <footer className="grid grid-cols-4 gap-1.5 pt-1 shrink-0">
         <button
           type="button"
           onClick={() => setShowWeekModal(true)}
-          className="cursor-pointer touch-manipulation min-h-[44px] bg-white hover:bg-slate-50 border-2 border-slate-200 rounded-xl text-xs font-black text-slate-800 flex items-center justify-center gap-1 shadow-xs"
+          className="cursor-pointer touch-manipulation min-h-[44px] bg-white hover:bg-slate-50 border-2 border-slate-200 rounded-xl text-xs font-black text-slate-800 flex flex-col items-center justify-center shadow-xs"
         >
-          <Calendar className="w-4 h-4 text-amber-500" />
-          <span>Semana</span>
+          <Calendar className="w-3.5 h-3.5 text-amber-500" />
+          <span className="text-[10px]">Semana</span>
         </button>
 
         <button
           type="button"
           onClick={() => setShowQuotesModal(true)}
-          className="cursor-pointer touch-manipulation min-h-[44px] bg-white hover:bg-slate-50 border-2 border-slate-200 rounded-xl text-xs font-black text-slate-800 flex items-center justify-center gap-1 shadow-xs"
+          className="cursor-pointer touch-manipulation min-h-[44px] bg-white hover:bg-slate-50 border-2 border-slate-200 rounded-xl text-xs font-black text-slate-800 flex flex-col items-center justify-center shadow-xs"
         >
-          <MessageCircle className="w-4 h-4 text-emerald-500" />
-          <span>Cotizar</span>
+          <MessageCircle className="w-3.5 h-3.5 text-emerald-500" />
+          <span className="text-[10px]">Cotizar</span>
+        </button>
+
+        {/* CONTADOR DE LEADS TÁCTIL */}
+        <button
+          type="button"
+          onClick={() => addLead(1)}
+          className="cursor-pointer touch-manipulation min-h-[44px] bg-emerald-50 hover:bg-emerald-100 border-2 border-emerald-400 rounded-xl text-emerald-950 font-black flex flex-col items-center justify-center shadow-xs"
+          title="Toca para registrar un alumno que escribió al WhatsApp"
+        >
+          <div className="flex items-center gap-1 leading-none">
+            <Users className="w-3 h-3 text-emerald-700" />
+            <span className="text-xs font-mono">{leadCount}</span>
+          </div>
+          <span className="text-[9.5px] uppercase tracking-tight">+1 Alumno</span>
         </button>
 
         <a
@@ -694,10 +806,10 @@ export function GrillaCockpitClient({
           target="_blank"
           rel="noopener noreferrer"
           download="formulario_maestro_ingenieria.pdf"
-          className="cursor-pointer touch-manipulation min-h-[44px] bg-blue-600 hover:bg-blue-700 rounded-xl text-xs font-black text-white flex items-center justify-center gap-1 shadow-xs"
+          className="cursor-pointer touch-manipulation min-h-[44px] bg-blue-600 hover:bg-blue-700 rounded-xl text-xs font-black text-white flex flex-col items-center justify-center shadow-xs"
         >
-          <FileText className="w-4 h-4" />
-          <span>Formulario</span>
+          <FileText className="w-3.5 h-3.5" />
+          <span className="text-[10px]">PDF Form</span>
         </a>
       </footer>
 
