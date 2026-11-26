@@ -21,6 +21,7 @@ import {
   Clock,
   Layers,
   Film,
+  Camera,
 } from "lucide-react";
 import type { ActionItem, DayKey, DaySchedule } from "./grilla-data";
 import {
@@ -185,6 +186,7 @@ export function GrillaCockpitClient({
   const [inspectBlockId, setInspectBlockId] = useState<string | null>(null);
   const [showQuotesModal, setShowQuotesModal] = useState(false);
   const [showSyncModal, setShowSyncModal] = useState(false);
+  const [showDailyReportModal, setShowDailyReportModal] = useState(false);
   const [manualSyncInput, setManualSyncInput] = useState("");
   const [pushEnabled, setPushEnabled] = useState(() => {
     if (typeof window !== "undefined" && "Notification" in window) {
@@ -435,18 +437,132 @@ export function GrillaCockpitClient({
     });
   }, [dayTasks, currentDayData]);
 
-  const completedCount = dayTasks.filter((t) => completedMap[t.id]).length;
-  const procesoTasks = dayTasks.filter((t) => !completedMap[t.id] && !isTaskUrgent(t));
-  const totalVideos = videoBlocks.length;
-  const videosCompletedCount = videoBlocks.filter((b) => !!completedMap[b.mainAction.id]).length;
-  const videosPendingCount = totalVideos - videosCompletedCount;
   const videosAlertCount = videoBlocks.filter(
     (b) => !completedMap[b.mainAction.id] && isTaskUrgent(b.mainAction)
   ).length;
-  const videoProgressPercent =
-    totalVideos > 0 ? Math.round((videosCompletedCount / totalVideos) * 100) : 0;
-  const isAllVideosDone = totalVideos > 0 && videosCompletedCount === totalVideos;
   const paesDaysLeft = diffDaysFromIso(santiagoNow.isoDate, "2026-11-30");
+
+  // Checklist de todos los subproductos del día
+  const allDaySubproducts = useMemo(() => {
+    const list: {
+      id: string;
+      blockId: string;
+      timeSlot: string;
+      type: "video" | "cover" | "carousel" | "stories" | "copy" | "comment" | "wa";
+      name: string;
+    }[] = [];
+
+    for (const b of videoBlocks) {
+      list.push({
+        id: b.mainAction.id,
+        blockId: b.id,
+        timeSlot: b.timeSlot,
+        type: "video",
+        name: `${b.timeSlot} Video Master`,
+      });
+      if (b.mainAction.assetPreview) {
+        list.push({
+          id: `${b.id}_cover`,
+          blockId: b.id,
+          timeSlot: b.timeSlot,
+          type: "cover",
+          name: `${b.timeSlot} Portada Oficial HD`,
+        });
+      }
+      if (b.carousel) {
+        list.push({
+          id: `${b.id}_carousel`,
+          blockId: b.id,
+          timeSlot: b.timeSlot,
+          type: "carousel",
+          name: `${b.timeSlot} Carrusel (${b.carousel.slides.length} láminas)`,
+        });
+      }
+      if (b.stories.length > 0) {
+        list.push({
+          id: `${b.id}_stories`,
+          blockId: b.id,
+          timeSlot: b.timeSlot,
+          type: "stories",
+          name: `${b.timeSlot} Stories (${b.stories.length})`,
+        });
+      }
+      if (b.mainAction.copies && b.mainAction.copies.length > 0) {
+        list.push({
+          id: `${b.id}_copy`,
+          blockId: b.id,
+          timeSlot: b.timeSlot,
+          type: "copy",
+          name: `${b.timeSlot} Copy Publicación`,
+        });
+        if (b.mainAction.copies.length > 2) {
+          list.push({
+            id: `${b.id}_comment`,
+            blockId: b.id,
+            timeSlot: b.timeSlot,
+            type: "comment",
+            name: `${b.timeSlot} Comentario Alumnos`,
+          });
+        }
+      }
+      if (b.associatedActions.length > 0) {
+        list.push({
+          id: `${b.id}_wa`,
+          blockId: b.id,
+          timeSlot: b.timeSlot,
+          type: "wa",
+          name: `${b.timeSlot} Difusión WhatsApp`,
+        });
+      }
+    }
+    return list;
+  }, [videoBlocks]);
+
+  const totalSubproducts = allDaySubproducts.length;
+  const completedSubproductsCount = allDaySubproducts.filter((i) => !!completedMap[i.id]).length;
+  const pendingSubproductsCount = totalSubproducts - completedSubproductsCount;
+  const checklistPercent =
+    totalSubproducts > 0
+      ? Math.round((completedSubproductsCount / totalSubproducts) * 100)
+      : 0;
+
+  const stats = useMemo(() => {
+    const byType = (t: string) => {
+      const items = allDaySubproducts.filter((i) => i.type === t);
+      const done = items.filter((i) => !!completedMap[i.id]).length;
+      return { done, total: items.length };
+    };
+    return {
+      videos: byType("video"),
+      covers: byType("cover"),
+      carousels: byType("carousel"),
+      stories: byType("stories"),
+      copies: byType("copy"),
+      comments: byType("comment"),
+      wa: byType("wa"),
+    };
+  }, [allDaySubproducts, completedMap]);
+
+  const buildDailyReportText = (): string => {
+    return [
+      `📊 REPORTE DIARIO DE OPERACIONES · @tuprofeindustrial`,
+      `📅 Día: ${currentDayData.fullLabel} (${santiagoNow.timeStr} CLT)`,
+      `🎯 Avance Checklist: ${checklistPercent}% (${completedSubproductsCount}/${totalSubproducts} subproductos)`,
+      `🎬 Videos en Internet: ${stats.videos.done}/${stats.videos.total}`,
+      `🖼️ Portadas Oficiales HD: ${stats.covers.done}/${stats.covers.total}`,
+      `📑 Carruseles Educativos: ${stats.carousels.done}/${stats.carousels.total}`,
+      `📱 Stories 9:16: ${stats.stories.done}/${stats.stories.total}`,
+      `📝 Copies, Comentarios & WA: ${stats.copies.done + stats.comments.done + stats.wa.done}/${stats.copies.total + stats.comments.total + stats.wa.total}`,
+      `🎓 Meta PAES M1: Faltan ${paesDaysLeft} días`,
+      `🔗 Grilla: ${typeof window !== "undefined" ? window.location.href : "https://tuprofeindustrial-web.vercel.app/grilla"}`,
+    ].join("\n");
+  };
+
+  const handleCopyDailyReport = async () => {
+    const text = buildDailyReportText();
+    const ok = await copyTextSafe(text);
+    showToast(ok ? "📋 Reporte diario copiado para WhatsApp" : "⚠️ Error al copiar");
+  };
 
   const inspectedBlock = useMemo(() => {
     return videoBlocks.find((b) => b.id === inspectBlockId) ?? null;
@@ -613,40 +729,59 @@ export function GrillaCockpitClient({
 
       {/* 2. PANEL DE MÉTRICAS OPERATIVAS Y CONTROL DE TIEMPO */}
       <section className="bg-white rounded-2xl p-2.5 border-2 border-slate-200 shadow-xs shrink-0 space-y-2">
-        {/* CABECERA SEMÁFORO CON SELECTOR DE DÍA */}
+        {/* CABECERA SEMÁFORO CON SELECTOR DE DÍA Y BOTÓN REPORTE */}
         <div className="flex items-center justify-between gap-1 text-xs font-black">
-          <span className="text-slate-700 uppercase tracking-wide text-[10.5px]">
-            Semáforo de Hoy
-          </span>
-          {/* SELECTOR RÁPIDO DE DÍA (MIÉ / JUE) */}
-          <div className="flex items-center gap-0.5 bg-slate-100 p-0.5 rounded-lg border border-slate-200">
-            {DAY_KEYS.map((key) => {
-              const active = selectedDay === key;
-              return (
-                <button
-                  key={key}
-                  type="button"
-                  onClick={() => {
-                    setDayOverride(key);
-                    setViewMode("diario");
-                  }}
-                  className={`cursor-pointer touch-manipulation px-2 py-0.5 rounded-md text-[10.5px] font-black transition ${
-                    active
-                      ? "bg-blue-600 text-white shadow-xs"
-                      : "text-slate-600 hover:text-slate-900"
-                  }`}
-                >
-                  {daysData[key].shortLabel}
-                </button>
-              );
-            })}
+          <div className="flex items-center gap-1.5 min-w-0">
+            <span className="text-slate-700 uppercase tracking-wide text-[10.5px]">
+              Semáforo de Hoy
+            </span>
+            <span className="font-mono text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.2 rounded text-[10px]">
+              {checklistPercent}%
+            </span>
+          </div>
+
+          <div className="flex items-center gap-1 shrink-0">
+            {/* BOTÓN GUARDAR / PANTALLAZO DEL DÍA */}
+            <button
+              type="button"
+              onClick={() => setShowDailyReportModal(true)}
+              className="cursor-pointer touch-manipulation px-2 py-0.5 rounded-md bg-slate-900 hover:bg-slate-800 text-amber-300 font-black text-[10px] flex items-center gap-1 shadow-xs transition active:scale-95"
+              title="Guardar o sacar pantallazo del día"
+            >
+              <Camera className="w-3 h-3" />
+              <span>Reporte</span>
+            </button>
+
+            {/* SELECTOR RÁPIDO DE DÍA (MIÉ / JUE) */}
+            <div className="flex items-center gap-0.5 bg-slate-100 p-0.5 rounded-lg border border-slate-200">
+              {DAY_KEYS.map((key) => {
+                const active = selectedDay === key;
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => {
+                      setDayOverride(key);
+                      setViewMode("diario");
+                    }}
+                    className={`cursor-pointer touch-manipulation px-2 py-0.5 rounded-md text-[10.5px] font-black transition ${
+                      active
+                        ? "bg-blue-600 text-white shadow-xs"
+                        : "text-slate-600 hover:text-slate-900"
+                    }`}
+                  >
+                    {daysData[key].shortLabel}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
 
         {/* BARRA COCKPIT FULL-WIDTH DE CUENTA REGRESIVA */}
         <div
           className={`w-full px-3 py-1.5 rounded-xl border flex items-center justify-between font-black text-xs shadow-xs transition ${
-            isAllVideosDone
+            checklistPercent === 100
               ? "bg-emerald-600 text-white border-emerald-700"
               : timeDiffMins !== null && timeDiffMins <= 0
               ? "bg-red-600 text-white border-red-700 animate-pulse"
@@ -656,49 +791,47 @@ export function GrillaCockpitClient({
           <div className="flex items-center gap-1.5 min-w-0">
             <Clock className="w-3.5 h-3.5 shrink-0" />
             <span className="truncate tracking-tight text-[11px]">
-              {isAllVideosDone
-                ? "🟢 ¡DÍA CUMPLIDO! Videos (3/3) subidos"
+              {checklistPercent === 100
+                ? "🟢 ¡DÍA CUMPLIDO! Checklist 100% en internet"
                 : timeDiffMins !== null && timeDiffMins <= 0
                 ? `🚨 TURNO ${nextPendingBlock?.timeSlot} ATRASADO (+${Math.abs(timeDiffMins)}m)`
                 : `⏳ PRÓXIMO: ${nextPendingBlock?.timeSlot ?? "12:30"} (en ${Math.floor((timeDiffMins ?? 0) / 60)}h ${(timeDiffMins ?? 0) % 60}m)`}
             </span>
           </div>
           <span className="text-[10px] font-mono uppercase tracking-wider opacity-90 shrink-0 bg-white/20 px-1.5 py-0.5 rounded ml-1">
-            {isAllVideosDone ? "3/3 OK" : `${videosCompletedCount}/3`}
+            {completedSubproductsCount}/{totalSubproducts} ({checklistPercent}%)
           </span>
         </div>
 
         {/* SEMÁFORO UNIFICADO EN UN SOLO BLOQUE INTEGRADO */}
         <div className="grid grid-cols-3 rounded-xl overflow-hidden border border-slate-200 divide-x divide-slate-200 text-center bg-slate-50 shadow-xs">
-          {/* VERDE: VIDEOS EN INTERNET */}
-          <div className={`p-2 transition ${videosCompletedCount > 0 ? "bg-emerald-50 text-emerald-950" : "bg-white text-slate-700"}`}>
+          {/* VERDE: EN INTERNET (CHECKLIST) */}
+          <div className={`p-2 transition ${checklistPercent > 0 ? "bg-emerald-50 text-emerald-950" : "bg-white text-slate-700"}`}>
             <div className="flex items-baseline justify-center gap-0.5">
-              <span className="text-base font-black leading-none">{videosCompletedCount}</span>
-              <span className="text-[10px] font-bold opacity-70">/{totalVideos}</span>
+              <span className="text-base font-black leading-none">{checklistPercent}%</span>
             </div>
             <span className="text-[9px] font-black uppercase tracking-wider block mt-0.5 text-emerald-700 leading-none">
               🟢 EN INTERNET
             </span>
             <span className="text-[8px] font-mono text-slate-500 block mt-0.5 leading-none truncate">
-              {completedCount} subprod.
+              {completedSubproductsCount}/{totalSubproducts} subprod.
             </span>
           </div>
 
-          {/* AMARILLO: VIDEOS POR SUBIR */}
-          <div className={`p-2 transition ${videosPendingCount > 0 ? "bg-amber-50 text-amber-950" : "bg-white text-slate-700"}`}>
+          {/* AMARILLO: POR SUBIR (CHECKLIST) */}
+          <div className={`p-2 transition ${pendingSubproductsCount > 0 ? "bg-amber-50 text-amber-950" : "bg-white text-slate-700"}`}>
             <div className="flex items-baseline justify-center gap-0.5">
-              <span className="text-base font-black leading-none">{videosPendingCount}</span>
-              <span className="text-[10px] font-bold opacity-70">/{totalVideos}</span>
+              <span className="text-base font-black leading-none">{100 - checklistPercent}%</span>
             </div>
             <span className="text-[9px] font-black uppercase tracking-wider block mt-0.5 text-amber-700 leading-none">
               🟡 POR SUBIR
             </span>
             <span className="text-[8px] font-mono text-slate-500 block mt-0.5 leading-none truncate">
-              {procesoTasks.length} subprod.
+              {pendingSubproductsCount} pendientes
             </span>
           </div>
 
-          {/* ROJO / AZUL: ALERTA O PROGRESO */}
+          {/* ESTADO / AL DÍA */}
           <div
             className={`p-2 transition ${
               videosAlertCount > 0
@@ -708,14 +841,14 @@ export function GrillaCockpitClient({
           >
             <div className="flex items-baseline justify-center gap-0.5">
               <span className="text-base font-black leading-none">
-                {videosAlertCount > 0 ? videosAlertCount : `${videoProgressPercent}%`}
+                {stats.videos.done}/{stats.videos.total} Vid
               </span>
             </div>
             <span className="text-[9px] font-black uppercase tracking-wider block mt-0.5 text-slate-700 leading-none">
-              {videosAlertCount > 0 ? "🔴 ATRASO" : "⚪ AL DÍA"}
+              {checklistPercent === 100 ? "🟢 100% LISTO" : videosAlertCount > 0 ? "🔴 ATRASO" : "⚪ AL DÍA"}
             </span>
-            <span className="text-[8px] font-mono text-slate-500 block mt-0.5 leading-none truncate">
-              {videosAlertCount > 0 ? "¡Revisar!" : "Meta diaria"}
+            <span className="text-[8px] font-mono opacity-80 mt-0.5 leading-none truncate">
+              Meta PAES: {paesDaysLeft}d
             </span>
           </div>
         </div>
@@ -724,11 +857,11 @@ export function GrillaCockpitClient({
         <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden border border-slate-200">
           <div
             className={`h-full rounded-full transition-all duration-500 ${
-              isAllVideosDone
+              checklistPercent === 100
                 ? "bg-emerald-500"
                 : "bg-gradient-to-r from-amber-400 via-emerald-400 to-emerald-500"
             }`}
-            style={{ width: `${Math.max(5, videoProgressPercent)}%` }}
+            style={{ width: `${Math.max(4, checklistPercent)}%` }}
           />
         </div>
       </section>
@@ -1577,6 +1710,106 @@ export function GrillaCockpitClient({
                   })}
                 </div>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ======================================================== */}
+      {/* MODAL REPORTE DIARIO DE CIERRE (PANTALLAZO Y EXPORTACIÓN) */}
+      {/* ======================================================== */}
+      {showDailyReportModal && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-3 animate-in fade-in">
+          <div className="bg-slate-900 border-2 border-slate-700 rounded-3xl w-full max-w-sm p-4 space-y-3.5 shadow-2xl text-white">
+            {/* CABECERA PANTALLAZO */}
+            <div className="flex items-center justify-between border-b border-slate-800 pb-2.5">
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+                <div>
+                  <h3 className="text-xs font-black tracking-tight text-white uppercase">
+                    Reporte de Operaciones · Cierre
+                  </h3>
+                  <span className="text-[10px] font-mono text-slate-400">
+                    {currentDayData.fullLabel} · {santiagoNow.timeStr} CLT
+                  </span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowDailyReportModal(false)}
+                className="p-1 rounded-full bg-slate-800 text-slate-400 hover:text-white"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* GRAN MEDIDOR DE AVANCE */}
+            <div className="bg-slate-950 p-3.5 rounded-2xl border border-slate-800 text-center space-y-1">
+              <span className="text-[10px] font-mono uppercase text-slate-400 block font-bold">
+                Avance Total del Checklist Diario
+              </span>
+              <div className="text-3xl font-black text-emerald-400 font-mono leading-none">
+                {checklistPercent}%
+              </div>
+              <span className="text-xs text-slate-300 font-bold block mt-1">
+                {completedSubproductsCount} de {totalSubproducts} subproductos subidos
+              </span>
+            </div>
+
+            {/* TABLA RESUMEN POR CATEGORÍAS */}
+            <div className="bg-slate-800/80 rounded-xl p-2.5 border border-slate-700 space-y-1.5 text-xs font-mono">
+              <div className="flex justify-between items-center text-slate-300">
+                <span>🎬 Videos Reels/TikTok:</span>
+                <span className="font-bold text-white">
+                  {stats.videos.done}/{stats.videos.total}
+                </span>
+              </div>
+              <div className="flex justify-between items-center text-slate-300">
+                <span>🖼️ Portadas Oficiales HD:</span>
+                <span className="font-bold text-white">
+                  {stats.covers.done}/{stats.covers.total}
+                </span>
+              </div>
+              <div className="flex justify-between items-center text-slate-300">
+                <span>📑 Carruseles Educativos:</span>
+                <span className="font-bold text-white">
+                  {stats.carousels.done}/{stats.carousels.total}
+                </span>
+              </div>
+              <div className="flex justify-between items-center text-slate-300">
+                <span>📱 Stories de Apoyo:</span>
+                <span className="font-bold text-white">
+                  {stats.stories.done}/{stats.stories.total}
+                </span>
+              </div>
+              <div className="flex justify-between items-center text-slate-300">
+                <span>📝 Copies, Comentarios & WA:</span>
+                <span className="font-bold text-white">
+                  {stats.copies.done + stats.comments.done + stats.wa.done}/
+                  {stats.copies.total + stats.comments.total + stats.wa.total}
+                </span>
+              </div>
+            </div>
+
+            {/* BOTONES DE ACCIÓN PARA GUARDAR */}
+            <div className="grid grid-cols-2 gap-2 pt-1">
+              <button
+                type="button"
+                onClick={handleCopyDailyReport}
+                className="cursor-pointer touch-manipulation min-h-[40px] px-3 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs rounded-xl flex items-center justify-center gap-1.5 shadow-xs transition active:scale-95"
+              >
+                <Copy className="w-3.5 h-3.5" />
+                <span>Copiar Texto</span>
+              </button>
+              <a
+                href={`https://wa.me/?text=${encodeURIComponent(buildDailyReportText())}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="cursor-pointer touch-manipulation min-h-[40px] px-3 bg-[#25D366] hover:bg-[#1ebe5d] text-white font-black text-xs rounded-xl flex items-center justify-center gap-1.5 shadow-xs transition active:scale-95"
+              >
+                <MessageCircle className="w-3.5 h-3.5" />
+                <span>Enviar a WA</span>
+              </a>
             </div>
           </div>
         </div>
