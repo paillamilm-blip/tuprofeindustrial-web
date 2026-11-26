@@ -6,6 +6,7 @@ import {
   Copy,
   Check,
   ChevronRight,
+  ChevronDown,
   Download,
   MessageCircle,
   FileText,
@@ -180,6 +181,7 @@ export function GrillaCockpitClient({
 
   // Modales ligeros y pestañas operativas de mando
   const [viewMode, setViewMode] = useState<"diario" | "semanal">("diario");
+  const [expandedBlockId, setExpandedBlockId] = useState<string | null>(null);
   const [inspectBlockId, setInspectBlockId] = useState<string | null>(null);
   const [showQuotesModal, setShowQuotesModal] = useState(false);
   const [showSyncModal, setShowSyncModal] = useState(false);
@@ -666,53 +668,53 @@ export function GrillaCockpitClient({
           </span>
         </div>
 
-        {/* 3 CAJAS DE SEMÁFORO COHERENTES CON LOS 3 VIDEOS */}
-        <div className="grid grid-cols-3 gap-1 text-center">
-          {/* VERDE: VIDEOS LISTOS */}
-          <div className="rounded-xl p-1.5 bg-emerald-500 text-white flex flex-col items-center justify-center shadow-xs">
-            <div className="flex items-baseline gap-0.5">
+        {/* SEMÁFORO UNIFICADO EN UN SOLO BLOQUE INTEGRADO */}
+        <div className="grid grid-cols-3 rounded-xl overflow-hidden border border-slate-200 divide-x divide-slate-200 text-center bg-slate-50 shadow-xs">
+          {/* VERDE: VIDEOS EN INTERNET */}
+          <div className={`p-2 transition ${videosCompletedCount > 0 ? "bg-emerald-50 text-emerald-950" : "bg-white text-slate-700"}`}>
+            <div className="flex items-baseline justify-center gap-0.5">
               <span className="text-base font-black leading-none">{videosCompletedCount}</span>
-              <span className="text-[10px] font-bold opacity-80">/{totalVideos}</span>
+              <span className="text-[10px] font-bold opacity-70">/{totalVideos}</span>
             </div>
-            <span className="text-[9px] font-black uppercase tracking-wider mt-0.5 leading-none">
-              🟢 LISTOS
+            <span className="text-[9px] font-black uppercase tracking-wider block mt-0.5 text-emerald-700 leading-none">
+              🟢 EN INTERNET
             </span>
-            <span className="text-[8px] font-mono opacity-80 mt-0.5 leading-none truncate">
+            <span className="text-[8px] font-mono text-slate-500 block mt-0.5 leading-none truncate">
               {completedCount} subprod.
             </span>
           </div>
 
-          {/* AMARILLO: VIDEOS EN ESPERA */}
-          <div className="rounded-xl p-1.5 bg-amber-400 text-slate-950 flex flex-col items-center justify-center shadow-xs">
-            <div className="flex items-baseline gap-0.5">
+          {/* AMARILLO: VIDEOS POR SUBIR */}
+          <div className={`p-2 transition ${videosPendingCount > 0 ? "bg-amber-50 text-amber-950" : "bg-white text-slate-700"}`}>
+            <div className="flex items-baseline justify-center gap-0.5">
               <span className="text-base font-black leading-none">{videosPendingCount}</span>
-              <span className="text-[10px] font-bold opacity-80">/{totalVideos}</span>
+              <span className="text-[10px] font-bold opacity-70">/{totalVideos}</span>
             </div>
-            <span className="text-[9px] font-black uppercase tracking-wider mt-0.5 leading-none">
-              🟡 EN ESPERA
+            <span className="text-[9px] font-black uppercase tracking-wider block mt-0.5 text-amber-700 leading-none">
+              🟡 POR SUBIR
             </span>
-            <span className="text-[8px] font-mono opacity-80 mt-0.5 leading-none truncate">
+            <span className="text-[8px] font-mono text-slate-500 block mt-0.5 leading-none truncate">
               {procesoTasks.length} subprod.
             </span>
           </div>
 
           {/* ROJO / AZUL: ALERTA O PROGRESO */}
           <div
-            className={`rounded-xl p-1.5 flex flex-col items-center justify-center transition shadow-xs ${
+            className={`p-2 transition ${
               videosAlertCount > 0
-                ? "bg-red-600 text-white animate-pulse"
-                : "bg-slate-100 text-slate-700 border border-slate-200"
+                ? "bg-red-50 text-red-950 animate-pulse"
+                : "bg-white text-slate-700"
             }`}
           >
-            <div className="flex items-baseline gap-0.5">
+            <div className="flex items-baseline justify-center gap-0.5">
               <span className="text-base font-black leading-none">
                 {videosAlertCount > 0 ? videosAlertCount : `${videoProgressPercent}%`}
               </span>
             </div>
-            <span className="text-[9px] font-black uppercase tracking-wider mt-0.5 leading-none">
+            <span className="text-[9px] font-black uppercase tracking-wider block mt-0.5 text-slate-700 leading-none">
               {videosAlertCount > 0 ? "🔴 ATRASO" : "⚪ AL DÍA"}
             </span>
-            <span className="text-[8px] font-mono opacity-80 mt-0.5 leading-none truncate">
+            <span className="text-[8px] font-mono text-slate-500 block mt-0.5 leading-none truncate">
               {videosAlertCount > 0 ? "¡Revisar!" : "Meta diaria"}
             </span>
           </div>
@@ -731,111 +733,345 @@ export function GrillaCockpitClient({
         </div>
       </section>
 
-      {/* 3. VISTA DIARIA: LOS 3 BLOQUES DE CONTENIDO DE HOY */}
+      {/* 3. VISTA DIARIA: LISTADO PLEGABLE UNIFICADO */}
       {viewMode === "diario" ? (
-        <section className="space-y-1.5 shrink-0">
-          <div className="flex items-center justify-between text-[10.5px] font-black text-slate-600 uppercase px-1">
-            <span>Contenido de Hoy ({videoBlocks.length} Productos)</span>
-            <span className="text-blue-700 font-bold">Toca para abrir subproductos</span>
-          </div>
+        <section className="flex-1 min-h-0 overflow-y-auto pr-0.5">
+          <div className="bg-white rounded-2xl border-2 border-slate-200 overflow-hidden shadow-xs divide-y divide-slate-200">
+            {/* CABECERA DEL LISTADO UNIFICADO */}
+            <div className="px-3 py-2 bg-slate-50 flex items-center justify-between text-[10.5px] font-black text-slate-700 uppercase">
+              <div className="flex items-center gap-1.5">
+                <Film className="w-3.5 h-3.5 text-blue-600" />
+                <span>Contenido de Hoy ({videoBlocks.length} Productos)</span>
+              </div>
+              <span className="text-[10px] text-blue-700 font-bold">Listado Plegable</span>
+            </div>
 
-          <div className="space-y-1.5">
+            {/* FILAS PLEGABLES */}
             {videoBlocks.map((block) => {
               const isVideoDone = !!completedMap[block.mainAction.id];
               const hasAlert = isTaskUrgent(block.mainAction);
-
-              const cardBg = isVideoDone
-                ? "bg-emerald-50 border-emerald-500 text-emerald-950 shadow-emerald-100"
-                : hasAlert
-                ? "bg-red-50 border-red-500 text-red-950 ring-2 ring-red-200"
-                : "bg-amber-50 border-amber-400 text-amber-950";
-
-              const badgeBg = isVideoDone
-                ? "bg-emerald-600 text-white"
-                : hasAlert
-                ? "bg-red-600 text-white animate-pulse"
-                : "bg-amber-500 text-slate-950";
-
-              const subproductsBadges = [
-                block.mainAction.videoDownloadUrl ? "🎬 MP4" : null,
-                block.mainAction.assetPreview ? "🖼️ Cover" : null,
-                block.carousel ? `📑 Carrusel (${block.carousel.slides.length})` : null,
-                block.stories.length > 0 ? `📱 ${block.stories.length} Stories` : null,
-              ].filter(Boolean);
+              const isExpanded = expandedBlockId === block.id;
 
               const cleanTitle = block.title
                 .replace(/^Video.*?: /, "")
                 .replace(/^Dato Nocturno.*?: /, "Dato Nocturno: ");
 
-              return (
-                <div
-                  key={block.id}
-                  className={`p-2 rounded-2xl border-2 flex items-center justify-between gap-1.5 shadow-xs transition duration-300 ${cardBg}`}
-                >
-                  {/* Tocar el bloque abre el modal con TODOS los subproductos */}
-                  <button
-                    type="button"
-                    onClick={() => setInspectBlockId(block.id)}
-                    className="cursor-pointer touch-manipulation min-w-0 flex-1 text-left flex items-center gap-1.5 overflow-hidden"
-                  >
-                    <span
-                      className={`font-mono font-black text-[11px] px-1.5 py-1 rounded-lg shrink-0 ${badgeBg}`}
-                    >
-                      {block.timeSlot}
-                    </span>
+              const subproductsSummary = [
+                block.mainAction.videoDownloadUrl ? "🎬 MP4" : null,
+                block.mainAction.assetPreview ? "🖼️ Cover" : null,
+                block.carousel ? `📑 Carrusel (${block.carousel.slides.length})` : null,
+                block.stories.length > 0 ? `📱 ${block.stories.length} Stories` : null,
+              ]
+                .filter(Boolean)
+                .join(" · ");
 
-                    <div className="min-w-0 flex-1">
-                      <div className="text-xs font-black truncate leading-tight flex items-center gap-0.5">
-                        <span className="truncate">{cleanTitle}</span>
-                        <ChevronRight className="w-3.5 h-3.5 opacity-50 shrink-0" />
+              return (
+                <div key={block.id} className="transition-colors">
+                  {/* FILA CABECERA CLICKEABLE PARA PLEGAR / DESPLEGAR */}
+                  <div
+                    onClick={() => setExpandedBlockId(isExpanded ? null : block.id)}
+                    className={`p-2.5 flex items-center justify-between gap-2 cursor-pointer touch-manipulation transition select-none ${
+                      isExpanded
+                        ? "bg-blue-50/70"
+                        : isVideoDone
+                        ? "bg-emerald-50/40 hover:bg-emerald-50/70"
+                        : hasAlert
+                        ? "bg-red-50/40 hover:bg-red-50/70"
+                        : "hover:bg-slate-50"
+                    }`}
+                  >
+                    {/* HORA Y TÍTULO */}
+                    <div className="min-w-0 flex-1 flex items-center gap-2">
+                      <span
+                        className={`font-mono font-black text-[11px] px-2 py-1 rounded-lg shrink-0 ${
+                          isVideoDone
+                            ? "bg-emerald-600 text-white"
+                            : hasAlert
+                            ? "bg-red-600 text-white animate-pulse"
+                            : "bg-amber-500 text-slate-950"
+                        }`}
+                      >
+                        {block.timeSlot}
+                      </span>
+
+                      <div className="min-w-0 flex-1">
+                        <div className="text-xs font-black truncate leading-tight text-slate-900">
+                          {cleanTitle}
+                        </div>
+                        <div className="text-[10px] text-slate-500 truncate mt-0.5 font-medium">
+                          {subproductsSummary}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* BOTÓN "EN INTERNET / NO EN INTERNET" + CHEVRON */}
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleTask(block.mainAction.id);
+                        }}
+                        className={`cursor-pointer touch-manipulation px-2.5 py-1.5 rounded-xl font-black text-[10.5px] border flex items-center gap-1 shadow-xs transition active:scale-95 ${
+                          isVideoDone
+                            ? "bg-emerald-600 border-emerald-600 text-white hover:bg-emerald-700"
+                            : "bg-white border-slate-300 text-slate-700 hover:border-slate-400"
+                        }`}
+                        title={
+                          isVideoDone
+                            ? "Publicado en internet. Toca para desmarcar."
+                            : "Toca para marcar que ya está en internet"
+                        }
+                      >
+                        {isVideoDone ? (
+                          <>
+                            <Check className="w-3.5 h-3.5 stroke-[3]" />
+                            <span>En Internet</span>
+                          </>
+                        ) : (
+                          <span>⚪ No en Internet</span>
+                        )}
+                      </button>
+
+                      <ChevronDown
+                        className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${
+                          isExpanded ? "rotate-180 text-blue-600" : ""
+                        }`}
+                      />
+                    </div>
+                  </div>
+
+                  {/* CONTENIDO DESPLEGADO (SUBPRODUCTOS Y DETALLES) */}
+                  {isExpanded && (
+                    <div className="p-3 bg-slate-50 border-t border-slate-200 space-y-3 text-xs animate-in fade-in duration-200">
+                      {/* ESTADO "¿ESTÁ EN EL INTERNET O NO?" CON BOTÓN */}
+                      <div
+                        className={`p-2.5 rounded-xl border flex items-center justify-between gap-2 shadow-xs ${
+                          isVideoDone
+                            ? "bg-emerald-50 border-emerald-300 text-emerald-950"
+                            : "bg-amber-50 border-amber-300 text-amber-950"
+                        }`}
+                      >
+                        <div>
+                          <div className="text-[10.5px] font-mono font-black uppercase flex items-center gap-1">
+                            {isVideoDone ? "🟢 ESTÁ EN INTERNET" : "🟡 NO ESTÁ EN INTERNET"}
+                          </div>
+                          <div className="text-[10px] opacity-80 mt-0.5">
+                            {isVideoDone ? "Video publicado y al aire" : "Pendiente de subir a redes"}
+                          </div>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => toggleTask(block.mainAction.id)}
+                          className={`cursor-pointer touch-manipulation px-3 py-1.5 rounded-xl font-black text-xs shadow-xs transition active:scale-95 flex items-center gap-1 ${
+                            isVideoDone
+                              ? "bg-emerald-600 text-white hover:bg-emerald-700"
+                              : "bg-slate-900 text-white hover:bg-slate-800"
+                          }`}
+                        >
+                          {isVideoDone ? (
+                            <>
+                              <Check className="w-3.5 h-3.5 stroke-[3]" />
+                              <span>En Internet ✓</span>
+                            </>
+                          ) : (
+                            <span>Marcar que Subió</span>
+                          )}
+                        </button>
                       </div>
 
-                      {/* BADGES DE SUBPRODUCTOS INCLUIDOS */}
-                      <div className="flex items-center gap-1 mt-0.5 overflow-hidden">
-                        {subproductsBadges.slice(0, 3).map((badge, idx) => (
-                          <span
-                            key={idx}
-                            className="text-[8.5px] font-mono font-bold bg-white/90 px-1 py-0.2 rounded border border-slate-300/70 text-slate-800 shrink-0"
-                          >
-                            {badge}
+                      {/* ATAJOS DIRECTOS A REDES SOCIALES */}
+                      <div className="grid grid-cols-2 gap-1.5">
+                        <a
+                          href="https://www.instagram.com"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="cursor-pointer touch-manipulation min-h-[34px] px-2 rounded-xl bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white font-black text-xs flex items-center justify-center gap-1 shadow-xs hover:opacity-90 active:scale-95 transition"
+                        >
+                          <span>Abrir Instagram</span>
+                        </a>
+                        <a
+                          href="https://www.tiktok.com"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="cursor-pointer touch-manipulation min-h-[34px] px-2 rounded-xl bg-black text-white font-black text-xs flex items-center justify-center gap-1 shadow-xs hover:bg-slate-800 active:scale-95 transition"
+                        >
+                          <span>Abrir TikTok</span>
+                        </a>
+                      </div>
+
+                      {/* 1. VIDEO MASTER MP4 */}
+                      <div className="bg-white p-2.5 rounded-xl border border-slate-200 space-y-2 shadow-xs">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] font-mono font-black text-blue-700 uppercase flex items-center gap-1">
+                            <Film className="w-3 h-3 text-blue-600" />
+                            <span>1. Video Master (MP4 9:16)</span>
                           </span>
-                        ))}
-                        {subproductsBadges.length > 3 && (
-                          <span className="text-[8.5px] font-mono font-bold bg-white/90 px-1 py-0.2 rounded border border-slate-300/70 text-slate-600 shrink-0">
-                            +{subproductsBadges.length - 3}
-                          </span>
+                          {block.mainAction.videoDownloadUrl && (
+                            <a
+                              href={block.mainAction.videoDownloadUrl}
+                              download
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="cursor-pointer touch-manipulation text-[10.5px] font-black bg-slate-900 text-white px-2.5 py-1 rounded-lg flex items-center gap-1 shadow-xs"
+                            >
+                              <Download className="w-3 h-3" /> Bajar MP4
+                            </a>
+                          )}
+                        </div>
+                        {block.mainAction.videoDownloadUrl && (
+                          <video
+                            controls
+                            playsInline
+                            preload="metadata"
+                            src={block.mainAction.videoDownloadUrl}
+                            className="w-full max-h-40 rounded-lg bg-black border border-slate-200"
+                          />
                         )}
                       </div>
 
-                      <div className="text-[9.5px] font-bold opacity-80 truncate mt-0.5">
-                        {isVideoDone
-                          ? "🟢 Video subido y confirmado"
-                          : hasAlert
-                          ? "🔴 ¡En alerta! Turno pendiente"
-                          : "🟡 En espera para publicar"}
-                      </div>
-                    </div>
-                  </button>
+                      {/* 2. PORTADA OFICIAL HD */}
+                      {block.mainAction.assetPreview && (
+                        <div className="bg-white p-2.5 rounded-xl border border-slate-200 flex items-center gap-3 shadow-xs">
+                          <div className="relative w-14 h-16 bg-slate-100 rounded-lg overflow-hidden shrink-0 border border-slate-300">
+                            <Image
+                              src={block.mainAction.assetPreview.url}
+                              alt={block.mainAction.assetPreview.name}
+                              fill
+                              unoptimized
+                              className="object-cover"
+                            />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <span className="text-[10px] font-mono font-black text-slate-500 uppercase block">
+                              2. Portada HD (1080×1920)
+                            </span>
+                            <div className="text-xs font-black text-slate-900 truncate">
+                              {block.mainAction.assetPreview.name}
+                            </div>
+                            <a
+                              href={block.mainAction.assetPreview.downloadUrl}
+                              download={block.mainAction.assetPreview.name}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="cursor-pointer touch-manipulation mt-1 inline-flex items-center gap-1 text-[10px] font-black bg-slate-800 text-white px-2 py-0.5 rounded-md shadow-xs"
+                            >
+                              <Download className="w-2.5 h-2.5" /> Bajar Portada
+                            </a>
+                          </div>
+                        </div>
+                      )}
 
-                  {/* BOTÓN MARCAR DIRECTO */}
-                  <button
-                    type="button"
-                    onClick={() => toggleTask(block.mainAction.id)}
-                    className={`cursor-pointer touch-manipulation min-h-[38px] px-3 rounded-xl text-xs font-black border flex items-center gap-1 shrink-0 transition active:scale-95 shadow-xs ${
-                      isVideoDone
-                        ? "bg-emerald-600 border-emerald-600 text-white"
-                        : "bg-white border-slate-300 hover:border-slate-400 text-slate-800"
-                    }`}
-                  >
-                    {isVideoDone ? (
-                      <>
-                        <Check className="w-3.5 h-3.5 stroke-[3]" />
-                        <span>Listo</span>
-                      </>
-                    ) : (
-                      <span>Marcar</span>
-                    )}
-                  </button>
+                      {/* 3. CARRUSEL */}
+                      {block.carousel && (
+                        <div className="bg-white p-2.5 rounded-xl border border-slate-200 space-y-2 shadow-xs">
+                          <div className="flex items-center justify-between">
+                            <span className="text-[10px] font-mono font-black text-amber-700 uppercase flex items-center gap-1">
+                              <Layers className="w-3 h-3 text-amber-600" />
+                              <span>3. Carrusel ({block.carousel.slides.length} Láminas)</span>
+                            </span>
+                            {block.carousel.sheetUrl && (
+                              <a
+                                href={block.carousel.sheetUrl}
+                                download
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="cursor-pointer touch-manipulation text-[10px] font-black bg-amber-500 text-slate-950 px-2 py-0.5 rounded-md shadow-xs"
+                              >
+                                Hoja Completa
+                              </a>
+                            )}
+                          </div>
+                          <div className="flex gap-2 overflow-x-auto pb-1">
+                            {block.carousel.slides.map((sl) => {
+                              const slideUrl = `${block.carousel!.folderPath}/${sl.file}`;
+                              return (
+                                <div
+                                  key={sl.num}
+                                  className="w-20 shrink-0 bg-slate-50 p-1 rounded-lg border border-slate-200 text-center space-y-1"
+                                >
+                                  <div className="relative w-full h-24 bg-slate-100 rounded overflow-hidden">
+                                    <Image
+                                      src={slideUrl}
+                                      alt={`${sl.num} ${sl.name}`}
+                                      fill
+                                      unoptimized
+                                      className="object-cover"
+                                    />
+                                  </div>
+                                  <a
+                                    href={slideUrl}
+                                    download={sl.file}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="cursor-pointer touch-manipulation text-[9px] font-black bg-slate-200 hover:bg-slate-300 text-slate-800 rounded py-0.5 block"
+                                  >
+                                    #{sl.num} Bajar
+                                  </a>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* 4. STORIES */}
+                      {block.stories.length > 0 && (
+                        <div className="bg-white p-2.5 rounded-xl border border-slate-200 space-y-1.5 shadow-xs">
+                          <span className="text-[10px] font-mono font-black text-purple-700 uppercase block">
+                            4. Stories 9:16 ({block.stories.length})
+                          </span>
+                          <div className="grid grid-cols-2 gap-2">
+                            {block.stories.map((st) => (
+                              <div
+                                key={st.id}
+                                className="bg-slate-50 p-1.5 rounded-lg border border-slate-200 text-center space-y-1"
+                              >
+                                <div className="relative w-full h-24 bg-slate-100 rounded overflow-hidden">
+                                  <Image src={st.url} alt={st.title} fill unoptimized className="object-cover" />
+                                </div>
+                                <a
+                                  href={st.url}
+                                  download={st.downloadName}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="cursor-pointer touch-manipulation text-[9.5px] font-black bg-purple-50 text-purple-700 border border-purple-200 rounded py-0.5 block shadow-xs"
+                                >
+                                  Bajar Story
+                                </a>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* 5. COPIES LISTOS */}
+                      {block.mainAction.copies && block.mainAction.copies.length > 0 && (
+                        <div className="bg-white p-2.5 rounded-xl border border-slate-200 space-y-1.5 shadow-xs">
+                          <span className="text-[10px] font-mono font-black text-slate-600 uppercase block">
+                            5. Textos Listos para Publicar
+                          </span>
+                          {block.mainAction.copies.map((c) => (
+                            <button
+                              key={c.key}
+                              type="button"
+                              onClick={() => handleCopy(c.key, c.text)}
+                              className="cursor-pointer touch-manipulation w-full p-2 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg text-left flex items-center justify-between text-xs"
+                            >
+                              <div className="min-w-0 pr-2">
+                                <div className="font-black text-slate-900 truncate">{c.label}</div>
+                                <div className="text-[10px] text-slate-500 truncate">{c.text.slice(0, 50)}...</div>
+                              </div>
+                              <span className="font-mono text-[10px] text-blue-700 font-black shrink-0 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded">
+                                {copiedKey === c.key ? "¡COPIADO!" : "COPIAR"}
+                              </span>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               );
             })}
