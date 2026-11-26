@@ -70,7 +70,7 @@ export interface DaySchedule {
 }
 
 export const SUPERPROF_URL =
-  "https://www.superprof.cl/ingeniero-industrial-docente-scuola-italiana-preparacion-intensiva-paes-matematica-calculo-domicilio-santiago.html";
+  "https://www.superprof.cl/ingeniero-industrial-diplomado-docencia-innovacion-educacion-superior-clases-calculo-algebra-fisica.html";
 
 export const WEB_URL = "https://tuprofeindustrial-web.vercel.app/";
 export const WHATSAPP_URL = "https://wa.me/56957936649";

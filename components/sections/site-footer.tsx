@@ -126,7 +126,7 @@ export function SiteFooter() {
             </li>
             <li>
               <a
-                href="https://www.superprof.cl/ingeniero-industrial-docente-scuola-italiana-preparacion-intensiva-paes-matematica-calculo-domicilio-santiago.html"
+                href="https://www.superprof.cl/ingeniero-industrial-diplomado-docencia-innovacion-educacion-superior-clases-calculo-algebra-fisica.html"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="rounded font-medium text-emerald-600 transition-colors hover:text-emerald-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"

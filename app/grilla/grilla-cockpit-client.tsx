@@ -595,22 +595,6 @@ export function GrillaCockpitClient({
     showToast(ok ? "📋 Reporte diario copiado para WhatsApp" : "⚠️ Error al copiar");
   };
 
-  const handleOpenSuperprof = () => {
-    const url =
-      superprofUrl ||
-      "https://www.superprof.cl/ingeniero-industrial-docente-scuola-italiana-preparacion-intensiva-paes-matematica-calculo-domicilio-santiago.html";
-    if (typeof window !== "undefined") {
-      try {
-        const win = window.open(url, "_blank");
-        if (!win || win.closed || typeof win.closed === "undefined") {
-          window.location.assign(url);
-        }
-      } catch {
-        window.location.assign(url);
-      }
-    }
-  };
-
   const inspectedBlock = useMemo(() => {
     return videoBlocks.find((b) => b.id === inspectBlockId) ?? null;
   }, [videoBlocks, inspectBlockId]);
@@ -1771,11 +1755,10 @@ export function GrillaCockpitClient({
         <a
           href={
             superprofUrl ||
-            "https://www.superprof.cl/ingeniero-industrial-docente-scuola-italiana-preparacion-intensiva-paes-matematica-calculo-domicilio-santiago.html"
+            "https://www.superprof.cl/ingeniero-industrial-diplomado-docencia-innovacion-educacion-superior-clases-calculo-algebra-fisica.html"
           }
           target="_blank"
           rel="noopener noreferrer"
-          onClick={handleOpenSuperprof}
           className="cursor-pointer touch-manipulation min-h-[36px] px-2.5 bg-amber-50 hover:bg-amber-100 border-2 border-amber-300 rounded-xl text-xs font-black text-amber-950 flex items-center justify-center gap-1.5 shadow-xs transition active:scale-95"
           title="Abrir perfil verificado en Superprof Chile"
         >
