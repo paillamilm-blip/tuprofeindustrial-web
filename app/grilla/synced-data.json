@@ -1,7 +1,7 @@
 {
-  "syncedAt": "2026-11-26T07:07:22-03:00",
-  "syncSource": "publicar-scan",
-  "registroEntries": 0,
+  "syncedAt": "2026-11-26T15:53:00-03:00",
+  "syncSource": "publicar-batch-assets-sync",
+  "registroEntries": 9,
   "completedBaseline": {
     "mie25": {
       "mie-1230-video": true,
@@ -14,8 +14,8 @@
     "MIERCOLES-1730-video-duplica-arista.mp4",
     "MIERCOLES-2115-noche05-dividir-por-cero.mp4"
   ],
-  "activeVideoCount": 3,
-  "activeVideoSizeMb": 12.4,
+  "activeVideoCount": 12,
+  "activeVideoSizeMb": 43.8,
   "weekendReadiness": [
     {
       "iso": "2026-11-27",
