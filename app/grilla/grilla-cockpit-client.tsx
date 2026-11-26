@@ -745,19 +745,29 @@ export function GrillaCockpitClient({
                 )}
               </div>
 
-              {/* COPIES */}
+              {/* TEXTO PARA PEGAR EN LA DESCRIPCIÓN DEL VIDEO (INSTAGRAM / TIKTOK) */}
               {inspectedBlock.mainAction.copies && (
                 <div className="space-y-1.5">
-                  <span className="text-[10px] font-mono font-bold text-slate-500 uppercase">Copies Listos:</span>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10.5px] font-black text-slate-700 uppercase tracking-wide">
+                      Texto para pegar en tu publicación:
+                    </span>
+                    <span className="text-[10px] text-slate-500 font-medium">Toca para copiar</span>
+                  </div>
                   {inspectedBlock.mainAction.copies.map((c) => (
                     <button
                       key={c.key}
                       type="button"
                       onClick={() => handleCopy(c.key, c.text)}
-                      className="cursor-pointer touch-manipulation w-full min-h-[42px] px-3 py-2 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl text-left flex items-center justify-between text-xs font-bold"
+                      className="cursor-pointer touch-manipulation w-full min-h-[46px] px-3.5 py-2.5 bg-slate-50 hover:bg-slate-100 border-2 border-slate-200 rounded-xl text-left flex items-center justify-between text-xs font-bold transition active:scale-[0.99]"
                     >
-                      <span className="truncate mr-2 text-slate-800">{c.label}</span>
-                      <span className="font-mono text-[10.5px] text-blue-700 font-black shrink-0">
+                      <div className="min-w-0 pr-2">
+                        <div className="truncate text-slate-900 font-black">{c.label}</div>
+                        <div className="text-[10px] text-slate-500 truncate font-normal">
+                          {c.text.slice(0, 50)}...
+                        </div>
+                      </div>
+                      <span className="font-mono text-[11px] text-blue-700 font-black shrink-0 bg-blue-50 border border-blue-200 px-2 py-1 rounded-lg">
                         {copiedKey === c.key ? "¡COPIADO!" : "COPIAR"}
                       </span>
                     </button>
