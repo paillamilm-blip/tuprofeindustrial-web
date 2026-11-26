@@ -1203,21 +1203,15 @@ export function GrillaCockpitClient({
             {/* FILAS PLEGABLES */}
             {videoBlocks.map((block) => {
               const isVideoDone = !!completedMap[block.mainAction.id];
+              const isCoverDone = block.mainAction.assetPreview ? !!completedMap[`${block.id}_cover`] : null;
+              const isCarouselDone = block.carousel ? !!completedMap[`${block.id}_carousel`] : null;
+              const isStoriesDone = block.stories.length > 0 ? !!completedMap[`${block.id}_stories`] : null;
               const hasAlert = isTaskUrgent(block.mainAction);
               const isExpanded = expandedBlockId === block.id;
 
               const cleanTitle = block.title
                 .replace(/^Video.*?: /, "")
                 .replace(/^Dato Nocturno.*?: /, "Dato Nocturno: ");
-
-              const subproductsSummary = [
-                block.mainAction.videoDownloadUrl ? "🎬 MP4" : null,
-                block.mainAction.assetPreview ? "🖼️ Cover" : null,
-                block.carousel ? `📑 Carrusel (${block.carousel.slides.length})` : null,
-                block.stories.length > 0 ? `📱 ${block.stories.length} Stories` : null,
-              ]
-                .filter(Boolean)
-                .join(" · ");
 
               return (
                 <div key={block.id} className="transition-colors">
@@ -1252,8 +1246,49 @@ export function GrillaCockpitClient({
                         <div className="text-xs font-black truncate leading-tight text-slate-900">
                           {cleanTitle}
                         </div>
-                        <div className="text-[10px] text-slate-500 truncate mt-0.5 font-medium">
-                          {subproductsSummary}
+                        <div className="flex items-center gap-1 text-[9px] font-mono mt-0.5 flex-wrap">
+                          <span
+                            className={`inline-flex items-center gap-0.5 px-1 py-0.2 rounded font-bold ${
+                              isVideoDone
+                                ? "bg-emerald-100 text-emerald-800"
+                                : "bg-slate-200 text-slate-700"
+                            }`}
+                          >
+                            🎬 Video {isVideoDone ? "✓" : "⏳"}
+                          </span>
+                          {block.mainAction.assetPreview && (
+                            <span
+                              className={`inline-flex items-center gap-0.5 px-1 py-0.2 rounded font-bold ${
+                                isCoverDone
+                                  ? "bg-emerald-100 text-emerald-800"
+                                  : "bg-slate-200 text-slate-700"
+                              }`}
+                            >
+                              🖼️ Cover {isCoverDone ? "✓" : "⏳"}
+                            </span>
+                          )}
+                          {block.carousel && (
+                            <span
+                              className={`inline-flex items-center gap-0.5 px-1 py-0.2 rounded font-bold ${
+                                isCarouselDone
+                                  ? "bg-emerald-100 text-emerald-800"
+                                  : "bg-amber-100 text-amber-900"
+                              }`}
+                            >
+                              📑 Carrusel {isCarouselDone ? "✓" : "⏳"}
+                            </span>
+                          )}
+                          {block.stories.length > 0 && (
+                            <span
+                              className={`inline-flex items-center gap-0.5 px-1 py-0.2 rounded font-bold ${
+                                isStoriesDone
+                                  ? "bg-emerald-100 text-emerald-800"
+                                  : "bg-purple-100 text-purple-900"
+                              }`}
+                            >
+                              📱 Story {isStoriesDone ? "✓" : "⏳"}
+                            </span>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -1367,6 +1402,19 @@ export function GrillaCockpitClient({
                           title="Descargar Hoja Completa de Carrusel"
                         >
                           <Download className="w-2.5 h-2.5" /> Carrusel
+                        </a>
+                      )}
+                      {block.stories.length > 0 && block.stories[0]?.url && (
+                        <a
+                          href={block.stories[0].url}
+                          download={block.stories[0].downloadName}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          className="cursor-pointer touch-manipulation px-1.5 py-0.5 rounded-md bg-purple-100 border border-purple-300 text-purple-950 font-mono text-[9px] font-bold flex items-center gap-0.5 shadow-2xs hover:bg-purple-200 active:scale-95"
+                          title="Descargar Historia 9:16"
+                        >
+                          <Download className="w-2.5 h-2.5" /> Story
                         </a>
                       )}
                       <button
