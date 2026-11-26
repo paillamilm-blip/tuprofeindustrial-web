@@ -585,26 +585,26 @@ export function GrillaCockpitClient({
           <button
             type="button"
             onClick={() => setViewMode("diario")}
-            className={`cursor-pointer touch-manipulation min-h-[32px] rounded-lg text-xs font-black flex items-center justify-center gap-1.5 transition ${
+            className={`cursor-pointer touch-manipulation min-h-[32px] rounded-lg text-xs font-black flex items-center justify-center gap-1 transition ${
               viewMode === "diario"
                 ? "bg-slate-900 text-white shadow-xs"
                 : "text-slate-600 hover:text-slate-900"
             }`}
           >
-            <Clock className="w-3.5 h-3.5" />
-            <span>Plan Diario (Hoy)</span>
+            <Clock className="w-3.5 h-3.5 shrink-0" />
+            <span className="truncate">Plan Diario</span>
           </button>
           <button
             type="button"
             onClick={() => setViewMode("semanal")}
-            className={`cursor-pointer touch-manipulation min-h-[32px] rounded-lg text-xs font-black flex items-center justify-center gap-1.5 transition ${
+            className={`cursor-pointer touch-manipulation min-h-[32px] rounded-lg text-xs font-black flex items-center justify-center gap-1 transition ${
               viewMode === "semanal"
                 ? "bg-slate-900 text-white shadow-xs"
                 : "text-slate-600 hover:text-slate-900"
             }`}
           >
-            <Calendar className="w-3.5 h-3.5" />
-            <span>Plan Semanal</span>
+            <Calendar className="w-3.5 h-3.5 shrink-0" />
+            <span className="truncate">Plan Semanal</span>
           </button>
         </div>
       </header>
@@ -628,7 +628,7 @@ export function GrillaCockpitClient({
                     setDayOverride(key);
                     setViewMode("diario");
                   }}
-                  className={`cursor-pointer touch-manipulation px-2.5 py-0.5 rounded-md text-[11px] font-black transition ${
+                  className={`cursor-pointer touch-manipulation px-2 py-0.5 rounded-md text-[10.5px] font-black transition ${
                     active
                       ? "bg-blue-600 text-white shadow-xs"
                       : "text-slate-600 hover:text-slate-900"
@@ -653,12 +653,12 @@ export function GrillaCockpitClient({
         >
           <div className="flex items-center gap-1.5 min-w-0">
             <Clock className="w-3.5 h-3.5 shrink-0" />
-            <span className="truncate tracking-tight text-[11.5px]">
+            <span className="truncate tracking-tight text-[11px]">
               {isAllVideosDone
-                ? "🟢 ¡DÍA CUMPLIDO! Todos los videos (3/3) subidos"
+                ? "🟢 ¡DÍA CUMPLIDO! Videos (3/3) subidos"
                 : timeDiffMins !== null && timeDiffMins <= 0
                 ? `🚨 TURNO ${nextPendingBlock?.timeSlot} ATRASADO (+${Math.abs(timeDiffMins)}m)`
-                : `⏳ PRÓXIMO TURNO: ${nextPendingBlock?.timeSlot ?? "12:30"} (en ${Math.floor((timeDiffMins ?? 0) / 60)}h ${(timeDiffMins ?? 0) % 60}m)`}
+                : `⏳ PRÓXIMO: ${nextPendingBlock?.timeSlot ?? "12:30"} (en ${Math.floor((timeDiffMins ?? 0) / 60)}h ${(timeDiffMins ?? 0) % 60}m)`}
             </span>
           </div>
           <span className="text-[10px] font-mono uppercase tracking-wider opacity-90 shrink-0 bg-white/20 px-1.5 py-0.5 rounded ml-1">
@@ -667,7 +667,7 @@ export function GrillaCockpitClient({
         </div>
 
         {/* 3 CAJAS DE SEMÁFORO COHERENTES CON LOS 3 VIDEOS */}
-        <div className="grid grid-cols-3 gap-1.5 text-center">
+        <div className="grid grid-cols-3 gap-1 text-center">
           {/* VERDE: VIDEOS LISTOS */}
           <div className="rounded-xl p-1.5 bg-emerald-500 text-white flex flex-col items-center justify-center shadow-xs">
             <div className="flex items-baseline gap-0.5">
@@ -677,7 +677,7 @@ export function GrillaCockpitClient({
             <span className="text-[9px] font-black uppercase tracking-wider mt-0.5 leading-none">
               🟢 LISTOS
             </span>
-            <span className="text-[8px] font-mono opacity-80 mt-0.5 leading-none">
+            <span className="text-[8px] font-mono opacity-80 mt-0.5 leading-none truncate">
               {completedCount} subprod.
             </span>
           </div>
@@ -691,7 +691,7 @@ export function GrillaCockpitClient({
             <span className="text-[9px] font-black uppercase tracking-wider mt-0.5 leading-none">
               🟡 EN ESPERA
             </span>
-            <span className="text-[8px] font-mono opacity-80 mt-0.5 leading-none">
+            <span className="text-[8px] font-mono opacity-80 mt-0.5 leading-none truncate">
               {procesoTasks.length} subprod.
             </span>
           </div>
@@ -712,8 +712,8 @@ export function GrillaCockpitClient({
             <span className="text-[9px] font-black uppercase tracking-wider mt-0.5 leading-none">
               {videosAlertCount > 0 ? "🔴 ATRASO" : "⚪ AL DÍA"}
             </span>
-            <span className="text-[8px] font-mono opacity-80 mt-0.5 leading-none">
-              {videosAlertCount > 0 ? "¡Revisar turno!" : "Meta diaria"}
+            <span className="text-[8px] font-mono opacity-80 mt-0.5 leading-none truncate">
+              {videosAlertCount > 0 ? "¡Revisar!" : "Meta diaria"}
             </span>
           </div>
         </div>
@@ -776,7 +776,7 @@ export function GrillaCockpitClient({
                   <button
                     type="button"
                     onClick={() => setInspectBlockId(block.id)}
-                    className="cursor-pointer touch-manipulation min-w-0 flex-1 text-left flex items-center gap-1.5"
+                    className="cursor-pointer touch-manipulation min-w-0 flex-1 text-left flex items-center gap-1.5 overflow-hidden"
                   >
                     <span
                       className={`font-mono font-black text-[11px] px-1.5 py-1 rounded-lg shrink-0 ${badgeBg}`}
@@ -792,7 +792,7 @@ export function GrillaCockpitClient({
 
                       {/* BADGES DE SUBPRODUCTOS INCLUIDOS */}
                       <div className="flex items-center gap-1 mt-0.5 overflow-hidden">
-                        {subproductsBadges.map((badge, idx) => (
+                        {subproductsBadges.slice(0, 3).map((badge, idx) => (
                           <span
                             key={idx}
                             className="text-[8.5px] font-mono font-bold bg-white/90 px-1 py-0.2 rounded border border-slate-300/70 text-slate-800 shrink-0"
@@ -800,6 +800,11 @@ export function GrillaCockpitClient({
                             {badge}
                           </span>
                         ))}
+                        {subproductsBadges.length > 3 && (
+                          <span className="text-[8.5px] font-mono font-bold bg-white/90 px-1 py-0.2 rounded border border-slate-300/70 text-slate-600 shrink-0">
+                            +{subproductsBadges.length - 3}
+                          </span>
+                        )}
                       </div>
 
                       <div className="text-[9.5px] font-bold opacity-80 truncate mt-0.5">
