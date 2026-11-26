@@ -180,7 +180,16 @@ export function GrillaCockpitClient({
   syncedData,
   isPinProtected,
 }: GrillaCockpitClientProps) {
-  const [dayOverride, setDayOverride] = useState<DayKey | null>(null);
+  const [dayOverride, setDayOverride] = useState<DayKey | null>(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const dia = params.get("dia") as DayKey | null;
+      if (dia && DAY_KEYS.includes(dia)) {
+        return dia;
+      }
+    }
+    return null;
+  });
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
 
