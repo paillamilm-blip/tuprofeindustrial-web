@@ -421,14 +421,17 @@ export function GrillaCockpitClient({
     block?: VideoBlock
   ) => {
     if (block && block.mainAction.copies && block.mainAction.copies.length > 0) {
-      const copyText = block.mainAction.copies[0].text;
+      let copyText = block.mainAction.copies[0].text;
+      if (platform === "facebook") {
+        copyText = `${copyText}\n\n🔗 Web oficial: https://tuprofeindustrial-web.vercel.app\n💬 WhatsApp tutorías: https://wa.me/56961226065`;
+      }
       await copyTextSafe(copyText);
       showToast(
         platform === "instagram"
           ? "📋 ¡Copy copiado! Abriendo Instagram..."
           : platform === "tiktok"
           ? "📋 ¡Copy copiado! Abriendo TikTok..."
-          : "📋 ¡Copy copiado con links! Abriendo Facebook..."
+          : "📋 ¡Copy copiado con links web! Abriendo Facebook..."
       );
     } else {
       showToast(
