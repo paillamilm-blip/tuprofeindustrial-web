@@ -157,7 +157,7 @@ Creado con IA. #tuprofeindustrial #paesm1 #algebra #ecuaciones #demre`,
             key: "mie1230-pin",
             label: "📌 1er Comentario Fijado",
             tone: "green",
-            text: `📌 ¿Quieres asegurar sobre 800 puntos en la PAES M1? Últimos cupos para tutorías personalizadas intensivas ($20.000/h · Pack PAES 6h $100.000, online todo Chile y presencial en RM). Escríbeme por DM para coordinar 📩`,
+            text: `📌 ¿Quieres asegurar sobre 800 puntos en la PAES M1? Últimos cupos para tutorías personalizadas intensivas ($20.000/h · Programa PAES 6h $100.000, online todo Chile y presencial en RM). Escríbeme por DM para coordinar 📩`,
           },
         ],
       },
@@ -229,7 +229,7 @@ Creado con IA. #tuprofeindustrial #paesm1 #geometria #cuerposgeometricos #demre`
             key: "mie1730-pin",
             label: "📌 1er Comentario Fijado (Tutorías)",
             tone: "green",
-            text: `📌 Tutorías personalizadas 1 a 1 de Geometría y PAES M1 ($20.000/h · Pack PAES 6h $100.000). Envíame un mensaje interno (DM) para revisar cupos disponibles 📲`,
+            text: `📌 Tutorías personalizadas 1 a 1 de Geometría y PAES M1 ($20.000/h · Programa PAES 6h $100.000). Envíame un mensaje interno (DM) para revisar cupos disponibles 📲`,
           },
         ],
       },
@@ -276,7 +276,7 @@ Creado con IA. #tuprofeindustrial #paesm1 #geometria #cuerposgeometricos #demre`
 🎯 En mi web pueden practicar gratis con la Calculadora PAES y descargar el Simulacro M1 (20 ítems con solucionario paso a paso):
 👉 ${WEB_URL}
 
-Como Ingeniero Industrial y docente diplomado (ex-profesor Scuola Italiana), abrí los últimos cupos de tutorías personalizadas intensivas de última semana ($20.000/h o Pack PAES 6 horas por $100.000, online u a domicilio en Santiago).
+Como Ingeniero Industrial y docente diplomado (ex-profesor Scuola Italiana), abrí los últimos cupos de tutorías personalizadas intensivas de última semana ($20.000/h o Programa PAES 6 horas por $100.000, online u a domicilio en Santiago).
 
 📲 Escríbeme directo al WhatsApp: ${WHATSAPP_URL}
 
@@ -308,7 +308,7 @@ El 70% dice que sí al tiro. ❌ ¡Error fatal!
 
 De paso les dejo gratis la Calculadora PAES y un Simulacro M1 de 20 preguntas con solucionario para repasar esta semana 👉 ${WEB_URL}
 
-Si alguien necesita tutorías personalizadas de refuerzo ($20k/h o Pack PAES 6h $100k), me escribe directo acá: ${WHATSAPP_URL} 📲`,
+Si alguien necesita tutorías personalizadas de refuerzo ($20k/h o Programa PAES 6h $100k), me escribe directo acá: ${WHATSAPP_URL} 📲`,
           },
         ],
       },
@@ -366,7 +366,7 @@ Creado con IA. #tuprofeindustrial #datosnocturnos #calculo #algebra #cienciachil
         minutesFromMidnight: 21 * 60 + 30,
         category: "story",
         role: "matias",
-        title: "Story Nocturna Cierre de Conversión (Pack PAES $100k)",
+        title: "Story Nocturna Cierre de Conversión (Programa PAES $100k)",
         detail: "Subir lámina 21:15 de captación con enlace directo a WhatsApp o sticker de DM.",
         assetPreview: {
           url: "/motor-assets/historias/miercoles-2115-historia-02-clases.png",
@@ -377,7 +377,7 @@ Creado con IA. #tuprofeindustrial #datosnocturnos #calculo #algebra #cienciachil
           {
             key: "mie2130-st",
             label: "📸 Texto Story Cierre",
-            text: `Últimos cupos antes del lunes 30 ⏳ Pack PAES (6 horas de tutorías 1 a 1) a $100.000 CLP. Escríbeme por aquí y aseguramos tus puntos clave 👇`,
+            text: `Últimos cupos antes del lunes 30 ⏳ Programa PAES (6 horas de tutorías 1 a 1) a $100.000 CLP. Escríbeme por aquí y aseguramos tus puntos clave 👇`,
           },
         ],
       },
@@ -531,7 +531,7 @@ La técnica analítica infalible:
             key: "jue1230-pin",
             label: "📌 1er Comentario Fijado (Tutorías)",
             tone: "green",
-            text: `📌 ¿Quieres asegurar tus últimos puntos en PAES M1? Últimos cupos para tutorías personalizadas intensivas ($20.000/h · Pack PAES 6h $100.000, online todo Chile y presencial en RM). Escríbeme por DM para coordinar 📩`,
+            text: `📌 ¿Quieres asegurar tus últimos puntos en PAES M1? Últimos cupos para tutorías personalizadas intensivas ($20.000/h · Programa PAES 6h $100.000, online todo Chile y presencial en RM). Escríbeme por DM para coordinar 📩`,
           },
         ],
       },
@@ -602,7 +602,7 @@ El atajo con las Relaciones de Viète:
             key: "jue1730-pin",
             label: "📌 1er Comentario Fijado (Tutorías)",
             tone: "green",
-            text: `📌 Últimos cupos para tutorías personalizadas PAES M1 ($20.000/h · Pack PAES 6h $100.000). Escríbeme directo por DM para coordinar horarios 📲`,
+            text: `📌 Últimos cupos para tutorías personalizadas PAES M1 ($20.000/h · Programa PAES 6h $100.000). Escríbeme directo por DM para coordinar horarios 📲`,
           },
         ],
       },
@@ -652,7 +652,7 @@ En x² - 5x + k = 0 con raíz x₁ = 2, no apliquen fórmula larga. Usen Relacio
 
 🎯 Practiquen gratis con la Calculadora PAES y descarguen el Simulacro M1 (20 ítems con solucionario) aquí: ${WEB_URL}
 
-Como Ingeniero Industrial y docente, tengo últimos horarios para tutorías personalizadas ($20.000/h o Pack PAES 6h $100.000).
+Como Ingeniero Industrial y docente, tengo últimos horarios para tutorías personalizadas ($20.000/h o Programa PAES 6h $100.000).
 📲 WhatsApp directo: ${WHATSAPP_URL}`,
           },
         ],
@@ -678,7 +678,7 @@ En *x² - 5x + k = 0*, si una raíz es *x₁ = 2*, ¿cuánto vale *k*?
 2️⃣ Producto = c/a ➔ k = 2 · 3 = *6*
 
 Les dejo el Simulacro M1 gratis (20 ítems + solucionario) y Calculadora PAES acá 👉 ${WEB_URL}
-Por tutorías personalizadas de última semana ($20k/h o Pack 6h $100k): ${WHATSAPP_URL} 📲`,
+Por tutorías personalizadas de última semana ($20k/h o Programa 6h $100k): ${WHATSAPP_URL} 📲`,
           },
         ],
       },
@@ -747,7 +747,7 @@ Le sumas 1... ¡y cierra en cero!
           {
             key: "jue2130-st",
             label: "📸 Texto Story Noche",
-            text: `¿Ramos complejos de Ingeniería o recta final PAES? Tutorías 1 a 1 ($20k/h · Pack PAES $100k · Intensivo U $600k). Escríbeme por DM 👇`,
+            text: `¿Ramos complejos de Ingeniería o recta final PAES? Tutorías 1 a 1 ($20k/h · Programa PAES $100k · Intensivo U $600k). Escríbeme por DM 👇`,
           },
         ],
       },
@@ -988,7 +988,7 @@ Le sumas 1... ¡y cierra en cero!
         category: "whatsapp",
         role: "matias",
         title: "Difusión Comunidad WhatsApp: Alerta Cupos Tutoría",
-        detail: "Informar últimos 2 cupos para Pack PAES de fin de semana ($100.000 / 6 horas).",
+        detail: "Informar últimos 2 cupos para Programa PAES de fin de semana ($100.000 / 6 horas).",
       },
       {
         id: "vie-2115-video",
@@ -1738,12 +1738,12 @@ export const QUOTES_WA = [
   },
   {
     key: "wa2",
-    name: "Pack PAES (6 horas)",
+    name: "Programa PAES (6 horas)",
     price: "$100.000 CLP",
     sub: "Ahorro $20k · Ensayos y cazabobos intensivos",
     featured: true,
     purple: false,
-    message: `¡Hola! Para esta recta final te recomiendo directamente el Pack PAES: son 6 horas de tutorías personalizadas intensivas por $100.000 CLP (ahorras $20.000 frente a la hora individual). Trabajamos resolución de ensayos, trampas clásicas DEMRE y manejo de tiempo pregunta a pregunta. ¿Te gustaría agendar la primera sesión esta semana?`,
+    message: `¡Hola! Para esta recta final te recomiendo directamente el Programa PAES: son 6 horas de tutorías personalizadas intensivas por $100.000 CLP (ahorras $20.000 frente a la hora individual). Trabajamos resolución de ensayos, trampas clásicas DEMRE y manejo de tiempo pregunta a pregunta. ¿Te gustaría agendar la primera sesión esta semana?`,
   },
   {
     key: "wa3",
@@ -1764,7 +1764,7 @@ export const CONVOCATORIAS_BASE = [
     fechaLabel: "30-Nov-2026",
     monto: "Ingreso Universidad 2027",
     estado: "alerta" as const,
-    accion: "Captación intensiva de última semana ($100k Pack PAES).",
+    accion: "Captación intensiva de última semana ($100k Programa PAES).",
   },
   {
     nombre: "CORFO: Semilla Inicia",

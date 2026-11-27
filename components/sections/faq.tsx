@@ -23,7 +23,7 @@ const FAQS = [
   },
   {
     q: "¿Cuánto cuestan las tutorías?",
-    a: "Tengo tres opciones claras con aranceles transparentes:\n• Tutoría individual: $20.000 por 1 hora (a domicilio en Santiago u online).\n• Pack PAES: $100.000 por 6 horas de tutoría personalizada, con ensayos reales y resolución de dudas por WhatsApp.\n• Intensivo de Ingeniería: $600.000 por 36 horas de tutoría en el mes (9 horas a la semana, divididas en 3 sesiones de 3 horas) para salvar o asegurar ramos como Cálculo, Álgebra y Física.",
+    a: "Tengo tres opciones claras con aranceles transparentes:\n• Tutoría individual: $20.000 por 1 hora (a domicilio en Santiago u online).\n• Programa PAES: $100.000 por 6 horas de tutoría personalizada, con ensayos reales y resolución de dudas por WhatsApp.\n• Intensivo de Ingeniería: $600.000 por 36 horas de tutoría en el mes (9 horas a la semana, divididas en 3 sesiones de 3 horas) para salvar o asegurar ramos como Cálculo, Álgebra y Física.",
   },
   {
     q: "¿Qué horarios tienes disponibles?",

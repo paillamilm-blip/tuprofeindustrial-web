@@ -37,7 +37,7 @@ export const metadata: Metadata = {
   title:
     "TuProfeIndustrial | Tutorías de Matemáticas, Física e Ingeniería en Chile",
   description:
-    "Ingeniero Industrial, Docente e Innovador con IA. Tutorías personalizadas a domicilio en Santiago y online en todo Chile: Matemáticas, Física e Ingeniería desde 1° medio hasta universidad, Pack PAES y Nivelación. Agenda por WhatsApp.",
+    "Ingeniero Industrial, Docente e Innovador con IA. Tutorías personalizadas a domicilio en Santiago y online en todo Chile: Matemáticas, Física e Ingeniería desde 1° medio hasta universidad, Programa PAES y Nivelación. Agenda por WhatsApp.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

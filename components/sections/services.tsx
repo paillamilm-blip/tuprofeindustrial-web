@@ -13,7 +13,7 @@ import { WhatsAppCta } from "@/components/whatsapp-cta";
 import { cn } from "@/lib/utils";
 
 const SERVICES_MESSAGE =
-  "Hola! Quiero información sobre tus tutorías (individuales, Pack PAES o Intensivo de Ingeniería). ¿Me cuentas?";
+  "Hola! Quiero información sobre tus tutorías (individuales, Programa PAES o Intensivo de Ingeniería). ¿Me cuentas?";
 
 /**
  * Services — tres servicios DIFERENCIADOS (anti-slop: no tres tarjetas
@@ -39,7 +39,7 @@ const SERVICES = [
   },
   {
     icon: Rocket,
-    name: "Pack PAES",
+    name: "Programa PAES",
     tagline: "6 horas de preparación",
     description:
       "Seis horas de tutorías individuales para la PAES de Matemáticas (M1 y M2). Vemos los temas clave, resolvemos ensayos juntos y aprendemos a no caer en las trampas del DEMRE.",
@@ -54,7 +54,7 @@ const SERVICES = [
   },
   {
     icon: Building2,
-    name: "Intensivo de Ingeniería",
+    name: "Programa Intensivo de Ingeniería",
     tagline: "36 horas en el mes",
     description:
       "Treinta y seis horas de tutorías en un mes para salvar o asegurar ramos difíciles de universidad: Cálculo, Álgebra y Física. Son 9 horas por semana (3 tutorías de 3 horas) resolviendo certámenes pasados.",
