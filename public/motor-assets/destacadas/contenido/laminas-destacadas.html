@@ -1,0 +1,543 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Láminas Interiores para Historias Destacadas</title>
+  <style>
+    @font-face {
+      font-family: "Montserrat";
+      src: url("/Users/documentos/Downloads/tuprofeindustrial-videos/src/tpi_videos/assets/fuentes/Montserrat-ExtraBold.ttf") format("truetype");
+      font-weight: 800;
+    }
+    @font-face {
+      font-family: "Montserrat";
+      src: url("/Users/documentos/Downloads/tuprofeindustrial-videos/src/tpi_videos/assets/fuentes/Montserrat-SemiBold.ttf") format("truetype");
+      font-weight: 600;
+    }
+    @font-face {
+      font-family: "Montserrat";
+      src: url("/Users/documentos/Downloads/tuprofeindustrial-videos/src/tpi_videos/assets/fuentes/Montserrat-Medium.ttf") format("truetype");
+      font-weight: 500;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #060a12;
+      font-family: "Montserrat", sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 40px;
+      padding: 40px 0;
+    }
+
+    .slide {
+      width: 1080px;
+      height: 1920px;
+      position: relative;
+      background: #080F18;
+      overflow: hidden;
+      padding: 160px 80px 180px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(56, 189, 248, 0.05) 1.5px, transparent 1.5px),
+        linear-gradient(90deg, rgba(56, 189, 248, 0.05) 1.5px, transparent 1.5px);
+      background-size: 60px 60px;
+      pointer-events: none;
+    }
+
+    .glow-top {
+      position: absolute;
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 800px;
+      height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(11, 89, 97, 0.35) 0%, rgba(8, 15, 24, 0) 70%);
+      pointer-events: none;
+    }
+
+    /* HEADER */
+    .header {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid rgba(56, 189, 248, 0.2);
+      padding-bottom: 30px;
+    }
+
+    .brand-tag {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 26px;
+      font-weight: 800;
+      color: #F8FAFC;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    .brand-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #F5B942;
+      box-shadow: 0 0 12px #F5B942;
+    }
+
+    .category-badge {
+      padding: 8px 20px;
+      background: rgba(18, 27, 47, 0.9);
+      border: 1px solid rgba(183, 247, 232, 0.4);
+      border-radius: 30px;
+      font-size: 20px;
+      font-weight: 600;
+      color: #B7F7E8;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    /* CONTENT */
+    .content-box {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 36px;
+    }
+
+    .eyebrow {
+      font-size: 26px;
+      font-weight: 600;
+      color: #F5B942;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+
+    .main-title {
+      font-size: 64px;
+      font-weight: 800;
+      color: #F8FAFC;
+      line-height: 1.15;
+      letter-spacing: -1px;
+    }
+
+    .highlight-text {
+      color: #38BDF8;
+    }
+
+    .accent-mint {
+      color: #B7F7E8;
+    }
+
+    .card-panel {
+      background: #101B2B;
+      border: 2px solid rgba(56, 189, 248, 0.25);
+      border-radius: 28px;
+      padding: 44px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+    }
+
+    .card-panel h3 {
+      font-size: 32px;
+      font-weight: 800;
+      color: #F8FAFC;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .card-panel p {
+      font-size: 26px;
+      font-weight: 500;
+      color: #CBD5E1;
+      line-height: 1.5;
+    }
+
+    .bullet-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .bullet-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      font-size: 26px;
+      font-weight: 500;
+      color: #E2E8F0;
+      line-height: 1.4;
+    }
+
+    .bullet-icon {
+      width: 36px;
+      height: 36px;
+      min-width: 36px;
+      border-radius: 50%;
+      background: rgba(183, 247, 232, 0.15);
+      border: 2px solid #B7F7E8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #B7F7E8;
+      font-size: 20px;
+      font-weight: 800;
+      margin-top: 2px;
+    }
+
+    .price-box {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      margin-top: 10px;
+    }
+
+    .price-number {
+      font-size: 68px;
+      font-weight: 800;
+      color: #F5B942;
+      letter-spacing: -1px;
+    }
+
+    .price-unit {
+      font-size: 26px;
+      font-weight: 600;
+      color: #94A3B8;
+    }
+
+    /* FOOTER */
+    .footer {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      border-top: 2px solid rgba(56, 189, 248, 0.2);
+      padding-top: 36px;
+    }
+
+    .cta-banner {
+      width: 100%;
+      background: linear-gradient(90deg, #0B5961 0%, #103B48 100%);
+      border: 2px solid #B7F7E8;
+      border-radius: 24px;
+      padding: 24px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .cta-text {
+      font-size: 28px;
+      font-weight: 800;
+      color: #FFFFFF;
+      letter-spacing: 1px;
+    }
+
+    .cta-arrow {
+      font-size: 32px;
+      color: #F5B942;
+    }
+
+    .foot-note {
+      font-size: 20px;
+      color: #94A3B8;
+      font-weight: 500;
+      letter-spacing: 1px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========================================== -->
+  <!-- 1. QUIÉN SOY - LÁMINA 1: PRESENTACIÓN      -->
+  <!-- ========================================== -->
+  <div id="slide-qs-1" class="slide">
+    <div class="grid"></div>
+    <div class="glow-top"></div>
+
+    <div class="header">
+      <div class="brand-tag"><span class="brand-dot"></span> TUPROFEINDUSTRIAL</div>
+      <div class="category-badge">HISTORIA 01 / 02</div>
+    </div>
+
+    <div class="content-box">
+      <div class="eyebrow">Sobre mí</div>
+      <div class="main-title">Soy Matías,<br><span class="highlight-text">Ingeniero Industrial</span> & Tutor de Matemáticas.</div>
+      
+      <div class="card-panel">
+        <h3>⚙️ Mi Trayectoria</h3>
+        <p>Docente diplomado con experiencia en colegios de alto rendimiento como Scuola Italiana y cientos de horas formando estudiantes para la PAES y la universidad.</p>
+      </div>
+
+      <div class="bullet-list">
+        <div class="bullet-item">
+          <div class="bullet-icon">✓</div>
+          <div><strong>Enseñanza Media y PAES:</strong> Aseguramos puntajes 800+ en M1 y M2 sin estrés.</div>
+        </div>
+        <div class="bullet-item">
+          <div class="bullet-icon">✓</div>
+          <div><strong>Primeros Años de Universidad:</strong> Cálculo Diferencial, Integral, Álgebra Lineal y Física.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div class="cta-banner">
+        <div class="cta-text">📲 Presencial en Santiago y Online Chile</div>
+        <div class="cta-arrow">→</div>
+      </div>
+      <div class="foot-note">Toca la pantalla para ver el método de trabajo</div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- 2. QUIÉN SOY - LÁMINA 2: EL MÉTODO          -->
+  <!-- ========================================== -->
+  <div id="slide-qs-2" class="slide">
+    <div class="grid"></div>
+    <div class="glow-top"></div>
+
+    <div class="header">
+      <div class="brand-tag"><span class="brand-dot"></span> TUPROFEINDUSTRIAL</div>
+      <div class="category-badge">HISTORIA 02 / 02</div>
+    </div>
+
+    <div class="content-box">
+      <div class="eyebrow">Metodología de Trabajo</div>
+      <div class="main-title">El Método del Ingeniero:<br><span class="accent-mint">Cero Fórmulas de Memoria</span>.</div>
+      
+      <div class="bullet-list">
+        <div class="card-panel">
+          <h3>📐 1. Comprensión Analítica</h3>
+          <p>Entendemos de dónde nace cada ecuación. Si entiendes la lógica, no necesitas memorizar 50 fórmulas.</p>
+        </div>
+
+        <div class="card-panel">
+          <h3>⚡ 2. Resolución de Ensayos y Certámenes</h3>
+          <p>Practicamos con pruebas reales del DEMRE y de universidades chilenas, cazando trampas paso a paso.</p>
+        </div>
+
+        <div class="card-panel">
+          <h3>💻 3. Apuntes Digitales en PDF</h3>
+          <p>Todas las pizarras y desarrollos quedan guardados en alta resolución para tu estudio personal.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div class="cta-banner">
+        <div class="cta-text">💬 Escríbeme por DM o al WhatsApp</div>
+        <div class="cta-arrow">📲</div>
+      </div>
+      <div class="foot-note">wa.me/56957936649 · tuprofeindustrial-web.vercel.app</div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- 3. TUTORÍAS - LÁMINA 1: INDIVIDUAL         -->
+  <!-- ========================================== -->
+  <div id="slide-tut-1" class="slide">
+    <div class="grid"></div>
+    <div class="glow-top"></div>
+
+    <div class="header">
+      <div class="brand-tag"><span class="brand-dot"></span> TUPROFEINDUSTRIAL</div>
+      <div class="category-badge">TUTORÍAS 01 / 03</div>
+    </div>
+
+    <div class="content-box">
+      <div class="eyebrow">Modalidad Flexible</div>
+      <div class="main-title">Tutoría Individual<br><span class="highlight-text">Personalizada 1 a 1</span></div>
+      
+      <div class="card-panel">
+        <div class="price-box">
+          <div class="price-number">$20.000</div>
+          <div class="price-unit">CLP / hora</div>
+        </div>
+        <p>Ideal para resolver dudas puntuales de una materia, preparar un certamen próximo o revisar un ensayo específico.</p>
+      </div>
+
+      <div class="bullet-list">
+        <div class="bullet-item">
+          <div class="bullet-icon">✓</div>
+          <div><strong>Sesión en vivo de 60 minutos:</strong> 100% enfocada en tus dudas y a tu ritmo.</div>
+        </div>
+        <div class="bullet-item">
+          <div class="bullet-icon">✓</div>
+          <div><strong>Pizarra interactiva + PDF:</strong> Te llevas el apunte completo con los desarrollos paso a paso.</div>
+        </div>
+        <div class="bullet-item">
+          <div class="bullet-icon">✓</div>
+          <div><strong>Online todo Chile</strong> o presencial a domicilio en Santiago.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div class="cta-banner">
+        <div class="cta-text">Reserva tu hora por WhatsApp</div>
+        <div class="cta-arrow">📲</div>
+      </div>
+      <div class="foot-note">+56 9 5793 6649</div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- 4. TUTORÍAS - LÁMINA 2: PROGRAMA PAES      -->
+  <!-- ========================================== -->
+  <div id="slide-tut-2" class="slide">
+    <div class="grid"></div>
+    <div class="glow-top"></div>
+
+    <div class="header">
+      <div class="brand-tag"><span class="brand-dot"></span> TUPROFEINDUSTRIAL</div>
+      <div class="category-badge">TUTORÍAS 02 / 03</div>
+    </div>
+
+    <div class="content-box">
+      <div class="eyebrow">Asegura tu puntaje</div>
+      <div class="main-title">Programa PAES<br><span class="accent-mint">6 Horas Intensivas</span></div>
+      
+      <div class="card-panel">
+        <div class="price-box">
+          <div class="price-number">$100.000</div>
+          <div class="price-unit">CLP (Ahorras $20.000)</div>
+        </div>
+        <p>Plan diseñado para estudiantes que rinden PAES M1/M2 y buscan asegurar sobre 800 puntos cazando trampas DEMRE.</p>
+      </div>
+
+      <div class="bullet-list">
+        <div class="bullet-item">
+          <div class="bullet-icon">✓</div>
+          <div><strong>6 horas de tutoría 1 a 1:</strong> Distribuidas a tu ritmo antes de la prueba.</div>
+        </div>
+        <div class="bullet-item">
+          <div class="bullet-icon">✓</div>
+          <div><strong>Diagnóstico y Ensayos Oficiales:</strong> Foco en Álgebra, Funciones, Geometría y Probabilidades.</div>
+        </div>
+        <div class="bullet-item">
+          <div class="bullet-icon">✓</div>
+          <div><strong>Gestión de tiempo DEMRE:</strong> Cómo responder preguntas en menos de 45 segundos.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div class="cta-banner">
+        <div class="cta-text">Cupos limitados por semana</div>
+        <div class="cta-arrow">⚡</div>
+      </div>
+      <div class="foot-note">Agenda tu programa directo al DM o WhatsApp</div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- 5. TUTORÍAS - LÁMINA 3: INTENSIVO INGENIERÍA -->
+  <!-- ========================================== -->
+  <div id="slide-tut-3" class="slide">
+    <div class="grid"></div>
+    <div class="glow-top"></div>
+
+    <div class="header">
+      <div class="brand-tag"><span class="brand-dot"></span> TUPROFEINDUSTRIAL</div>
+      <div class="category-badge">TUTORÍAS 03 / 03</div>
+    </div>
+
+    <div class="content-box">
+      <div class="eyebrow">Universidad & Nivelación</div>
+      <div class="main-title">Programa Intensivo<br><span class="highlight-text">de Ingeniería</span></div>
+      
+      <div class="card-panel">
+        <div class="price-box">
+          <div class="price-number">36 Horas</div>
+          <div class="price-unit">Acompañamiento Mensual</div>
+        </div>
+        <p>Para estudiantes universitarios que necesitan salvar o asegurar ramos críticos: Cálculo 1 y 2, Álgebra Lineal y Física Mecánica.</p>
+      </div>
+
+      <div class="bullet-list">
+        <div class="bullet-item">
+          <div class="bullet-icon">✓</div>
+          <div><strong>9 horas semanales:</strong> 3 sesiones intensivas de 3 horas para dominar la materia.</div>
+        </div>
+        <div class="bullet-item">
+          <div class="bullet-icon">✓</div>
+          <div><strong>Resolución de certámenes reales:</strong> Con el formato exacto de tu universidad.</div>
+        </div>
+        <div class="bullet-item">
+          <div class="bullet-icon">✓</div>
+          <div><strong>☀️ Nivelación de Verano "Cálculo Cero":</strong> Para recién egresados que entran en marzo a la U.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div class="cta-banner">
+        <div class="cta-text">Consulta aranceles y horarios</div>
+        <div class="cta-arrow">📲</div>
+      </div>
+      <div class="foot-note">WhatsApp: +56 9 5793 6649</div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- 6. SIMULADOR - LÁMINA 1: WEB & CALCULADORAS  -->
+  <!-- ========================================== -->
+  <div id="slide-sim-1" class="slide">
+    <div class="grid"></div>
+    <div class="glow-top"></div>
+
+    <div class="header">
+      <div class="brand-tag"><span class="brand-dot"></span> TUPROFEINDUSTRIAL</div>
+      <div class="category-badge">PLATAFORMA WEB</div>
+    </div>
+
+    <div class="content-box">
+      <div class="eyebrow">100% Gratuito</div>
+      <div class="main-title">Prueba nuestros<br><span class="accent-mint">Simuladores Online</span></div>
+      
+      <div class="card-panel">
+        <h3>💻 tuprofeindustrial-web.vercel.app</h3>
+        <p>Diseñé herramientas interactivas gratuitas para que calcules tus metas académicas en 30 segundos.</p>
+      </div>
+
+      <div class="bullet-list">
+        <div class="bullet-item">
+          <div class="bullet-icon">1</div>
+          <div><strong>Calculadora PAES:</strong> Ingresa tu puntaje actual y tu meta para ver la brecha exacta.</div>
+        </div>
+        <div class="bullet-item">
+          <div class="bullet-icon">2</div>
+          <div><strong>Simulador de Notas Universitario:</strong> Calcula qué nota necesitas en el examen para aprobar el ramo.</div>
+        </div>
+        <div class="bullet-item">
+          <div class="bullet-icon">3</div>
+          <div><strong>Diagnóstico en 1 Minuto:</strong> Conoce qué programa te conviene según tu objetivo.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div class="cta-banner">
+        <div class="cta-text">Toca el sticker de enlace arriba 🔗</div>
+        <div class="cta-arrow">👆</div>
+      </div>
+      <div class="foot-note">Prueba las herramientas gratis en tu navegador</div>
+    </div>
+  </div>
+
+</body>
+</html>
