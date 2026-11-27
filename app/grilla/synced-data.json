@@ -1,7 +1,7 @@
 {
-  "syncedAt": "2026-11-27T06:30:00-03:00",
-  "syncSource": "santiago-morning-sync-cron",
-  "registroEntries": 9,
+  "syncedAt": "2026-11-27T11:42:37-03:00",
+  "syncSource": "publicar-scan",
+  "registroEntries": 0,
   "completedBaseline": {
     "mie25": {
       "mie-1230-video": true,
@@ -11,43 +11,35 @@
       "jue-1230-video": true,
       "jue-1730-video": true,
       "jue-2115-video": true
-    },
-    "vie27": {}
+    }
   },
-  "prunedPastVideos": [
-    "MIERCOLES-1230-video-discriminante.mp4",
-    "MIERCOLES-1730-video-duplica-arista.mp4",
-    "MIERCOLES-2115-noche05-dividir-por-cero.mp4",
-    "JUEVES-1230-video-parabola-recta.mp4",
-    "JUEVES-1730-video-viete-propiedades.mp4",
-    "JUEVES-2115-noche06-identidad-euler.mp4"
-  ],
+  "prunedPastVideos": [],
   "activeVideoCount": 9,
-  "activeVideoSizeMb": 30.2,
+  "activeVideoSizeMb": 65.8,
   "weekendReadiness": [
     {
       "iso": "2026-11-27",
-      "label": "Viernes 27 Noviembre (72h PAES)",
-      "status": "listo",
-      "summary": "Inecuaciones (12:30) · Máxima Ganancia (17:30) · Copo de Koch (21:15)",
-      "assetCount": 3,
-      "notes": "Producción en lote ordenada: guiones, copys A/B oficiales y activos listos en Publicar/"
+      "label": "Viernes 27 Noviembre",
+      "status": "calibrado",
+      "summary": "Inecuaciones trampa · Máxima Ganancia · Fractales",
+      "assetCount": 35,
+      "notes": "Detectados 35 archivos calibrados recientes"
     },
     {
       "iso": "2026-11-28",
-      "label": "Sábado 28 Noviembre (48h PAES)",
-      "status": "listo",
-      "summary": "Función Inversa (12:30) · Intersección Ejes (17:30) · Identidad de Euler (21:15)",
-      "assetCount": 3,
-      "notes": "Producción en lote ordenada: guiones, copys A/B oficiales y activos listos en Publicar/"
+      "label": "Sábado 28 Noviembre",
+      "status": "calibrado",
+      "summary": "Intersección Ejes · Función Inversa · Infinito de Hilbert",
+      "assetCount": 29,
+      "notes": "Detectados 29 archivos calibrados recientes"
     },
     {
       "iso": "2026-11-29",
-      "label": "Domingo 29 Noviembre (Víspera PAES)",
-      "status": "listo",
-      "summary": "5 Trampas DEMRE (12:30) · Gestión Tiempos 45s (17:30) · Mensaje Confianza (21:15)",
-      "assetCount": 3,
-      "notes": "Víspera PAES: Formulario de bolsillo, hacks de 45s, copys A/B y ritual de calma listos"
+      "label": "Domingo 29 Noviembre",
+      "status": "calibrado",
+      "summary": "Puntos Clave PAES · Ritual Calma · Mensaje de Confianza",
+      "assetCount": 28,
+      "notes": "Detectados 28 archivos calibrados recientes"
     }
   ]
 }
