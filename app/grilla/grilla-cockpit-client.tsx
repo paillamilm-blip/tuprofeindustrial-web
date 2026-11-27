@@ -423,7 +423,7 @@ export function GrillaCockpitClient({
     if (block && block.mainAction.copies && block.mainAction.copies.length > 0) {
       let copyText = block.mainAction.copies[0].text;
       if (platform === "facebook") {
-        copyText = `${copyText}\n\n🔗 Web oficial: https://tuprofeindustrial-web.vercel.app\n💬 WhatsApp tutorías: https://wa.me/56961226065`;
+        copyText = `${copyText}\n\n🔗 Web oficial: https://tuprofeindustrial-web.vercel.app\n💬 WhatsApp tutorías: https://wa.me/56957936649`;
       }
       await copyTextSafe(copyText);
       showToast(
