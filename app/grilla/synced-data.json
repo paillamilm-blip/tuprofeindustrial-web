@@ -1,21 +1,29 @@
 {
-  "syncedAt": "2026-11-26T15:53:00-03:00",
-  "syncSource": "publicar-batch-assets-sync",
+  "syncedAt": "2026-11-27T06:30:00-03:00",
+  "syncSource": "santiago-morning-sync-cron",
   "registroEntries": 9,
   "completedBaseline": {
     "mie25": {
       "mie-1230-video": true,
       "mie-1300-story": true
     },
-    "jue26": {}
+    "jue26": {
+      "jue-1230-video": true,
+      "jue-1730-video": true,
+      "jue-2115-video": true
+    },
+    "vie27": {}
   },
   "prunedPastVideos": [
     "MIERCOLES-1230-video-discriminante.mp4",
     "MIERCOLES-1730-video-duplica-arista.mp4",
-    "MIERCOLES-2115-noche05-dividir-por-cero.mp4"
+    "MIERCOLES-2115-noche05-dividir-por-cero.mp4",
+    "JUEVES-1230-video-parabola-recta.mp4",
+    "JUEVES-1730-video-viete-propiedades.mp4",
+    "JUEVES-2115-noche06-identidad-euler.mp4"
   ],
-  "activeVideoCount": 12,
-  "activeVideoSizeMb": 43.8,
+  "activeVideoCount": 9,
+  "activeVideoSizeMb": 30.2,
   "weekendReadiness": [
     {
       "iso": "2026-11-27",
