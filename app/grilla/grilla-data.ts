@@ -276,7 +276,7 @@ Creado con IA. #tuprofeindustrial #paesm1 #geometria #cuerposgeometricos #demre`
 🎯 En mi web pueden practicar gratis con la Calculadora PAES y descargar el Simulacro M1 (20 ítems con solucionario paso a paso):
 👉 ${WEB_URL}
 
-Como Ingeniero Civil Industrial y docente diplomado (ex-profesor Scuola Italiana), abrí los últimos cupos de tutorías personalizadas intensivas de última semana ($20.000/h o Pack PAES 6 horas por $100.000, online u a domicilio en Santiago).
+Como Ingeniero Industrial y docente diplomado (ex-profesor Scuola Italiana), abrí los últimos cupos de tutorías personalizadas intensivas de última semana ($20.000/h o Pack PAES 6 horas por $100.000, online u a domicilio en Santiago).
 
 📲 Escríbeme directo al WhatsApp: ${WHATSAPP_URL}
 
@@ -652,7 +652,7 @@ En x² - 5x + k = 0 con raíz x₁ = 2, no apliquen fórmula larga. Usen Relacio
 
 🎯 Practiquen gratis con la Calculadora PAES y descarguen el Simulacro M1 (20 ítems con solucionario) aquí: ${WEB_URL}
 
-Como Ingeniero Civil Industrial y docente, tengo últimos horarios para tutorías personalizadas ($20.000/h o Pack PAES 6h $100.000).
+Como Ingeniero Industrial y docente, tengo últimos horarios para tutorías personalizadas ($20.000/h o Pack PAES 6h $100.000).
 📲 WhatsApp directo: ${WHATSAPP_URL}`,
           },
         ],
