@@ -1,5 +1,5 @@
 {
-  "syncedAt": "2026-11-27T11:42:37-03:00",
+  "syncedAt": "2026-11-27T12:44:24-03:00",
   "syncSource": "publicar-scan",
   "registroEntries": 0,
   "completedBaseline": {
@@ -15,15 +15,15 @@
   },
   "prunedPastVideos": [],
   "activeVideoCount": 9,
-  "activeVideoSizeMb": 65.8,
+  "activeVideoSizeMb": 66.2,
   "weekendReadiness": [
     {
       "iso": "2026-11-27",
       "label": "Viernes 27 Noviembre",
       "status": "calibrado",
       "summary": "Inecuaciones trampa · Máxima Ganancia · Fractales",
-      "assetCount": 35,
-      "notes": "Detectados 35 archivos calibrados recientes"
+      "assetCount": 40,
+      "notes": "Detectados 40 archivos calibrados recientes"
     },
     {
       "iso": "2026-11-28",
