@@ -1,5 +1,5 @@
 {
-  "syncedAt": "2026-11-27T12:44:24-03:00",
+  "syncedAt": "2026-11-27T13:37:49-03:00",
   "syncSource": "publicar-scan",
   "registroEntries": 0,
   "completedBaseline": {
@@ -22,24 +22,24 @@
       "label": "Viernes 27 Noviembre",
       "status": "calibrado",
       "summary": "Inecuaciones trampa · Máxima Ganancia · Fractales",
-      "assetCount": 40,
-      "notes": "Detectados 40 archivos calibrados recientes"
+      "assetCount": 37,
+      "notes": "Detectados 37 archivos calibrados recientes"
     },
     {
       "iso": "2026-11-28",
       "label": "Sábado 28 Noviembre",
       "status": "calibrado",
       "summary": "Intersección Ejes · Función Inversa · Infinito de Hilbert",
-      "assetCount": 29,
-      "notes": "Detectados 29 archivos calibrados recientes"
+      "assetCount": 32,
+      "notes": "Detectados 32 archivos calibrados recientes"
     },
     {
       "iso": "2026-11-29",
       "label": "Domingo 29 Noviembre",
       "status": "calibrado",
       "summary": "Puntos Clave PAES · Ritual Calma · Mensaje de Confianza",
-      "assetCount": 28,
-      "notes": "Detectados 28 archivos calibrados recientes"
+      "assetCount": 33,
+      "notes": "Detectados 33 archivos calibrados recientes"
     }
   ]
 }
