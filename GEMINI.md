@@ -5,48 +5,45 @@ Este archivo define las reglas obligatorias e inquebrantables de pedagogía visu
 ---
 
 ## 1. Principio Rector: Superar la «Prueba del Mudo»
-- **La animación demuestra, no decora:** Si un estudiante mira el video en silencio absoluto (sin audio), debe entender visualmente el 100% de la explicación, la trampa matemática y el conjunto solución.
-- **Prohibidas las fórmulas desnudas:** Ninguna ecuación puede quedar flotando sola en pantalla sin su acompañamiento visual (recta, gráfico, figura geométrica, cuerpo 3D, circuito o diagrama de fuerzas).
+- **La animación es el profesor visual (demuestra, no decora):** Si un estudiante mira el video en **silencio absoluto (sin audio)**, debe entender visualmente el 100% de la explicación: qué problema se plantea, qué propiedad se aplica, cómo se transforma cada paso y cuál es el resultado final.
+- **Prohibidas las fórmulas desnudas:** Ninguna ecuación puede quedar flotando sola en la pizarra sin su modelo visual completo y dinámico.
 
 ---
 
-## 2. Componentes Obligatorios de la Animación
+## 2. Los 6 Componentes Obligatorios de TODA Animación (Universal)
 
-### A. Inecuaciones y Conjuntos Numéricos (Recta de Intervalos)
-Toda recta numérica debe incluir sin excepción:
-1. **Eje continuo con extremos infinitos:** Flechas en ambos extremos acompañadas de los símbolos limpios `−∞` y `+∞` (Unicode o MathTex, nunca texto LaTeX crudo como `\infty`).
-2. **Graduación completa:** Marcas y números enteros sobre el eje para dar escala real.
-3. **Zona de solución (Área del intervalo):** Franja semitransparente con rayado diagonal (*hatching*) en color de acento (`col.acento`) sobre todo el intervalo o rayo.
-4. **Flecha direccional del rayo:** Flecha gruesa sobre el eje señalando explícitamente hacia el infinito correspondiente (ej: hacia `−∞`).
-5. **Punto crítico diferenciado:**
-   - **Cerrado (`[` o `]`):** Punto sólido (`Dot`) + halo concéntrico exterior (`Circle`) + etiqueta superior `cerrado [`.
-   - **Abierto (`]` o `[`):** Aro hueco con fondo de papel + etiqueta superior `] abierto`.
-6. **Rótulo flotante de la solución:** Cartela matemática destacada sobre la franja sombreada con la expresión formal (ej: `x ≤ -3`).
+Sin importar la materia (álgebra, cálculo, geometría, física, ingeniería o estadística), toda animación debe portar sus 6 componentes explicativos:
 
-### B. Movimiento de Giro en Inversión de Signos y Transformaciones
-- Cuando una propiedad matemática altere el sentido o naturaleza de un símbolo (ej: **dividir por un negativo invierte la desigualdad** de $\ge$ a $\le$):
-  - El signo debe ejecutar un **movimiento de giro físico 3D de $360^\circ$ sobre el eje vertical (`Rotate(mob, angle=2*PI, axis=UP)`)**.
-  - Durante el giro, el símbolo se amplía al **$140\%$ de escala en color de acento (`col.acento`)**.
-  - Al completar el giro, detona un **destello radial brillante (`Flash`)** para fijar la regla en la memoria visual del espectador.
-
-### C. Funciones, Física e Ingeniería
-- **Funciones:** Ejes graduados con unidades, marcado visual de raíces y vértice. Tangente animada en vivo para derivadas, área acumulada sombreada para integrales.
-- **Física:** Vectores con flechas rotuladas ($P$, $N$, $f$, $v$, $a$, $T$). Descomposición vectorial explícita en planos inclinados.
-- **Ingeniería:** Cuerpos 3D con despiece (*exploded view*), cotas de dimensiones y rotación de cámara controlada.
+1. **Marco de Referencia y Escala Real:** Ejes graduados con unidades ($X-Y$, tiempo, altura), límites de escala (`−∞`, `+∞`), orígenes y planos de referencia explícitos.
+2. **Diferenciación Visual Dato vs Incógnita:** Lo conocido en color base; lo que se busca (incógnita) en color de alerta o con etiqueta explícita (`¿?`); el valor resuelto en color de éxito (`col.exito`).
+3. **Zona o Estado Activo Delimitado:** La región matemática de interés debe estar físicamente resaltada (franja con rayado diagonal *hatching* en intervalos, área sombreada bajo la curva en integrales, caras activas en 3D).
+4. **Guías Direccionales y de Sentido:** Flechas vectoriales de sentido, vectores de velocidad/fuerza rotulados o flechas sobre el eje que indiquen explícitamente hacia dónde fluye o se proyecta la solución.
+5. **Puntos Críticos y Singularidades con Tratamiento Especial:** Vértices, raíces, puntos cerrados `[` vs abiertos `]`, apoyos o singularidades destacados con **halos concéntricos y etiquetas semánticas claras** (ej: `cerrado [`, `vértice (h, k)`).
+6. **Rótulo Dinámico Flotante (Ecuación Viva):** Cartela matemática limpia con el valor o expresión formal de lo que se muestra (ej: `x ≤ -3`, `V = 8 m³`), que muta visualmente con cada paso.
 
 ---
 
-## 3. Sincronización Dinámica Voz-Visual (`registrar_parte`)
-- Todo dibujo debe registrar sus piezas pedagógicas en `dib.registrar_parte("termino", mob)`.
-- El motor (`_indicar_partes_del_dibujo`) detecta los *timestamps* de audio de palabras clave (*"menos tres"*, *"cerrado"*, *"invierte"*, *"solución"*, *"desigualdad"*) y resalta sincrónicamente la pieza visual en pantalla con `Indicate` y acompañamiento sutil de cámara.
+## 3. Cinemática y Física del Movimiento en Toda Transformación
+Los cambios de regla, signo o estado nunca deben ocurrir como un corte estático:
+- **Inversión de signo o polaridad (ej: dividir por negativo):** Giro físico 3D de $360^\circ$ sobre el eje vertical (`Rotate(mob, angle=2*PI, axis=UP)`), escala al $140\%$ en color cian y destello radial brillante (`Flash`).
+- **Errores y trampas:** Tacha cruzada en rojo + temblor sísmico (`Wiggle`).
+- **Derivadas e integrales:** Tangente que se desliza mostrando la pendiente en vivo; área que se llena progresivamente.
+- **Cuerpos 3D e ingeniería:** Rotación suave axonométrica, cotas y despiece rotativo (*exploded view*).
+- **Vectores y fuerzas:** Descomposición proyectada viva sobre los ejes del plano.
 
 ---
 
-## 4. Estándar de Tipografía y Glifos Matemáticos
+## 4. Sincronización Léxica Dinámica Universal (`registrar_parte`)
+- Toda función de dibujo debe asociar sus piezas a palabras clave del lenguaje mediante `dib.registrar_parte("palabra", mob)`.
+- El motor (`_indicar_partes_del_dibujo`) detecta los *timestamps* de audio de la locución y resalta automáticamente (`Indicate` + micro-encuadre de cámara) la pieza visual exacta en el milisegundo en que se pronuncia.
+
+---
+
+## 5. Estándar de Tipografía y Glifos Matemáticos
 - **Prohibido el LaTeX crudo en textos:** Nunca imprimir textos literales como `\leq`, `\geq`, `\infty` o `\le`.
 - **Usar siempre glifos limpios:** `≤`, `≥`, `−∞`, `+∞`, `≠`, `≈`, `∈`, `√`.
 
 ---
 
-## 5. Proceso de Admisión Vigente
-- Todas las menciones, badges en historias, carruseles y copys deben señalar formalmente: **`ADMISIÓN PAES 2027`** (para la prueba rendida en 2026 correspondiente al proceso de admisión universitaria 2027).
+## 6. Proceso de Admisión Vigente
+- Todas las menciones, historias, carruseles y copys deben señalar formalmente: **`ADMISIÓN PAES 2027`**.
