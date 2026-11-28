@@ -1,5 +1,5 @@
 {
-  "syncedAt": "2026-11-27T22:49:23-03:00",
+  "syncedAt": "2026-11-28T05:28:05-03:00",
   "syncSource": "publicar-scan",
   "registroEntries": 0,
   "completedBaseline": {
@@ -30,8 +30,8 @@
       "label": "Sábado 28 Noviembre",
       "status": "calibrado",
       "summary": "Intersección Ejes · Función Inversa · Infinito de Hilbert",
-      "assetCount": 32,
-      "notes": "Detectados 32 archivos calibrados recientes"
+      "assetCount": 35,
+      "notes": "Detectados 35 archivos calibrados recientes"
     },
     {
       "iso": "2026-11-29",
