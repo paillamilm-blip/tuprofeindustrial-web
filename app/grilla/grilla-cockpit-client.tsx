@@ -76,7 +76,7 @@ interface GrillaCockpitClientProps {
 }
 
 const DAY_KEYS: DayKey[] = ["mie25", "jue26", "vie27", "sab28", "dom29"];
-const SERVER_TIME_KEY = "2026-11-27|0390|06:30";
+const SERVER_TIME_KEY = "2026-11-27|1324|22:04";
 
 function subscribeStorage(callback: () => void) {
   window.addEventListener("storage", callback);
